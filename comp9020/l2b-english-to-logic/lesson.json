@@ -1,0 +1,1145 @@
+{
+ "id": "comp9020-l2b",
+ "course": {
+  "code": "COMP9020",
+  "href": "../"
+ },
+ "code": "L2B",
+ "emoji": "🗣️",
+ "title": "English → Logic Translator",
+ "eyebrow": "COMP9020 · Week 2 · Propositional logic",
+ "minutes": 45,
+ "verified": true,
+ "goal": "Turn any English sentence, even a long one, into a formula, then pick out **every** formula that means the same. That is Quiz 2's Q3b.",
+ "roadmap": [
+  "**The small joiners:** and / but / although, or, not, neither…nor, not both, exactly one.",
+  "**Who grabs first:** `¬` before `∧ ∨` before `⇒ ⇔`, and when you must add brackets.",
+  "**The translation recipe:** letters → main joiner → halves → brackets.",
+  "**Nested conditions:** *whenever … unless …* and *… if …, provided …*",
+  "**Same or different?** Two fast ways to check whether two formulas are equivalent.",
+  "Then the **practice ladder**, ending with full Quiz 2 Q3b-style drills and 🟣 boss problems."
+ ],
+ "magic": [
+  "and, but, although, yet, however, `;` → `∧`.",
+  "Neither A nor B = `¬A ∧ ¬B`. Not both = `¬(A ∧ B)`.",
+  "`¬` grabs only the next thing. Brackets decide everything else.",
+  "Find the MAIN joiner first. It splits the sentence into two halves.",
+  "`A ⇒ (B ⇒ C)` = `(A ∧ B) ⇒ C`.",
+  "One row where two formulas differ = not equivalent."
+ ],
+ "blocks": [
+  {
+   "type": "section",
+   "id": "learn",
+   "title": "💡 Learn it, one idea at a time",
+   "sub": "Needs L2 first. Every idea: 🧒 picture → 🎓 official version → 👀 one worked example → ✋ your turn → 🪤 the trap."
+  },
+  {
+   "type": "idea",
+   "id": "j1",
+   "short": "Small joiners",
+   "title": "The small joiners: and, but, or, not, neither…nor",
+   "picture": "\"I'm tired **but** I'll go.\" Both facts are true: I'm tired, and I'll go. *But* adds a feeling, not new logic. To logic it's just **and**.",
+   "official": "*and · but · although · yet · however · `;`* → `∧`. *or* → `∨` (inclusive: both is fine). *not* → `¬`. *neither A nor B* → `¬A ∧ ¬B`. *not both A and B* → `¬(A ∧ B)`. *exactly one of A, B* → `(A ∨ B) ∧ ¬(A ∧ B)`, also written `A ⊕ B` (xor).",
+   "grid": {
+    "title": "Cheat table",
+    "cols": [
+     "English",
+     "Logic",
+     "Say it"
+    ],
+    "rows": [
+     [
+      "A and B · A but B · although A, B",
+      "`A ∧ B`",
+      "both"
+     ],
+     [
+      "A or B",
+      "`A ∨ B`",
+      "at least one (both is OK)"
+     ],
+     [
+      "not A · it's false that A",
+      "`¬A`",
+      "flip it"
+     ],
+     [
+      "neither A nor B",
+      "`¬A ∧ ¬B`",
+      "not this AND not that"
+     ],
+     [
+      "not both A and B",
+      "`¬(A ∧ B)`",
+      "at most one"
+     ],
+     [
+      "either A or B but not both · exactly one",
+      "`(A ∨ B) ∧ ¬(A ∧ B)`",
+      "exactly one"
+     ]
+    ]
+   },
+   "watch": {
+    "q": "\"Neither the API nor the database responds.\" (`a` = the API responds, `d` = the database responds)",
+    "steps": [
+     "Neither … nor = not this AND not that.",
+     "`¬a ∧ ¬d`",
+     "Same as `¬(a ∨ d)`: \"it's not true that **at least one** of them responds\" (De Morgan's law)."
+    ],
+    "answer": "**`¬a ∧ ¬d`**"
+   },
+   "tries": [
+    {
+     "id": "j1t1",
+     "q": "\"It's cold but sunny.\"",
+     "a": "`c ∧ s`",
+     "why": "*But* = and.",
+     "letters": "`c` = it's cold · `s` = it's sunny"
+    },
+    {
+     "id": "j1t2",
+     "q": "\"You can have tea or coffee.\" (Both is fine.)",
+     "a": "`t ∨ k`",
+     "why": "In this course *or* is inclusive.",
+     "letters": "`t` = you have tea · `k` = you have coffee"
+    },
+    {
+     "id": "j1t3",
+     "q": "\"The tests and the linter don't both pass.\"",
+     "a": "`¬(t ∧ l)` (≡ `¬t ∨ ¬l`)",
+     "why": "Not both = at most one of them passes.",
+     "letters": "`t` = the tests pass · `l` = the linter passes",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(t ∧ l)",
+      "g": "¬t ∨ ¬l",
+      "expect": true
+     }
+    },
+    {
+     "id": "j1t4",
+     "q": "\"Exactly one of the two lamps is on.\"",
+     "a": "`(a ∨ b) ∧ ¬(a ∧ b)`",
+     "why": "At least one, but not both. Also written `a ⊕ b`.",
+     "letters": "`a` = lamp A is on · `b` = lamp B is on",
+     "check": {
+      "kind": "equiv",
+      "f": "(a ∨ b) ∧ ¬(a ∧ b)",
+      "g": "a ⊕ b",
+      "expect": true
+     }
+    },
+    {
+     "id": "j1t5",
+     "q": "\"It's neither raining nor windy.\"",
+     "a": "`¬r ∧ ¬w`",
+     "why": "Not this AND not that.",
+     "letters": "`r` = it's raining · `w` = it's windy",
+     "check": {
+      "kind": "equiv",
+      "f": "¬r ∧ ¬w",
+      "g": "¬(r ∨ w)",
+      "expect": true
+     }
+    },
+    {
+     "id": "j1t6",
+     "q": "\"Although it's late, the shop is open.\"",
+     "a": "`l ∧ o`",
+     "why": "*Although* = and.",
+     "letters": "`l` = it's late · `o` = the shop is open"
+    }
+   ],
+   "trap": {
+    "tempting": "Neither A nor B → `¬(A ∧ B)`",
+    "correct": "`¬A ∧ ¬B` (= `¬(A ∨ B)`)",
+    "test": "Neither = not this **and** not that. `¬(A ∧ B)` would still allow one of them."
+   },
+   "magic": "Neither A nor B = `¬A ∧ ¬B`. Not both = `¬(A ∧ B)`."
+  },
+  {
+   "type": "idea",
+   "id": "j2",
+   "short": "Who grabs first",
+   "title": "Who grabs first: `¬`, then `∧ ∨`, then `⇒ ⇔`",
+   "picture": "In maths, `2 + 3 × 4` means `2 + (3 × 4)` because × grabs first. Logic has the same kind of rule. `¬` grabs first, and it only grabs the very next thing.",
+   "official": "The lecture's order: **`¬` first → then `∧` and `∨` → then `⇒` and `⇔` last.** The slides don't rank `∧` against `∨`, so **always bracket** when you mix them. Formulas can also use `⊤` (always true) and `⊥` (always false).",
+   "watch": {
+    "q": "How is `¬p ∧ q ⇒ r` read?",
+    "steps": [
+     "`¬` grabs first, and only `p`: `(¬p)`.",
+     "Then `∧`: `((¬p) ∧ q)`.",
+     "`⇒` comes last: `((¬p) ∧ q) ⇒ r`."
+    ],
+    "answer": "**`((¬p) ∧ q) ⇒ r`**"
+   },
+   "tries": [
+    {
+     "id": "j2t1",
+     "q": "Add brackets to show how it is read: `¬a ∨ b ⇒ c`",
+     "a": "`((¬a) ∨ b) ⇒ c`",
+     "why": "`¬` first, then `∨`, and `⇒` last.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬a ∨ b ⇒ c",
+      "g": "((¬a) ∨ b) ⇒ c",
+      "expect": true
+     }
+    },
+    {
+     "id": "j2t2",
+     "q": "Are `¬(p ∨ q)` and `¬p ∨ q` the same? Find one row.",
+     "a": "**No.** Row `p = T, q = T`: `¬(p ∨ q)` = F, but `¬p ∨ q` = T.",
+     "why": "Where the `¬` sits changes everything.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(p ∨ q)",
+      "g": "¬p ∨ q",
+      "expect": false
+     }
+    },
+    {
+     "id": "j2t3",
+     "q": "In `¬p ∧ q`, what does the `¬` apply to?",
+     "a": "Only `p`.",
+     "why": "`¬` grabs just the next thing. To negate everything, write `¬(p ∧ q)`."
+    },
+    {
+     "id": "j2t4",
+     "q": "Why must you bracket `p ∧ q ∨ r`?",
+     "a": "Because `(p ∧ q) ∨ r` and `p ∧ (q ∨ r)` are different, and the slides don't say which one is meant.",
+     "why": "Row `p = F, r = T`: the first is T, the second is F.",
+     "check": {
+      "kind": "equiv",
+      "f": "(p ∧ q) ∨ r",
+      "g": "p ∧ (q ∨ r)",
+      "expect": false
+     }
+    },
+    {
+     "id": "j2t5",
+     "q": "Add brackets: `p ⇒ ¬q ∧ r`",
+     "a": "`p ⇒ ((¬q) ∧ r)`",
+     "why": "`¬` first, then `∧`, and `⇒` last.",
+     "check": {
+      "kind": "equiv",
+      "f": "p ⇒ ¬q ∧ r",
+      "g": "p ⇒ ((¬q) ∧ r)",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "`¬p ∨ q` means `¬(p ∨ q)`.",
+    "correct": "`¬p ∨ q` means `(¬p) ∨ q`.",
+    "test": "`¬` never reaches past a joiner unless there's a bracket."
+   },
+   "magic": "`¬` grabs only the next thing. Brackets decide the rest."
+  },
+  {
+   "type": "idea",
+   "id": "j3",
+   "short": "The recipe",
+   "title": "The translation recipe: find the main joiner",
+   "picture": "A long sentence is like a sandwich. Find where it splits into two big halves: that word is the **main joiner**. Translate each half on its own, then join them.",
+   "official": "① Give each simple sentence a letter. Use the **positive** version: if `u` = the server is up, then \"down\" is `¬u`. ② Find the **main joiner**, the word that splits the whole sentence in two. ③ Translate each half. ④ Put brackets around each half.",
+   "watch": {
+    "q": "A lecture example. `p` = HD on the exam, `q` = you do every exercise, `r` = HD in the course. Translate (a) \"You get an HD in the course **although** you don't do every exercise.\" (b) \"To get an HD in the course you **must** get an HD on the exam.\"",
+    "steps": [
+     "(a) The main joiner *although* = `∧`. The halves are `r` and `¬q`. So `r ∧ ¬q`.",
+     "(b) *Must* makes the exam HD **necessary**, so it goes on the right: `r ⇒ p`."
+    ],
+    "answer": "(a) **`r ∧ ¬q`** (b) **`r ⇒ p`**"
+   },
+   "tries": [
+    {
+     "id": "j3t1",
+     "q": "\"If the server is down or the network is slow, the page times out.\"",
+     "a": "`(¬u ∨ n) ⇒ t`",
+     "why": "Main joiner: *if … then*. The left half, \"down or slow\", is `¬u ∨ n`.",
+     "letters": "`u` = the server is up · `n` = the network is slow · `t` = the page times out"
+    },
+    {
+     "id": "j3t2",
+     "q": "\"You graduate only if you pass all core courses and pay your fees.\"",
+     "a": "`g ⇒ (c ∧ f)`",
+     "why": "Main joiner: *only if*. The whole \"c and f\" goes on the right.",
+     "letters": "`g` = you graduate · `c` = you pass all core courses · `f` = you pay your fees"
+    },
+    {
+     "id": "j3t3",
+     "q": "\"If you don't sleep, you'll be tired and grumpy.\"",
+     "a": "`¬s ⇒ (t ∧ m)`",
+     "why": "Main joiner: *if … then*. The right half has two parts joined by *and*.",
+     "letters": "`s` = you sleep · `t` = you're tired · `m` = you're grumpy"
+    },
+    {
+     "id": "j3t4",
+     "q": "\"Access is granted if the key is valid and the token hasn't expired.\"",
+     "a": "`(k ∧ ¬x) ⇒ a`",
+     "why": "*If* marks the left side: the whole \"valid and not expired\" part (🔄 order).",
+     "letters": "`k` = the key is valid · `x` = the token has expired · `a` = access is granted"
+    },
+    {
+     "id": "j3t5",
+     "q": "\"We merge just in case the build passes and the review is approved.\"",
+     "a": "`m ⇔ (b ∧ r)`",
+     "why": "Main joiner: *just in case* = `⇔`. The right half is \"b and r\".",
+     "letters": "`b` = the build passes · `r` = the review is approved · `m` = we merge"
+    }
+   ],
+   "trap": {
+    "tempting": "Translate word by word, left to right.",
+    "correct": "Find the main joiner first, then translate each half.",
+    "test": "Can you point to the one word that splits the sentence in two?"
+   },
+   "magic": "Main joiner first. Halves second. Brackets always."
+  },
+  {
+   "type": "idea",
+   "id": "j4",
+   "short": "Nested conditions",
+   "title": "Nested conditions: *whenever … unless …*, *… provided …*",
+   "picture": "\"Whenever it's raining, I get wet unless I carry an umbrella.\" Two conditions are stacked: *whenever raining* on the outside, *unless umbrella* on the inside.",
+   "official": "Translate the outer condition first, then the inner one. Two rules make the result tidy: `A ⇒ (B ⇒ C)` ≡ `(A ∧ B) ⇒ C` (**exportation**), and *C unless B* = `¬B ⇒ C`. So *whenever A, C unless B* = `A ⇒ (¬B ⇒ C)` = `(A ∧ ¬B) ⇒ C`.",
+   "watch": {
+    "q": "\"Whenever the queue is full, new messages are dropped unless back-pressure is on.\" (`f` = the queue is full, `d` = new messages are dropped, `b` = back-pressure is on)",
+    "steps": [
+     "Outer: *whenever the queue is full* → `f ⇒ (…)`.",
+     "Inner: *dropped unless back-pressure* → `¬b ⇒ d`.",
+     "Together: `f ⇒ (¬b ⇒ d)`.",
+     "Exportation: `(f ∧ ¬b) ⇒ d`. A full queue with no back-pressure → dropped."
+    ],
+    "answer": "**`f ⇒ (¬b ⇒ d)`** ≡ **`(f ∧ ¬b) ⇒ d`**"
+   },
+   "tries": [
+    {
+     "id": "j4t1",
+     "q": "\"The discount applies if you pay by card, provided the order is over $100.\"",
+     "a": "`o ⇒ (c ⇒ d)` ≡ `(o ∧ c) ⇒ d`",
+     "why": "*Provided* is the outer if, and *if* is the inner one.",
+     "letters": "`o` = the order is over $100 · `c` = you pay by card · `d` = the discount applies",
+     "check": {
+      "kind": "equiv",
+      "f": "o ⇒ (c ⇒ d)",
+      "g": "(o ∧ c) ⇒ d",
+      "expect": true
+     }
+    },
+    {
+     "id": "j4t2",
+     "q": "\"The program terminates just in case the input is positive, provided the input is an integer.\"",
+     "a": "`i ⇒ (t ⇔ p)`",
+     "why": "*Provided* is the outer if. *Just in case* is the `⇔` inside it.",
+     "letters": "`i` = the input is an integer · `t` = the program terminates · `p` = the input is positive"
+    },
+    {
+     "id": "j4t3",
+     "q": "\"Unless there's a storm warning, the ferry runs if it's daytime.\"",
+     "a": "`¬s ⇒ (d ⇒ f)` ≡ `(¬s ∧ d) ⇒ f`",
+     "why": "Outer: unless = if not. Inner: *if it's daytime*.",
+     "letters": "`s` = there's a storm warning · `d` = it's daytime · `f` = the ferry runs",
+     "check": {
+      "kind": "equiv",
+      "f": "¬s ⇒ (d ⇒ f)",
+      "g": "(¬s ∧ d) ⇒ f",
+      "expect": true
+     }
+    },
+    {
+     "id": "j4t4",
+     "q": "Rewrite `r ⇒ (¬u ⇒ w)` with a single arrow, then with no arrow at all.",
+     "a": "`(r ∧ ¬u) ⇒ w`, and with no arrow: `¬r ∨ u ∨ w`.",
+     "why": "Exportation, then `A ⇒ B` = `¬A ∨ B` and De Morgan on `¬(r ∧ ¬u)`.",
+     "letters": "`r` = the job is scheduled · `u` = the upstream is healthy · `w` = a warning is logged",
+     "check": [
+      {
+       "kind": "equiv",
+       "f": "r ⇒ (¬u ⇒ w)",
+       "g": "(r ∧ ¬u) ⇒ w",
+       "expect": true
+      },
+      {
+       "kind": "equiv",
+       "f": "r ⇒ (¬u ⇒ w)",
+       "g": "¬r ∨ u ∨ w",
+       "expect": true
+      }
+     ]
+    },
+    {
+     "id": "j4t5",
+     "q": "Is `(a ∧ b) ⇒ c` the same as `(a ⇒ c) ∧ (b ⇒ c)`?",
+     "a": "**No.** Row `a = T, b = F, c = F`: the left is `F ⇒ F` = T, the right is `(T ⇒ F) ∧ …` = F.",
+     "why": "Needing both a and b is weaker than each of them forcing c alone.",
+     "check": [
+      {
+       "kind": "equiv",
+       "f": "(a ∧ b) ⇒ c",
+       "g": "(a ⇒ c) ∧ (b ⇒ c)",
+       "expect": false
+      },
+      {
+       "kind": "equiv",
+       "f": "(a ∨ b) ⇒ c",
+       "g": "(a ⇒ c) ∧ (b ⇒ c)",
+       "expect": true
+      }
+     ]
+    }
+   ],
+   "trap": {
+    "tempting": "`A ⇒ (B ⇒ C)` = `(A ⇒ B) ⇒ C`.",
+    "correct": "`A ⇒ (B ⇒ C)` = `(A ∧ B) ⇒ C`. Moving brackets across arrows changes the meaning.",
+    "test": "The row A = F, B = F, C = F tells them apart."
+   },
+   "magic": "`A ⇒ (B ⇒ C)` = `(A ∧ B) ⇒ C`."
+  },
+  {
+   "type": "idea",
+   "id": "j5",
+   "short": "Same or different?",
+   "title": "Same or different? Two fast checks",
+   "picture": "Two formulas are **equivalent** (`≡`) if they give the same answer in **every** row. To prove they're different you need just **one** row where they disagree, like one counterexample.",
+   "official": "**Method 1, rewrite into `¬ ∧ ∨`:** `A ⇒ B` → `¬A ∨ B`. `A ⇔ B` → `(A ∧ B) ∨ (¬A ∧ ¬B)`. Push `¬` inwards with De Morgan: `¬(A ∧ B)` = `¬A ∨ ¬B` and `¬(A ∨ B)` = `¬A ∧ ¬B`. **Method 2, hunt for one row:** try the row that breaks the simpler formula. If the other formula survives that row, they're different. (Full truth tables come in L3.)",
+   "watch": {
+    "q": "Is `p ⇒ (q ∨ r)` the same as `(p ∧ ¬q) ⇒ r`?",
+    "steps": [
+     "Method 1 on the left: `¬p ∨ q ∨ r`.",
+     "Method 1 on the right: `¬(p ∧ ¬q) ∨ r` = `¬p ∨ q ∨ r` (De Morgan).",
+     "Both have the same `¬ ∧ ∨` form."
+    ],
+    "answer": "**Yes, they're equivalent.**"
+   },
+   "tries": [
+    {
+     "id": "j5t1",
+     "q": "Rewrite `¬(p ∧ ¬q)` with no `¬` in front of a bracket.",
+     "a": "`¬p ∨ q`",
+     "why": "De Morgan: `¬(A ∧ B)` = `¬A ∨ ¬B`, and `¬¬q` = `q`.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(p ∧ ¬q)",
+      "g": "¬p ∨ q",
+      "expect": true
+     }
+    },
+    {
+     "id": "j5t2",
+     "q": "Is `p ⇔ q` the same as `(p ∨ ¬q) ∧ (¬p ∨ q)`?",
+     "a": "**Yes.**",
+     "why": "That's `(q ⇒ p) ∧ (p ⇒ q)` written with `∨`.",
+     "check": {
+      "kind": "equiv",
+      "f": "p ⇔ q",
+      "g": "(p ∨ ¬q) ∧ (¬p ∨ q)",
+      "expect": true
+     }
+    },
+    {
+     "id": "j5t3",
+     "q": "Is `p ⇔ q` the same as `(p ∨ q) ∧ (¬p ∨ ¬q)`?",
+     "a": "**No.** That's \"exactly one\" (xor). Row `p = q = T`: `p ⇔ q` = T, the other = F.",
+     "why": "It says at least one AND at most one.",
+     "check": {
+      "kind": "equiv",
+      "f": "p ⇔ q",
+      "g": "(p ∨ q) ∧ (¬p ∨ ¬q)",
+      "expect": false
+     }
+    },
+    {
+     "id": "j5t4",
+     "q": "Is `¬(p ⇔ q)` the same as `p ⇔ ¬q`?",
+     "a": "**Yes.**",
+     "why": "Both are true exactly when p and q differ.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(p ⇔ q)",
+      "g": "p ⇔ ¬q",
+      "expect": true
+     }
+    },
+    {
+     "id": "j5t5",
+     "q": "Is `(p ⇒ q) ⇒ p` the same as just `p`?",
+     "a": "**Yes**, which surprises most people.",
+     "why": "If p = T, both are T. If p = F, the left is `T ⇒ F` = F. Same value in every row.",
+     "check": {
+      "kind": "equiv",
+      "f": "(p ⇒ q) ⇒ p",
+      "g": "p",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "They look alike, so they're equivalent.",
+    "correct": "Equivalent means the same value in **every** row.",
+    "test": "Hunt for one disagreeing row before you say yes."
+   },
+   "magic": "One row where they differ = not equivalent."
+  },
+  {
+   "type": "section",
+   "id": "practice",
+   "title": "🏋️ Practice ladder",
+   "sub": "A different example every time. Think first, then reveal. Mark ✅/❌ honestly, and come back to your ❌ in 2 days."
+  },
+  {
+   "type": "practice",
+   "id": "h-green",
+   "level": "green",
+   "sub": "One joiner at a time.",
+   "items": [
+    {
+     "id": "hg1",
+     "q": "\"The pizza is hot but not cheap.\"",
+     "a": "`h ∧ ¬c`",
+     "why": "*But* = and. \"Not cheap\" = `¬c`.",
+     "letters": "`h` = the pizza is hot · `c` = the pizza is cheap"
+    },
+    {
+     "id": "hg2",
+     "q": "\"Neither email nor Slack works.\"",
+     "a": "`¬e ∧ ¬s`",
+     "why": "Neither–nor = not this AND not that.",
+     "letters": "`e` = email works · `s` = Slack works",
+     "check": {
+      "kind": "equiv",
+      "f": "¬e ∧ ¬s",
+      "g": "¬(e ∨ s)",
+      "expect": true
+     }
+    },
+    {
+     "id": "hg3",
+     "q": "\"Alice and Bob won't both come.\"",
+     "a": "`¬(a ∧ b)`",
+     "why": "Not both = at most one.",
+     "letters": "`a` = Alice comes · `b` = Bob comes"
+    },
+    {
+     "id": "hg4",
+     "q": "Add brackets: `¬x ∧ y ∨ z`",
+     "a": "It can't be done safely: it's either `((¬x) ∧ y) ∨ z` or `(¬x) ∧ (y ∨ z)`, and they differ.",
+     "why": "Only `¬` is certain, since it grabs `x` alone. The slides don't rank `∧` against `∨`, so whoever writes it must add the brackets.",
+     "check": {
+      "kind": "equiv",
+      "f": "((¬x) ∧ y) ∨ z",
+      "g": "(¬x) ∧ (y ∨ z)",
+      "expect": false
+     }
+    },
+    {
+     "id": "hg5",
+     "q": "\"It's hot, yet the fan is off.\"",
+     "a": "`h ∧ ¬f`",
+     "why": "*Yet* = and.",
+     "letters": "`h` = it's hot · `f` = the fan is on"
+    },
+    {
+     "id": "hg6",
+     "q": "\"You pick chocolate or vanilla, but not both.\"",
+     "a": "`(c ∨ v) ∧ ¬(c ∧ v)`",
+     "why": "\"Or … but not both\" = exactly one.",
+     "letters": "`c` = you pick chocolate · `v` = you pick vanilla",
+     "check": {
+      "kind": "equiv",
+      "f": "(c ∨ v) ∧ ¬(c ∧ v)",
+      "g": "c ⊕ v",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "h-yellow",
+   "level": "yellow",
+   "sub": "Three letters, one main joiner.",
+   "items": [
+    {
+     "id": "hy1",
+     "q": "\"You log in only if the password and the 2FA code are right.\"",
+     "a": "`l ⇒ (p ∧ c)`",
+     "why": "Main joiner *only if*: everything after it goes right.",
+     "letters": "`l` = you log in · `p` = the password is right · `c` = the 2FA code is right"
+    },
+    {
+     "id": "hy2",
+     "q": "\"Users see an error if the website or the payment gateway is down.\"",
+     "a": "`(¬w ∨ ¬g) ⇒ e`",
+     "why": "*If* in the middle → the part after it goes left (🔄).",
+     "letters": "`w` = the website is up · `g` = the payment gateway is up · `e` = users see an error"
+    },
+    {
+     "id": "hy3",
+     "q": "\"The café serves breakfast unless it's Sunday or it's after 11am.\"",
+     "a": "`¬(s ∨ e) ⇒ b`, which is `(¬s ∧ ¬e) ⇒ b`, which is `b ∨ s ∨ e`",
+     "why": "Unless = if not, applied to the whole \"Sunday or after 11am\".",
+     "letters": "`b` = the café serves breakfast · `s` = it's Sunday · `e` = it's after 11am",
+     "check": [
+      {
+       "kind": "equiv",
+       "f": "¬(s ∨ e) ⇒ b",
+       "g": "(¬s ∧ ¬e) ⇒ b",
+       "expect": true
+      },
+      {
+       "kind": "equiv",
+       "f": "¬(s ∨ e) ⇒ b",
+       "g": "b ∨ s ∨ e",
+       "expect": true
+      }
+     ]
+    },
+    {
+     "id": "hy4",
+     "q": "Rewrite `¬(a ∨ ¬b)` with no `¬` in front of a bracket.",
+     "a": "`¬a ∧ b`",
+     "why": "De Morgan, then `¬¬b` = `b`.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(a ∨ ¬b)",
+      "g": "¬a ∧ b",
+      "expect": true
+     }
+    },
+    {
+     "id": "hy5",
+     "q": "\"The fire alarm rings exactly when there's smoke or someone presses test.\"",
+     "a": "`f ⇔ (s ∨ t)`",
+     "why": "*Exactly when* = `⇔`.",
+     "letters": "`f` = the fire alarm rings · `s` = there's smoke · `t` = someone presses test"
+    },
+    {
+     "id": "hy6",
+     "q": "Is `(p ∨ q) ⇒ r` the same as `(p ⇒ r) ∧ (q ⇒ r)`?",
+     "a": "**Yes.**",
+     "why": "\"If p or q, then r\" = \"p forces r, and q forces r\".",
+     "check": {
+      "kind": "equiv",
+      "f": "(p ∨ q) ⇒ r",
+      "g": "(p ⇒ r) ∧ (q ⇒ r)",
+      "expect": true
+     }
+    },
+    {
+     "id": "hy7",
+     "q": "\"If the train is late, I take the bus unless I walk.\"",
+     "a": "`t ⇒ (¬w ⇒ b)` ≡ `(t ∧ ¬w) ⇒ b`",
+     "why": "Outer *if*, inner *unless*.",
+     "letters": "`t` = the train is late · `b` = I take the bus · `w` = I walk",
+     "check": {
+      "kind": "equiv",
+      "f": "t ⇒ (¬w ⇒ b)",
+      "g": "(t ∧ ¬w) ⇒ b",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "h-red",
+   "level": "red",
+   "title": "🔴 Quiz level: Q3b style",
+   "sub": "Translate the sentence, then pick **every** option that means the same. Recipe: ① translate ② rewrite everything into `¬ ∧ ∨` ③ compare, or hunt for one row where they differ.",
+   "items": [
+    {
+     "id": "hr1",
+     "q": "\"The alarm rings whenever the door opens.\" Which options mean the same?",
+     "a": "**(1), (3), (5)**",
+     "why": "\"Whenever the door opens\" is the if-part → `d ⇒ a`. (3) is the `¬A ∨ B` form and (5) the contrapositive. (2) and (4) both say `a ⇒ d`, the converse.",
+     "letters": "`a` = the alarm rings · `d` = the door opens",
+     "options": [
+      "`d ⇒ a`",
+      "`a ⇒ d`",
+      "`¬d ∨ a`",
+      "`¬a ∨ d`",
+      "`¬a ⇒ ¬d`"
+     ],
+     "correct": [
+      0,
+      2,
+      4
+     ],
+     "multi": true,
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "d ⇒ a"
+     }
+    },
+    {
+     "id": "hr2",
+     "q": "\"The tests pass only if the code compiles.\" Which options mean the same?",
+     "a": "**(2), (3), (4)**",
+     "why": "\"Only if\" never flips → `t ⇒ c`. (3) is the contrapositive and (4) the `¬A ∨ B` form. (1) is the converse trap.",
+     "letters": "`c` = the code compiles · `t` = the tests pass",
+     "options": [
+      "`c ⇒ t`",
+      "`t ⇒ c`",
+      "`¬c ⇒ ¬t`",
+      "`¬t ∨ c`",
+      "`c ∨ t`"
+     ],
+     "correct": [
+      1,
+      2,
+      3
+     ],
+     "multi": true,
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "t ⇒ c"
+     }
+    },
+    {
+     "id": "hr3",
+     "q": "\"The request fails unless the server is up.\" Which options mean the same?",
+     "a": "**(2), (3), (4)**",
+     "why": "\"Fails\" is `¬r`. Unless = if not → `¬s ⇒ ¬r`. Its contrapositive is `r ⇒ s`, which is `¬r ∨ s`. (5) is `s ⇒ r`: the wrong direction.",
+     "letters": "`s` = the server is up · `r` = the request succeeds",
+     "options": [
+      "`s ⇒ ¬r`",
+      "`¬s ⇒ ¬r`",
+      "`r ⇒ s`",
+      "`s ∨ ¬r`",
+      "`¬s ∨ r`"
+     ],
+     "correct": [
+      1,
+      2,
+      3
+     ],
+     "multi": true,
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "¬s ⇒ ¬r"
+     }
+    },
+    {
+     "id": "hr4",
+     "q": "\"The light is on just in case the switch is up.\" Which options mean the same?",
+     "a": "**(1) and (3)**",
+     "why": "`l ⇔ w` = \"both on or both off\", which is (1). (3) is `(l ⇒ w) ∧ (w ⇒ l)` rewritten. (2) and (5) mean \"exactly one\" (xor), the opposite. (4) is only one direction.",
+     "letters": "`l` = the light is on · `w` = the switch is up",
+     "options": [
+      "`(l ∧ w) ∨ (¬l ∧ ¬w)`",
+      "`(l ∨ w) ∧ (¬l ∨ ¬w)`",
+      "`(¬l ∨ w) ∧ (l ∨ ¬w)`",
+      "`l ⇒ w`",
+      "`(l ∧ ¬w) ∨ (¬l ∧ w)`"
+     ],
+     "correct": [
+      0,
+      2
+     ],
+     "multi": true,
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "l ⇔ w"
+     }
+    },
+    {
+     "id": "hr5",
+     "q": "**S1:** \"Whenever the tank is empty, the pump is off unless the system is in manual mode.\" Which options match S1?",
+     "a": "**(1) and (5)**",
+     "why": "S1 = `e ⇒ (¬m ⇒ ¬p)` = `¬e ∨ m ∨ ¬p`, which is (1). (5) opens up to the same thing by exportation.",
+     "letters": "`e` = the tank is empty · `p` = the pump is running · `m` = the system is in manual mode",
+     "options": [
+      "`¬e ∨ m ∨ ¬p`",
+      "`e ∨ ¬m ∨ p`",
+      "`¬p ∨ ¬e`",
+      "`¬e ⇒ p`",
+      "`(e ∧ ¬m) ⇒ ¬p`",
+      "`e ⇒ p`"
+     ],
+     "correct": [
+      0,
+      4
+     ],
+     "multi": true,
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "e ⇒ (¬m ⇒ ¬p)"
+     }
+    },
+    {
+     "id": "hr6",
+     "q": "**S2** (same letters): \"The pump runs only if the tank is not empty.\" Which options match S2?",
+     "a": "**(3)** only",
+     "why": "S2 = `p ⇒ ¬e` = `¬p ∨ ¬e`.",
+     "letters": "`e` = the tank is empty · `p` = the pump is running · `m` = the system is in manual mode",
+     "options": [
+      "`¬e ∨ m ∨ ¬p`",
+      "`e ∨ ¬m ∨ p`",
+      "`¬p ∨ ¬e`",
+      "`¬e ⇒ p`",
+      "`(e ∧ ¬m) ⇒ ¬p`",
+      "`e ⇒ p`"
+     ],
+     "correct": [
+      2
+     ],
+     "multi": true,
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "p ⇒ ¬e"
+     }
+    },
+    {
+     "id": "hr7",
+     "q": "**S1:** \"The office is open only if it's not a holiday.\" Which options match S1?",
+     "a": "**(1) and (5)**",
+     "why": "`o ⇒ ¬h` = `¬o ∨ ¬h`. Its contrapositive is `h ⇒ ¬o`.",
+     "letters": "`h` = it's a holiday · `o` = the office is open · `w` = I work from home",
+     "options": [
+      "`¬h ∨ ¬o`",
+      "`h ∨ o`",
+      "`(w ∧ ¬o) ∨ (¬w ∧ o)`",
+      "`(w ∨ ¬o) ∧ (¬w ∨ o)`",
+      "`h ⇒ ¬o`",
+      "`(¬w ∨ ¬o) ∧ (w ∨ o)`"
+     ],
+     "correct": [
+      0,
+      4
+     ],
+     "multi": true,
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "o ⇒ ¬h"
+     }
+    },
+    {
+     "id": "hr8",
+     "q": "**S2** (same letters): \"I work from home just in case the office is closed.\" Which options match S2?",
+     "a": "**(3) and (6)**",
+     "why": "`w ⇔ ¬o` is true when exactly one of `w`, `o` is true. (3) says it as \"one way or the other\", (6) as \"at least one, but not both\". (4) is `w ⇔ o`, the trap.",
+     "letters": "`h` = it's a holiday · `o` = the office is open · `w` = I work from home",
+     "options": [
+      "`¬h ∨ ¬o`",
+      "`h ∨ o`",
+      "`(w ∧ ¬o) ∨ (¬w ∧ o)`",
+      "`(w ∨ ¬o) ∧ (¬w ∨ o)`",
+      "`h ⇒ ¬o`",
+      "`(¬w ∨ ¬o) ∧ (w ∨ o)`"
+     ],
+     "correct": [
+      2,
+      5
+     ],
+     "multi": true,
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "w ⇔ ¬o"
+     }
+    },
+    {
+     "id": "hr9",
+     "q": "\"You get a bonus if you hit your target, provided you're not late more than twice.\" Which options mean the same?",
+     "a": "**(1), (2), (5)**",
+     "why": "\"Provided ¬l\" is the outer if, and \"if t\" the inner one: `¬l ⇒ (t ⇒ b)` = `l ∨ ¬t ∨ b`. (2) and (5) open up to the same thing. (3) is the converse. (4) is `b ⇒ (t ∨ ¬l)`, also the wrong direction.",
+     "letters": "`b` = you get a bonus · `t` = you hit your target · `l` = you're late more than twice",
+     "options": [
+      "`l ∨ ¬t ∨ b`",
+      "`(t ∧ ¬l) ⇒ b`",
+      "`b ⇒ (t ∧ ¬l)`",
+      "`¬l ∨ t ∨ ¬b`",
+      "`t ⇒ (¬l ⇒ b)`"
+     ],
+     "correct": [
+      0,
+      1,
+      4
+     ],
+     "multi": true,
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "¬l ⇒ (t ⇒ b)"
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "h-boss",
+   "level": "boss",
+   "sub": "Beyond the quiz: mid-term and exam territory.",
+   "items": [
+    {
+     "id": "hb1",
+     "q": "\"The order ships just in case the payment clears, unless there's fraud.\" Which options mean the same?",
+     "a": "**(1) and (2)**",
+     "why": "The comma makes *unless* apply to the whole sentence. Unless = if not: `¬f ⇒ (s ⇔ p)` = `f ∨ (s ⇔ p)`. (4) and (5) each keep only one half of the `⇔`. (3) reverses the arrow.",
+     "letters": "`p` = the payment clears · `f` = there's fraud · `s` = the order ships",
+     "options": [
+      "`¬f ⇒ (s ⇔ p)`",
+      "`f ∨ (s ⇔ p)`",
+      "`(s ⇔ p) ⇒ ¬f`",
+      "`(¬f ∧ s) ⇒ p`",
+      "`(¬f ∧ p) ⇒ s`"
+     ],
+     "correct": [
+      0,
+      1
+     ],
+     "multi": true,
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "¬f ⇒ (s ⇔ p)"
+     }
+    },
+    {
+     "id": "hb2",
+     "q": "Show that `¬(p ⇒ (q ⇒ r))` = `p ∧ q ∧ ¬r`, and say what it means.",
+     "a": "`p ⇒ (q ⇒ r)` = `(p ∧ q) ⇒ r`, and its negation is `p ∧ q ∧ ¬r`.",
+     "why": "In words: \"p and q both happened, but r didn't\". That is the only way to break the promise.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(p ⇒ (q ⇒ r))",
+      "g": "p ∧ q ∧ ¬r",
+      "expect": true
+     }
+    },
+    {
+     "id": "hb3",
+     "q": "A detective knows three things: \"If Alice is guilty, so is Bob\", \"Bob is guilty only if Carol is\", and \"Carol is not guilty\". Translate all three. Can Alice be guilty?",
+     "a": "`a ⇒ b`, `b ⇒ c`, `¬c`. **No, she can't.**",
+     "why": "`¬c` together with `b ⇒ c` forces `¬b`. Then `a ⇒ b` forces `¬a`. This chain is a preview of L4 (arguments).",
+     "letters": "`a` = Alice is guilty · `b` = Bob is guilty · `c` = Carol is guilty",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "a ⇒ b",
+       "b ⇒ c",
+       "¬c"
+      ],
+      "f": "¬a",
+      "expect": true
+     }
+    },
+    {
+     "id": "hb4",
+     "q": "Is `(p ⇒ q) ∧ (q ⇒ r)` the same as `p ⇒ r`?",
+     "a": "**No.** Row `p = F, q = T, r = F`: the left is `T ∧ (T ⇒ F)` = F, the right is `F ⇒ F` = T.",
+     "why": "The chain **gives** you `p ⇒ r` (it entails it), but `p ⇒ r` alone doesn't give back the chain. Entailment is L4.",
+     "check": [
+      {
+       "kind": "equiv",
+       "f": "(p ⇒ q) ∧ (q ⇒ r)",
+       "g": "p ⇒ r",
+       "expect": false
+      },
+      {
+       "kind": "entails",
+       "premises": [
+        "p ⇒ q",
+        "q ⇒ r"
+       ],
+       "f": "p ⇒ r",
+       "expect": true
+      }
+     ]
+    },
+    {
+     "id": "hb5",
+     "q": "\"Writes succeed only if the disk isn't full, and an alert fires whenever the disk is full.\" Translate. If writes succeed, what does this rule tell you about the alert?",
+     "a": "`(w ⇒ ¬d) ∧ (d ⇒ a)`. If writes succeed, the disk isn't full, so the rule says **nothing** about the alert.",
+     "why": "With `d = F`, `d ⇒ a` is true whatever `a` is.",
+     "letters": "`d` = the disk is full · `w` = writes succeed · `a` = an alert fires",
+     "check": [
+      {
+       "kind": "entails",
+       "premises": [
+        "(w ⇒ ¬d) ∧ (d ⇒ a)",
+        "w"
+       ],
+       "f": "a",
+       "expect": false
+      },
+      {
+       "kind": "entails",
+       "premises": [
+        "(w ⇒ ¬d) ∧ (d ⇒ a)",
+        "w"
+       ],
+       "f": "¬a",
+       "expect": false
+      }
+     ]
+    },
+    {
+     "id": "hb6",
+     "q": "\"The service is up if and only if the primary is healthy or, failing that, a replica is healthy.\"",
+     "a": "`s ⇔ (p ∨ r)`",
+     "why": "\"Failing that\" adds nothing logical. It just means \"or else\", so at least one healthy node is enough.",
+     "letters": "`s` = the service is up · `p` = the primary is healthy · `r` = a replica is healthy"
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "h-retest",
+   "level": "retest",
+   "sub": "Don't do these now. Come back in 2 days and answer from memory.",
+   "items": [
+    {
+     "id": "ht1",
+     "q": "\"Neither the cat nor the dog is hungry.\"",
+     "a": "`¬c ∧ ¬d`",
+     "why": "Not this AND not that.",
+     "letters": "`c` = the cat is hungry · `d` = the dog is hungry"
+    },
+    {
+     "id": "ht2",
+     "q": "Add brackets: `¬p ∨ q ⇒ r`",
+     "a": "`((¬p) ∨ q) ⇒ r`",
+     "why": "`¬`, then `∨`, then `⇒`.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬p ∨ q ⇒ r",
+      "g": "((¬p) ∨ q) ⇒ r",
+      "expect": true
+     }
+    },
+    {
+     "id": "ht3",
+     "q": "\"You can enter only if you have a ticket and ID.\"",
+     "a": "`e ⇒ (t ∧ i)`",
+     "why": "Everything after *only if* goes right.",
+     "letters": "`e` = you can enter · `t` = you have a ticket · `i` = you have ID"
+    },
+    {
+     "id": "ht4",
+     "q": "Write `A ⇒ (B ⇒ C)` with a single arrow.",
+     "a": "`(A ∧ B) ⇒ C`",
+     "why": "Exportation.",
+     "check": {
+      "kind": "equiv",
+      "f": "A ⇒ (B ⇒ C)",
+      "g": "(A ∧ B) ⇒ C",
+      "expect": true
+     }
+    },
+    {
+     "id": "ht5",
+     "q": "Is `¬(p ∨ q)` the same as `¬p ∨ ¬q`?",
+     "a": "**No.** Row `p = T, q = F`: the left is F, the right is T.",
+     "why": "`¬(p ∨ q)` = `¬p ∧ ¬q`. De Morgan swaps `∨` for `∧`.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(p ∨ q)",
+      "g": "¬p ∨ ¬q",
+      "expect": false
+     }
+    }
+   ]
+  },
+  {
+   "type": "recap",
+   "lines": [
+    "and / but / although / yet → `∧`. or → `∨` (inclusive). neither–nor → `¬A ∧ ¬B`. not both → `¬(A ∧ B)`.",
+    "`¬` first, then `∧ ∨`, then `⇒ ⇔`. Bracket every mix of `∧` and `∨`.",
+    "Recipe: letters (positive versions) → main joiner → halves → brackets.",
+    "Nested: `A ⇒ (B ⇒ C)` = `(A ∧ B) ⇒ C`. Whenever A, C unless B = `(A ∧ ¬B) ⇒ C`.",
+    "Equivalent = same in every row. One disagreeing row = not equivalent."
+   ]
+  },
+  {
+   "type": "links",
+   "id": "links",
+   "sub": "Free, from universities.",
+   "items": [
+    {
+     "title": "UW CSE 311 — Section 1 worksheet, with solutions",
+     "url": "https://courses.cs.washington.edu/courses/cse311/24au/section/section01-solutions.pdf",
+     "source": "University of Washington",
+     "checked": "24 Sep 2026",
+     "note": "Problem 4 (Translation) has long sentences like the ones above. Every answer is worked out."
+    },
+    {
+     "title": "English to propositional logic — lecture notes",
+     "url": "https://homepage.divms.uiowa.edu/~tinelli/classes/4350/Spring21/Notes/02-English-to-propositional-logic.pdf",
+     "source": "University of Iowa",
+     "checked": "24 Sep 2026",
+     "note": "A summary table of English joiners, including *only if* and *unless*."
+    },
+    {
+     "title": "Mathematics for Computer Science (Lehman, Leighton, Meyer) — Chapter 3, Logical Formulas",
+     "url": "https://courses.csail.mit.edu/6.042/spring18/mcs.pdf",
+     "source": "MIT — the book the COMP9020 slides borrow examples from",
+     "checked": "24 Sep 2026",
+     "note": "Lots of Problem 3.x exercises at the end of the chapter."
+    }
+   ]
+  }
+ ],
+ "checks": [
+  {
+   "kind": "equiv",
+   "f": "¬a ∧ ¬d",
+   "g": "¬(a ∨ d)",
+   "expect": true
+  },
+  {
+   "kind": "equiv",
+   "f": "¬p ∧ q ⇒ r",
+   "g": "((¬p) ∧ q) ⇒ r",
+   "expect": true
+  },
+  {
+   "kind": "equiv",
+   "f": "f ⇒ (¬b ⇒ d)",
+   "g": "(f ∧ ¬b) ⇒ d",
+   "expect": true
+  },
+  {
+   "kind": "equiv",
+   "f": "A ⇒ (¬B ⇒ C)",
+   "g": "(A ∧ ¬B) ⇒ C",
+   "expect": true
+  },
+  {
+   "kind": "equiv",
+   "f": "p ⇒ (q ∨ r)",
+   "g": "(p ∧ ¬q) ⇒ r",
+   "expect": true
+  },
+  {
+   "kind": "equiv",
+   "f": "A ⇒ (B ⇒ C)",
+   "g": "(A ⇒ B) ⇒ C",
+   "expect": false
+  },
+  {
+   "kind": "equiv",
+   "f": "A ⇔ B",
+   "g": "(A ∧ B) ∨ (¬A ∧ ¬B)",
+   "expect": true
+  }
+ ],
+ "sources": "Lecture slides: Week 1 (logic, incl. the HD example from Lehman, Leighton & Meyer) and Week 2. Notation follows Prof. Thielscher's slides. All practice questions are original.",
+ "prev": {
+  "href": "../l2-if-then/",
+  "label": "L2 · If–Then & Friends"
+ },
+ "next": {
+  "href": "../drill-if-then-decoder/",
+  "label": "D1 · If–Then Decoder drill"
+ }
+}

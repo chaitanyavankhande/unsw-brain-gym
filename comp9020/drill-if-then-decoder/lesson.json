@@ -1,0 +1,581 @@
+{
+ "id": "comp9020-d1",
+ "course": {
+  "code": "COMP9020",
+  "href": "../"
+ },
+ "code": "D1",
+ "emoji": "🔎",
+ "title": "If–Then Decoder",
+ "eyebrow": "COMP9020 · Drill · goes with L2",
+ "minutes": 15,
+ "verified": true,
+ "goal": "Spot the signal word, put each side where it belongs, and say whether the order flips. Fast.",
+ "roadmap": [
+  "**Round 1:** the 16-sentence Decoder table (the same one as in L2).",
+  "**Round 2:** 12 rapid-fire sentences with no pattern column to lean on.",
+  "**Round 3:** \"Who breaks the rule?\" Pick the situation(s) that make the rule false."
+ ],
+ "magic": [
+  "⬅️ LEFT: if · whenever · provided · the sufficient thing.",
+  "➡️ RIGHT: then · only if · the necessary thing · after \"implies\".",
+  "\"B if A\", \"necessary\", and whenever/provided in the middle flip the order. \"A only if B\" never flips, but \"Only if B, A\" (only if at the front) does.",
+  "A rule `A ⇒ B` is broken only by A = T, B = F."
+ ],
+ "blocks": [
+  {
+   "type": "table",
+   "id": "round1",
+   "toc": "Round 1 · Decoder",
+   "title": "Round 1: the Decoder table",
+   "sub": "Say the logic and the direction out loud, then reveal. Turn on **Hard mode** to hide the Pattern and Signal columns.",
+   "columns": [
+    {
+     "label": "#"
+    },
+    {
+     "label": "Pattern",
+     "hideable": true
+    },
+    {
+     "label": "Example 1"
+    },
+    {
+     "label": "Example 2"
+    },
+    {
+     "label": "Signal word marks…",
+     "hideable": true
+    }
+   ],
+   "rows": [
+    {
+     "cells": [
+      "1",
+      "If A then B",
+      {
+       "id": "r1-d1a",
+       "s": "**If** you drop the glass, it breaks.",
+       "a": "`drop ⇒ breaks`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      {
+       "id": "r1-d1b",
+       "s": "**If** water drops below 0°C, it freezes.",
+       "a": "`below0 ⇒ freezes`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      "\"if\" → ⬅️ LEFT"
+     ]
+    },
+    {
+     "cells": [
+      "2",
+      "B if A",
+      {
+       "id": "r1-d2a",
+       "s": "You get a discount **if** you show your student card.",
+       "a": "`card ⇒ discount`",
+       "tag": "🔄 2nd ⇒ 1st",
+       "tone": "rev"
+      },
+      {
+       "id": "r1-d2b",
+       "s": "The alarm rings **if** someone opens the door.",
+       "a": "`opens ⇒ alarm`",
+       "tag": "🔄 2nd ⇒ 1st",
+       "tone": "rev"
+      },
+      "\"if\" → ⬅️ LEFT, even when it comes second"
+     ]
+    },
+    {
+     "cells": [
+      "3",
+      "Whenever A, B",
+      {
+       "id": "r1-d3a",
+       "s": "**Whenever** the bell rings, class ends.",
+       "a": "`bell ⇒ ends`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      {
+       "id": "r1-d3b",
+       "s": "**Whenever** I smell pepper, I sneeze.",
+       "a": "`pepper ⇒ sneeze`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      "\"whenever\" → ⬅️ LEFT"
+     ]
+    },
+    {
+     "cells": [
+      "4",
+      "Provided A, B",
+      {
+       "id": "r1-d4a",
+       "s": "**Provided** you finish your homework, you can play.",
+       "a": "`homework ⇒ play`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      {
+       "id": "r1-d4b",
+       "s": "**Provided** the battery is charged, the phone turns on.",
+       "a": "`charged ⇒ on`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      "\"provided\" → ⬅️ LEFT"
+     ]
+    },
+    {
+     "cells": [
+      "5",
+      "A only if B ⚠️",
+      {
+       "id": "r1-d5a",
+       "s": "You can post in the forum **only if** you're a member.",
+       "a": "`post ⇒ member`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      {
+       "id": "r1-d5b",
+       "s": "You can drive **only if** you have a licence.",
+       "a": "`drive ⇒ licence`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      "\"only if\" → ➡️ RIGHT ⚠️"
+     ]
+    },
+    {
+     "cells": [
+      "6",
+      "A is sufficient for B",
+      {
+       "id": "r1-d6a",
+       "s": "Scoring 100% is **sufficient** to pass.",
+       "a": "`100% ⇒ pass`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      {
+       "id": "r1-d6b",
+       "s": "Being born in Sydney is **sufficient** for being born in Australia.",
+       "a": "`Sydney ⇒ Australia`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      "the sufficient thing → ⬅️ LEFT"
+     ]
+    },
+    {
+     "cells": [
+      "7",
+      "B is necessary for A ⚠️",
+      {
+       "id": "r1-d7a",
+       "s": "Oxygen is **necessary** for fire.",
+       "a": "`fire ⇒ oxygen`",
+       "tag": "🔄 2nd ⇒ 1st",
+       "tone": "rev"
+      },
+      {
+       "id": "r1-d7b",
+       "s": "A password is **necessary** to log in.",
+       "a": "`login ⇒ password`",
+       "tag": "🔄 2nd ⇒ 1st",
+       "tone": "rev"
+      },
+      "the necessary thing → ➡️ RIGHT ⚠️"
+     ]
+    },
+    {
+     "cells": [
+      "8",
+      "A implies B",
+      {
+       "id": "r1-d8a",
+       "s": "Being a square **implies** being a rectangle.",
+       "a": "`square ⇒ rectangle`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      {
+       "id": "r1-d8b",
+       "s": "Being divisible by 4 **implies** being even.",
+       "a": "`div4 ⇒ even`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      "whatever comes after \"implies\" → ➡️ RIGHT"
+     ]
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "round2",
+   "level": "yellow",
+   "title": "Round 2: rapid fire",
+   "toc": "Round 2 · Rapid fire",
+   "sub": "Mixed order, new sentences. Give the logic **and** the direction.",
+   "items": [
+    {
+     "id": "rf1",
+     "q": "\"The printer jams whenever the paper is damp.\"",
+     "letters": "`j` = the printer jams · `m` = the paper is damp",
+     "a": "`m ⇒ j` · 🔄 2nd ⇒ 1st (flipped)",
+     "why": "\"Whenever\" in the middle: the part after it is the trigger."
+    },
+    {
+     "id": "rf2",
+     "q": "\"You can withdraw cash only if your card is valid.\"",
+     "letters": "`w` = you withdraw cash · `v` = your card is valid",
+     "a": "`w ⇒ v` · ➡️ 1st ⇒ 2nd (same order)",
+     "why": "\"A only if B\" never flips."
+    },
+    {
+     "id": "rf3",
+     "q": "\"Rain is sufficient for the match to be cancelled.\"",
+     "letters": "`r` = it rains · `c` = the match is cancelled",
+     "a": "`r ⇒ c` · ➡️ 1st ⇒ 2nd (same order)",
+     "why": "The sufficient thing goes on the left."
+    },
+    {
+     "id": "rf4",
+     "q": "\"A charger is necessary to keep the laptop running overnight.\"",
+     "letters": "`n` = the laptop runs overnight · `c` = it has a charger",
+     "a": "`n ⇒ c` · 🔄 2nd ⇒ 1st (flipped)",
+     "why": "The necessary thing goes on the right."
+    },
+    {
+     "id": "rf5",
+     "q": "\"Provided the dough has risen, the bread goes in the oven.\"",
+     "letters": "`r` = the dough has risen · `o` = the bread goes in the oven",
+     "a": "`r ⇒ o` · ➡️ 1st ⇒ 2nd (same order)",
+     "why": "\"Provided\" at the front = \"if\" at the front."
+    },
+    {
+     "id": "rf6",
+     "q": "\"The screen dims if the battery is low.\"",
+     "letters": "`d` = the screen dims · `b` = the battery is low",
+     "a": "`b ⇒ d` · 🔄 2nd ⇒ 1st (flipped)",
+     "why": "\"If\" in the middle → the part after it goes left."
+    },
+    {
+     "id": "rf7",
+     "q": "\"Being a prime bigger than 2 implies being odd.\"",
+     "letters": "`p` = it's a prime bigger than 2 · `o` = it's odd",
+     "a": "`p ⇒ o` · ➡️ 1st ⇒ 2nd (same order)",
+     "why": "Whatever comes after \"implies\" goes on the right."
+    },
+    {
+     "id": "rf8",
+     "q": "\"If the milk smells sour, you throw it out.\"",
+     "letters": "`s` = the milk smells sour · `t` = you throw it out",
+     "a": "`s ⇒ t` · ➡️ 1st ⇒ 2nd (same order)",
+     "why": "Plain if–then."
+    },
+    {
+     "id": "rf9",
+     "q": "\"Only if the light is green may you cross.\"",
+     "letters": "`g` = the light is green · `c` = you may cross",
+     "a": "`c ⇒ g` · 🔄 2nd ⇒ 1st (flipped)",
+     "why": "\"Only if X, Y\" = \"Y only if X\" → `Y ⇒ X`. Here X (green) is read first, so the order flips."
+    },
+    {
+     "id": "rf10",
+     "q": "\"The meeting is cancelled if fewer than three people come.\"",
+     "letters": "`m` = the meeting is cancelled · `f` = fewer than three people come",
+     "a": "`f ⇒ m` · 🔄 2nd ⇒ 1st (flipped)",
+     "why": "\"If\" in the middle → flip."
+    },
+    {
+     "id": "rf11",
+     "q": "\"Pressing the red button is sufficient to stop the machine.\"",
+     "letters": "`p` = you press the red button · `s` = the machine stops",
+     "a": "`p ⇒ s` · ➡️ 1st ⇒ 2nd (same order)",
+     "why": "Sufficient → left."
+    },
+    {
+     "id": "rf12",
+     "q": "\"Fuel is necessary for the car to start.\"",
+     "letters": "`s` = the car starts · `f` = there's fuel",
+     "a": "`s ⇒ f` · 🔄 2nd ⇒ 1st (flipped)",
+     "why": "Necessary → right."
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "round3",
+   "level": "red",
+   "title": "Round 3: who breaks the rule?",
+   "toc": "Round 3 · Who breaks it?",
+   "sub": "An if–then rule breaks only when the if-part happens and the then-part doesn't. A just-in-case rule breaks whenever the two sides differ. Translate first, then find the breaking situation(s).",
+   "items": [
+    {
+     "id": "wb1",
+     "q": "Rule: \"You can swim only if a lifeguard is on duty.\" Which situation breaks it?",
+     "letters": "`s` = you swim · `g` = a lifeguard is on duty",
+     "options": [
+      "Lifeguard on duty, nobody swims",
+      "No lifeguard, you swim",
+      "Lifeguard on duty, you swim",
+      "No lifeguard, nobody swims"
+     ],
+     "correct": [
+      1
+     ],
+     "labels": "abcd",
+     "a": "Only **(b)**.",
+     "why": "The rule is `s ⇒ g`. Swimming with no lifeguard is the T ⇒ F row.",
+     "check": {
+      "kind": "options_falsify",
+      "f": "s ⇒ g",
+      "rows": [
+       {
+        "s": false,
+        "g": true
+       },
+       {
+        "s": true,
+        "g": false
+       },
+       {
+        "s": true,
+        "g": true
+       },
+       {
+        "s": false,
+        "g": false
+       }
+      ]
+     }
+    },
+    {
+     "id": "wb2",
+     "q": "Rule: \"Whenever the oven is on, the fan runs.\" Which situation breaks it?",
+     "letters": "`o` = the oven is on · `f` = the fan runs",
+     "options": [
+      "Oven off, fan running",
+      "Oven on, fan off",
+      "Oven on, fan running",
+      "Oven off, fan off"
+     ],
+     "correct": [
+      1
+     ],
+     "labels": "abcd",
+     "a": "Only **(b)**.",
+     "why": "The rule is `o ⇒ f`. (a) is fine: the fan may run for other reasons.",
+     "check": {
+      "kind": "options_falsify",
+      "f": "o ⇒ f",
+      "rows": [
+       {
+        "o": false,
+        "f": true
+       },
+       {
+        "o": true,
+        "f": false
+       },
+       {
+        "o": true,
+        "f": true
+       },
+       {
+        "o": false,
+        "f": false
+       }
+      ]
+     }
+    },
+    {
+     "id": "wb3",
+     "q": "Rule: \"A receipt is necessary for a refund.\" Which situation breaks it?",
+     "letters": "`r` = you get a refund · `c` = you have a receipt",
+     "options": [
+      "Receipt, no refund",
+      "No receipt, no refund",
+      "No receipt, refund given",
+      "Receipt, refund given"
+     ],
+     "correct": [
+      2
+     ],
+     "labels": "abcd",
+     "a": "Only **(c)**.",
+     "why": "Necessary → `r ⇒ c`. A refund without a receipt is the T ⇒ F row. (a) is allowed: necessary isn't sufficient.",
+     "check": {
+      "kind": "options_falsify",
+      "f": "r ⇒ c",
+      "rows": [
+       {
+        "r": false,
+        "c": true
+       },
+       {
+        "r": false,
+        "c": false
+       },
+       {
+        "r": true,
+        "c": false
+       },
+       {
+        "r": true,
+        "c": true
+       }
+      ]
+     }
+    },
+    {
+     "id": "wb4",
+     "q": "Rule: \"I'll cook unless I'm tired.\" Which situation breaks it?",
+     "letters": "`k` = I cook · `t` = I'm tired",
+     "options": [
+      "Tired, didn't cook",
+      "Tired, cooked",
+      "Not tired, didn't cook",
+      "Not tired, cooked"
+     ],
+     "correct": [
+      2
+     ],
+     "labels": "abcd",
+     "a": "Only **(c)**.",
+     "why": "Unless = if not: `¬t ⇒ k`. Not tired and still not cooking breaks it. Tired days are left open.",
+     "check": {
+      "kind": "options_falsify",
+      "f": "¬t ⇒ k",
+      "rows": [
+       {
+        "t": true,
+        "k": false
+       },
+       {
+        "t": true,
+        "k": true
+       },
+       {
+        "t": false,
+        "k": false
+       },
+       {
+        "t": false,
+        "k": true
+       }
+      ]
+     }
+    },
+    {
+     "id": "wb5",
+     "q": "Rule: \"The door opens just in case you tap your card.\" Which situations break it? (Pick all.)",
+     "letters": "`o` = the door opens · `c` = you tap your card",
+     "options": [
+      "Tapped, door opened",
+      "Tapped, door stayed shut",
+      "Didn't tap, door opened",
+      "Didn't tap, door stayed shut"
+     ],
+     "correct": [
+      1,
+      2
+     ],
+     "labels": "abcd",
+     "a": "Only **(b)** and **(c)**.",
+     "why": "`o ⇔ c` needs a match. Both mismatches break it.",
+     "check": {
+      "kind": "options_falsify",
+      "f": "o ⇔ c",
+      "rows": [
+       {
+        "c": true,
+        "o": true
+       },
+       {
+        "c": true,
+        "o": false
+       },
+       {
+        "c": false,
+        "o": true
+       },
+       {
+        "c": false,
+        "o": false
+       }
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "wb6",
+     "q": "Rule: \"If you're under 12, you ride free.\" Which situation breaks it?",
+     "letters": "`u` = you're under 12 · `f` = you ride free",
+     "options": [
+      "Under 12, paid",
+      "12 or over, rode free",
+      "Under 12, rode free",
+      "12 or over, paid"
+     ],
+     "correct": [
+      0
+     ],
+     "labels": "abcd",
+     "a": "Only **(a)**.",
+     "why": "`u ⇒ f` breaks only for an under-12 who had to pay. (b) is a bonus, not a broken promise.",
+     "check": {
+      "kind": "options_falsify",
+      "f": "u ⇒ f",
+      "rows": [
+       {
+        "u": true,
+        "f": false
+       },
+       {
+        "u": false,
+        "f": true
+       },
+       {
+        "u": true,
+        "f": true
+       },
+       {
+        "u": false,
+        "f": false
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "type": "recap",
+   "title": "🧠 What this drill trains",
+   "lines": [
+    "Find the signal word first, then bucket it: LEFT (if, whenever, provided, sufficient) or RIGHT (then, only if, necessary, after implies).",
+    "\"B if A\", \"necessary\", and whenever/provided in the middle flip the order. \"A only if B\" never flips. \"Only if B, A\" at the front does.",
+    "To test an if–then rule, look for where the if-part happens and the then-part doesn't. A just-in-case rule breaks wherever the two sides differ."
+   ]
+  }
+ ],
+ "sources": "All sentences are original. Goes with L2 · If–Then & Friends.",
+ "prev": {
+  "href": "../l2b-english-to-logic/",
+  "label": "L2B · English → Logic"
+ },
+ "next": {
+  "href": "../",
+  "label": "COMP9020 home"
+ }
+}

@@ -1,0 +1,131 @@
+{
+  "site": "UNSW Brain Gym",
+  "tagline": "Interactive lessons and practice for my UNSW Master of IT courses. Every answer starts hidden: **think, try, then reveal.**",
+  "footer": "Original lessons and drills only. No problem-set text or solutions. Lecture examples are cited by slide.",
+  "courses": [
+    {
+      "id": "comp9020",
+      "code": "COMP9020",
+      "title": "Foundations of Computer Science",
+      "term": "UNSW · Term 3 2026",
+      "href": "comp9020/",
+      "blurb": "Logic, proofs, sets and more, from zero to exam level. If implication (`⇒`) is where it gets hard, start with **L2**.",
+      "units": [
+        {
+          "id": "comp9020-l2",
+          "code": "L2",
+          "title": "If–Then & Friends",
+          "kind": "lesson",
+          "group": "Week 2 · Logic",
+          "status": "ready",
+          "path": "l2-if-then/",
+          "minutes": 50,
+          "summary": "`⇒` as a promise · only if · necessary vs sufficient · contrapositive · unless · `⇔`"
+        },
+        {
+          "id": "comp9020-l2b",
+          "code": "L2B",
+          "title": "English → Logic Translator",
+          "kind": "lesson",
+          "group": "Week 2 · Logic",
+          "status": "ready",
+          "path": "l2b-english-to-logic/",
+          "minutes": 45,
+          "summary": "but / neither–nor / not both · brackets · the main joiner · nested conditions · Quiz 2 Q3b style"
+        },
+        {
+          "id": "comp9020-l3",
+          "code": "L3",
+          "title": "Truth-Table Detective",
+          "kind": "lesson",
+          "group": "Week 2 · Logic",
+          "status": "next",
+          "summary": "Truth tables step by step · satisfiable, valid, `≡` · the laws of logic"
+        },
+        {
+          "id": "comp9020-l4",
+          "code": "L4",
+          "title": "Arguments & Entailment",
+          "kind": "lesson",
+          "group": "Week 2 · Logic",
+          "status": "next",
+          "summary": "`⊨` · which formulas are entailed (Quiz 2 Q5b) · valid and invalid arguments · `∀ ∃`"
+        },
+        {
+          "id": "comp9020-l5",
+          "code": "L5",
+          "title": "Proofs",
+          "kind": "lesson",
+          "group": "Week 2 · Logic",
+          "status": "planned",
+          "summary": "Direct proof · proof by cases · contrapositive · contradiction · spotting a broken proof"
+        },
+        {
+          "id": "comp9020-l6",
+          "code": "L6",
+          "title": "Boolean Algebra",
+          "kind": "lesson",
+          "group": "Week 2 · Logic",
+          "status": "planned",
+          "summary": "`+ · ′` notation · the laws · simplifying expressions"
+        },
+        {
+          "id": "comp9020-l7",
+          "code": "L7",
+          "title": "CNF, DNF & K-maps",
+          "kind": "lesson",
+          "group": "Week 2 · Logic",
+          "status": "planned",
+          "summary": "Normal forms · canonical DNF · Karnaugh maps"
+        },
+        {
+          "id": "comp9020-d1",
+          "code": "D1",
+          "title": "If–Then Decoder",
+          "kind": "drill",
+          "group": "Drills",
+          "status": "ready",
+          "path": "drill-if-then-decoder/",
+          "minutes": 15,
+          "summary": "16-sentence decoder table · 12 rapid-fire sentences · \"who breaks the rule?\""
+        },
+        {
+          "id": "comp9020-d2",
+          "code": "D2",
+          "title": "Quiz 2 Gym",
+          "kind": "drill",
+          "group": "Drills",
+          "status": "next",
+          "summary": "Q3b (English → logic → equivalent formulas) and Q5b (entailed formulas) drills, before Thu 1 Oct"
+        },
+        {
+          "id": "comp9020-r1",
+          "code": "R1",
+          "title": "AND, OR, NOT from zero",
+          "kind": "lesson",
+          "group": "Week 1 review",
+          "status": "planned",
+          "summary": "Propositions · `¬ ∧ ∨` · building truth tables row by row"
+        },
+        {
+          "id": "comp9020-r2",
+          "code": "R2",
+          "title": "Words & alphabets",
+          "kind": "lesson",
+          "group": "Week 1 review",
+          "status": "planned",
+          "summary": "`Σ`, `λ`, `Σ*`, `Σ⁺`, counting words, languages"
+        },
+        {
+          "id": "comp9020-r3",
+          "code": "R3",
+          "title": "Power sets, intervals & products",
+          "kind": "lesson",
+          "group": "Week 1 review",
+          "status": "planned",
+          "summary": "`Pow(X)` · intervals over `ℤ` vs `ℝ` · Cartesian products"
+        }
+      ]
+    }
+  ]
+}

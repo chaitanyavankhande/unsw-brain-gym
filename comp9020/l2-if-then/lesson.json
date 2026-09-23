@@ -1,0 +1,1678 @@
+{
+ "id": "comp9020-l2",
+ "course": {
+  "code": "COMP9020",
+  "href": "../"
+ },
+ "code": "L2",
+ "emoji": "➡️",
+ "title": "If–Then & Friends",
+ "eyebrow": "COMP9020 · Week 1 (end) + Week 2 · Propositional logic",
+ "minutes": 50,
+ "verified": true,
+ "goal": "Read any if–then sentence, write it as `A ⇒ B` the right way round, and know exactly when it is true.",
+ "roadmap": [
+  "**What `A ⇒ B` means:** a promise, and its 4-row truth table.",
+  "**Eight ways English says `A ⇒ B`**, practised on the Decoder table.",
+  "**The \"only if\" trap**, and the \"who breaks the rule?\" test.",
+  "**Shuffling a promise:** converse, inverse, contrapositive.",
+  "**`⇒` in disguise:** `¬A ∨ B`, and what a broken promise looks like.",
+  "**Unless** = if not.",
+  "**`⇔`:** if and only if, just in case, necessary and sufficient.",
+  "Then the **practice ladder**: 🟢 warm-up → 🟡 → 🔴 quiz level → 🟣 boss level → 🔁 retest."
+ ],
+ "magic": [
+  "`⇒` only lies when TRUE leads to FALSE.",
+  "\"A only if B\" never flips: it is `A ⇒ B`.",
+  "The NECESSARY thing goes on the RIGHT. The SUFFICIENT thing goes on the LEFT.",
+  "Swap AND flip (contrapositive) keeps the meaning. Swap only, or flip only, does not.",
+  "`A ⇒ B` = `¬A ∨ B`. A broken promise = `A ∧ ¬B`.",
+  "UNLESS = IF NOT.",
+  "Just in case = `⇔` = both sides match."
+ ],
+ "blocks": [
+  {
+   "type": "section",
+   "id": "learn",
+   "title": "💡 Learn it, one idea at a time",
+   "sub": "Every idea: 🧒 picture → 🎓 official version → 👀 one worked example → ✋ your turn → 🪤 the trap."
+  },
+  {
+   "type": "idea",
+   "id": "i1",
+   "short": "A promise",
+   "title": "`A ⇒ B` is a promise",
+   "picture": "Mum says: **\"If it rains, I'll bring an umbrella.\"** When has she broken her promise? Only on a rainy day with no umbrella. On a sunny day she can't break it, whatever she carries.",
+   "official": "`A ⇒ B` (say \"A implies B\" or \"if A then B\") is **false only when A = T and B = F**. The lecture defines it as `¬(A ∧ ¬B)`: \"it is not the case that A happens and B doesn't\". A is the **if-part** (antecedent). B is the **then-part** (consequent).",
+   "grid": {
+    "title": "The truth table: one row per kind of day",
+    "cols": [
+     "Rains? (A)",
+     "Umbrella? (B)",
+     "Promise broken?",
+     "`A ⇒ B`"
+    ],
+    "rows": [
+     [
+      "☀️ F",
+      "F",
+      "no",
+      "T"
+     ],
+     [
+      "☀️ F",
+      "T",
+      "no",
+      "T"
+     ],
+     [
+      "🌧️ T",
+      "F",
+      "**YES**",
+      "**F**"
+     ],
+     [
+      "🌧️ T",
+      "T",
+      "no",
+      "T"
+     ]
+    ],
+    "emph": [
+     2
+    ]
+   },
+   "watch": {
+    "q": "Is `F ⇒ T` true or false?",
+    "steps": [
+     "A = F: it did not rain.",
+     "The promise only talks about rainy days, so today it was never tested.",
+     "A promise that was never broken counts as **true**."
+    ],
+    "answer": "`F ⇒ T` = **T**"
+   },
+   "tries": [
+    {
+     "id": "i1t1",
+     "q": "`T ⇒ F` = ?",
+     "a": "**F**",
+     "why": "This is the only row that breaks the promise: the if-part happened, the then-part didn't.",
+     "check": {
+      "kind": "value",
+      "f": "⊤ ⇒ ⊥",
+      "expect": false
+     }
+    },
+    {
+     "id": "i1t2",
+     "q": "`F ⇒ F` = ?",
+     "a": "**T**",
+     "why": "The if-part didn't happen, so the promise was never tested.",
+     "check": {
+      "kind": "value",
+      "f": "⊥ ⇒ ⊥",
+      "expect": true
+     }
+    },
+    {
+     "id": "i1t3",
+     "q": "`T ⇒ T` = ?",
+     "a": "**T**",
+     "why": "The if-part happened and the then-part happened: promise kept.",
+     "check": {
+      "kind": "value",
+      "f": "⊤ ⇒ ⊤",
+      "expect": true
+     }
+    },
+    {
+     "id": "i1t4",
+     "q": "Coach: \"If you train every day, you'll make the team.\" You trained every day but didn't make the team. Is the coach's promise true or false?",
+     "a": "**F**. `t = T`, `m = F`: the one breaking row of `t ⇒ m`.",
+     "why": "You kept your side, the coach didn't deliver.",
+     "letters": "`t` = you train every day · `m` = you make the team",
+     "check": {
+      "kind": "falsifying",
+      "f": "t ⇒ m",
+      "rows": [
+       {
+        "t": true,
+        "m": false
+       }
+      ]
+     }
+    },
+    {
+     "id": "i1t5",
+     "q": "Shop: \"Spend $50 and you get free shipping.\" You spent $30 and **still** got free shipping. Did the shop break its promise?",
+     "a": "**No. The promise is T.**",
+     "why": "Spending $50 = F, so the promise was never tested. A bonus isn't a broken promise. This is the `F ⇒ T` row."
+    },
+    {
+     "id": "i1t6",
+     "q": "\"If 2 + 2 = 5, then pigs can fly.\" True or false?",
+     "a": "**True.**",
+     "why": "`2 + 2 = 5` is F, and `F ⇒ anything` is T. Logic only checks the rows where the if-part is true.",
+     "wrong": "If you said false because pigs can't fly: that's the then-part. It only matters when the if-part is true.",
+     "check": [
+      {
+       "kind": "value",
+       "f": "⊥ ⇒ ⊥",
+       "expect": true
+      },
+      {
+       "kind": "value",
+       "f": "⊥ ⇒ ⊤",
+       "expect": true
+      }
+     ]
+    }
+   ],
+   "trap": {
+    "tempting": "`F ⇒ anything` is F, because nothing happened.",
+    "correct": "`F ⇒ anything` is **T**. An untested promise is not a broken promise.",
+    "test": "Ask \"Did anyone break the promise?\" If no, it's T."
+   },
+   "magic": "`⇒` only lies when TRUE leads to FALSE."
+  },
+  {
+   "type": "idea",
+   "id": "i2",
+   "short": "8 ways to say it",
+   "title": "Eight ways English says `A ⇒ B`",
+   "picture": "The same promise can wear different outfits. \"If you press the button, the lift comes\" and \"The lift comes if you press the button\" mean exactly the same thing. Your job is to find the **trigger** (it goes on the LEFT) and the **result or requirement** (it goes on the RIGHT).",
+   "official": "All of these are `A ⇒ B`: if A then B · B if A · whenever A, B · provided A, B · A only if B · A is sufficient for B · B is necessary for A · A implies B.",
+   "grid": {
+    "title": "Sort the signal word into a bucket",
+    "cols": [
+     "⬅️ Marks the LEFT side (trigger)",
+     "➡️ Marks the RIGHT side (result or requirement)"
+    ],
+    "rows": [
+     [
+      "if",
+      "then"
+     ],
+     [
+      "whenever",
+      "**only if**"
+     ],
+     [
+      "provided (that)",
+      "the **necessary** thing"
+     ],
+     [
+      "the **sufficient** thing",
+      "whatever comes after \"implies\""
+     ]
+    ]
+   },
+   "watch": {
+    "q": "\"You can vote only if you're 18 or older.\" Letters: `v` = you can vote, `e` = you're 18 or older.",
+    "steps": [
+     "Signal word: **only if**. It marks the RIGHT side, so `e` goes right.",
+     "The other part, `v`, goes left: `v ⇒ e`.",
+     "Check with \"who breaks the rule?\": someone under 18 who votes (`v = T`, `e = F`). That is exactly the T ⇒ F row of `v ⇒ e` ✓"
+    ],
+    "answer": "**`v ⇒ e`**, same order as the sentence (1st ⇒ 2nd)"
+   },
+   "trap": {
+    "tempting": "The part after \"if\" goes on the right, because it comes second in the sentence.",
+    "correct": "The part after a plain **if** (not *only if*) always goes on the LEFT, wherever it sits.",
+    "test": "Rewrite the sentence so it starts with \"If …\", then read it again."
+   },
+   "magic": "Find the signal word first. It tells you which side is which."
+  },
+  {
+   "type": "table",
+   "id": "decoder",
+   "toc": "🔎 Decoder table",
+   "title": "✋ Your turn: the If–Then Decoder",
+   "sub": "16 sentences, 8 patterns. For each one, say the logic and the direction out loud, then reveal. **1st** = the part you read first. The direction tells you whether the logic keeps the sentence's order (➡️) or flips it (🔄). Hard mode hides the Pattern and Signal columns.",
+   "columns": [
+    {
+     "label": "#"
+    },
+    {
+     "label": "Pattern",
+     "hideable": true
+    },
+    {
+     "label": "Example 1"
+    },
+    {
+     "label": "Example 2"
+    },
+    {
+     "label": "Signal word marks…",
+     "hideable": true
+    }
+   ],
+   "rows": [
+    {
+     "cells": [
+      "1",
+      "If A then B",
+      {
+       "id": "d1a",
+       "s": "**If** you drop the glass, it breaks.",
+       "a": "`drop ⇒ breaks`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      {
+       "id": "d1b",
+       "s": "**If** water drops below 0°C, it freezes.",
+       "a": "`below0 ⇒ freezes`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      "\"if\" → ⬅️ LEFT"
+     ]
+    },
+    {
+     "cells": [
+      "2",
+      "B if A",
+      {
+       "id": "d2a",
+       "s": "You get a discount **if** you show your student card.",
+       "a": "`card ⇒ discount`",
+       "tag": "🔄 2nd ⇒ 1st",
+       "tone": "rev"
+      },
+      {
+       "id": "d2b",
+       "s": "The alarm rings **if** someone opens the door.",
+       "a": "`opens ⇒ alarm`",
+       "tag": "🔄 2nd ⇒ 1st",
+       "tone": "rev"
+      },
+      "\"if\" → ⬅️ LEFT, even when it comes second"
+     ]
+    },
+    {
+     "cells": [
+      "3",
+      "Whenever A, B",
+      {
+       "id": "d3a",
+       "s": "**Whenever** the bell rings, class ends.",
+       "a": "`bell ⇒ ends`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      {
+       "id": "d3b",
+       "s": "**Whenever** I smell pepper, I sneeze.",
+       "a": "`pepper ⇒ sneeze`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      "\"whenever\" → ⬅️ LEFT"
+     ]
+    },
+    {
+     "cells": [
+      "4",
+      "Provided A, B",
+      {
+       "id": "d4a",
+       "s": "**Provided** you finish your homework, you can play.",
+       "a": "`homework ⇒ play`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      {
+       "id": "d4b",
+       "s": "**Provided** the battery is charged, the phone turns on.",
+       "a": "`charged ⇒ on`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      "\"provided\" → ⬅️ LEFT"
+     ]
+    },
+    {
+     "cells": [
+      "5",
+      "A only if B ⚠️",
+      {
+       "id": "d5a",
+       "s": "You can post in the forum **only if** you're a member.",
+       "a": "`post ⇒ member`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      {
+       "id": "d5b",
+       "s": "You can drive **only if** you have a licence.",
+       "a": "`drive ⇒ licence`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      "\"only if\" → ➡️ RIGHT ⚠️"
+     ]
+    },
+    {
+     "cells": [
+      "6",
+      "A is sufficient for B",
+      {
+       "id": "d6a",
+       "s": "Scoring 100% is **sufficient** to pass.",
+       "a": "`100% ⇒ pass`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      {
+       "id": "d6b",
+       "s": "Being born in Sydney is **sufficient** for being born in Australia.",
+       "a": "`Sydney ⇒ Australia`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      "the sufficient thing → ⬅️ LEFT"
+     ]
+    },
+    {
+     "cells": [
+      "7",
+      "B is necessary for A ⚠️",
+      {
+       "id": "d7a",
+       "s": "Oxygen is **necessary** for fire.",
+       "a": "`fire ⇒ oxygen`",
+       "tag": "🔄 2nd ⇒ 1st",
+       "tone": "rev"
+      },
+      {
+       "id": "d7b",
+       "s": "A password is **necessary** to log in.",
+       "a": "`login ⇒ password`",
+       "tag": "🔄 2nd ⇒ 1st",
+       "tone": "rev"
+      },
+      "the necessary thing → ➡️ RIGHT ⚠️"
+     ]
+    },
+    {
+     "cells": [
+      "8",
+      "A implies B",
+      {
+       "id": "d8a",
+       "s": "Being a square **implies** being a rectangle.",
+       "a": "`square ⇒ rectangle`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      {
+       "id": "d8b",
+       "s": "Being divisible by 4 **implies** being even.",
+       "a": "`div4 ⇒ even`",
+       "tag": "➡️ 1st ⇒ 2nd",
+       "tone": "same"
+      },
+      "whatever comes after \"implies\" → ➡️ RIGHT"
+     ]
+    }
+   ]
+  },
+  {
+   "type": "callout",
+   "tone": "key",
+   "title": "🔄 When the order flips",
+   "body": "\"B **if** A\" and \"B is **necessary** for A\". \"Whenever\" and \"provided\" flip the same way when they sit in the middle of a sentence: \"I sneeze whenever I smell pepper\" → `pepper ⇒ sneeze`. **\"A only if B\" never flips.** Careful: when *only if* comes first, as in \"Only if B, A\", the order does flip, because B is read first."
+  },
+  {
+   "type": "idea",
+   "id": "i3",
+   "short": "The only-if trap",
+   "title": "\"Only if\": the #1 trap (who breaks the rule?)",
+   "picture": "\"You can board **only if** you have a ticket.\" Sam has no ticket but sneaks on: rule broken 🚨. Priya has a ticket but misses the flight: rule **not** broken. The ticket is **required**, not **enough**.",
+   "official": "`A only if B` ≡ `A ⇒ B` ≡ `¬B ⇒ ¬A` (\"no B → no A\"). B is a **necessary** condition for A. It is not a sufficient one.",
+   "grid": {
+    "title": "Who broke the rule `board ⇒ ticket`?",
+    "cols": [
+     "Person",
+     "Boarded? (A)",
+     "Ticket? (B)",
+     "Broke the rule?"
+    ],
+    "rows": [
+     [
+      "🧍 Sam",
+      "T",
+      "F",
+      "**YES**: `T ⇒ F`"
+     ],
+     [
+      "🧍 Priya",
+      "F",
+      "T",
+      "no: `F ⇒ T` is fine"
+     ],
+     [
+      "🧍 Lee",
+      "T",
+      "T",
+      "no"
+     ],
+     [
+      "🧍 Ana",
+      "F",
+      "F",
+      "no"
+     ]
+    ],
+    "emph": [
+     0
+    ]
+   },
+   "watch": {
+    "q": "\"The machine starts only if the key is in.\" Letters: `s` = the machine starts, `k` = the key is in.",
+    "steps": [
+     "Rewrite it as \"no ___ → no ___\": no key → no start. That's `¬k ⇒ ¬s`.",
+     "Swap and flip it (the contrapositive): `s ⇒ k`. Same meaning.",
+     "Who breaks it? The machine starting with no key: `s = T`, `k = F`. That is the T ⇒ F row of `s ⇒ k` ✓"
+    ],
+    "answer": "**`s ⇒ k`**"
+   },
+   "tries": [
+    {
+     "id": "i3t1",
+     "q": "\"You pass only if you submit the assignment.\"",
+     "a": "`p ⇒ u`",
+     "why": "No submission → no pass. Submitting doesn't guarantee a pass.",
+     "letters": "`p` = you pass · `u` = you submit the assignment",
+     "wrong": "If you wrote `u ⇒ p`: that says submitting **guarantees** a pass, which is false in real life.",
+     "check": {
+      "kind": "equiv",
+      "f": "p ⇒ u",
+      "g": "¬u ⇒ ¬p",
+      "expect": true
+     }
+    },
+    {
+     "id": "i3t2",
+     "q": "\"The app loads only if you're online.\"",
+     "a": "`a ⇒ n`",
+     "why": "Offline → no loading. Being online doesn't force the app to load (it could still crash).",
+     "letters": "`a` = the app loads · `n` = you're online"
+    },
+    {
+     "id": "i3t3",
+     "q": "\"You're a teenager only if you're under 20.\"",
+     "a": "`t ⇒ u`",
+     "why": "Not under 20 → not a teenager. Being under 20 doesn't make you a teenager (a 7-year-old isn't one).",
+     "letters": "`t` = you're a teenager · `u` = you're under 20"
+    },
+    {
+     "id": "i3t4",
+     "q": "Rule: \"You enter the club only if you're on the list.\" Who breaks it?",
+     "a": "Only **(b)**.",
+     "why": "The rule is `c ⇒ l`. It breaks only when `c = T` and `l = F`: getting in without being on the list.",
+     "letters": "`c` = you enter the club · `l` = you're on the list",
+     "labels": "abcd",
+     "options": [
+      "On the list, didn't enter",
+      "**Not** on the list, entered",
+      "On the list, entered",
+      "Not on the list, didn't enter"
+     ],
+     "correct": [
+      1
+     ],
+     "check": {
+      "kind": "options_falsify",
+      "f": "c ⇒ l",
+      "rows": [
+       {
+        "c": false,
+        "l": true
+       },
+       {
+        "c": true,
+        "l": false
+       },
+       {
+        "c": true,
+        "l": true
+       },
+       {
+        "c": false,
+        "l": false
+       }
+      ]
+     }
+    },
+    {
+     "id": "i3t5",
+     "q": "\"**Only if** it's sunny will we go to the beach.\" (Here the \"only if\" part comes first.)",
+     "a": "`b ⇒ s`",
+     "why": "\"Only if X, Y\" = \"Y only if X\". No sun → no beach.",
+     "letters": "`b` = we go to the beach · `s` = it's sunny",
+     "wrong": "If you wrote `s ⇒ b`: sunshine doesn't force a beach trip."
+    }
+   ],
+   "trap": {
+    "tempting": "\"You board only if you have a ticket\" → `ticket ⇒ board`.",
+    "correct": "`board ⇒ ticket`.",
+    "test": "Ask who breaks the rule. It's the person who boards with **no** ticket: the T ⇒ F row of `board ⇒ ticket`."
+   },
+   "magic": "\"Only if\" never flips: A only if B = `A ⇒ B` = no B → no A."
+  },
+  {
+   "type": "idea",
+   "id": "i4",
+   "short": "Converse & contrapositive",
+   "title": "Shuffling a promise: converse, inverse, contrapositive",
+   "picture": "\"If you live in Paris, you live in France.\" True. Shuffle it: \"If you live in France, you live in Paris\"? False, because Lyon exists. Only one of the shuffles keeps the meaning.",
+   "official": "For `A ⇒ B`: the **converse** is `B ⇒ A`, the **inverse** is `¬A ⇒ ¬B`, the **contrapositive** is `¬B ⇒ ¬A`. Only the contrapositive is equivalent: `A ⇒ B ≡ ¬B ⇒ ¬A`. The converse and the inverse are equivalent to **each other**.",
+   "grid": {
+    "title": "Four shuffles of `Paris ⇒ France`",
+    "cols": [
+     "Name",
+     "Shape",
+     "Paris example",
+     "Same meaning?"
+    ],
+    "rows": [
+     [
+      "Original",
+      "`A ⇒ B`",
+      "Paris ⇒ France ✅",
+      "—"
+     ],
+     [
+      "Converse (swap)",
+      "`B ⇒ A`",
+      "France ⇒ Paris ❌ Lyon!",
+      "❌ No"
+     ],
+     [
+      "Inverse (flip both)",
+      "`¬A ⇒ ¬B`",
+      "not Paris ⇒ not France ❌ Lyon again",
+      "❌ No"
+     ],
+     [
+      "Contrapositive (swap + flip)",
+      "`¬B ⇒ ¬A`",
+      "not France ⇒ not Paris ✅",
+      "✅ Yes"
+     ]
+    ]
+   },
+   "watch": {
+    "q": "Write the contrapositive of \"If the build fails, the deploy stops.\" (`f` = the build fails, `s` = the deploy stops)",
+    "steps": [
+     "Original: `f ⇒ s`.",
+     "Swap: `s ⇒ f`.",
+     "Flip both: `¬s ⇒ ¬f`."
+    ],
+    "answer": "**`¬s ⇒ ¬f`**: \"If the deploy didn't stop, the build didn't fail.\" Same meaning ✅"
+   },
+   "tries": [
+    {
+     "id": "i4t1",
+     "q": "Converse of \"If it's the weekend, the shop is closed.\" Does it mean the same?",
+     "a": "`c ⇒ w`: \"If the shop is closed, it's the weekend.\" **Not** the same.",
+     "why": "The shop could also be closed on a public holiday.",
+     "letters": "`w` = it's the weekend · `c` = the shop is closed",
+     "check": {
+      "kind": "equiv",
+      "f": "w ⇒ c",
+      "g": "c ⇒ w",
+      "expect": false
+     }
+    },
+    {
+     "id": "i4t2",
+     "q": "Contrapositive of \"If a number ends in 0, it is divisible by 5.\"",
+     "a": "`¬f ⇒ ¬z`: \"If a number isn't divisible by 5, it doesn't end in 0.\"",
+     "why": "Swap and flip. Still true, just like the original.",
+     "letters": "`z` = the number ends in 0 · `f` = the number is divisible by 5",
+     "check": {
+      "kind": "equiv",
+      "f": "z ⇒ f",
+      "g": "¬f ⇒ ¬z",
+      "expect": true
+     }
+    },
+    {
+     "id": "i4t3",
+     "q": "Inverse of \"If the cache hits, the response is quick.\" Does it mean the same?",
+     "a": "`¬h ⇒ ¬q`: \"If the cache misses, the response is slow.\" **Not** the same.",
+     "why": "A cache miss can still be quick if the database is fast. Flipping without swapping changes the meaning.",
+     "letters": "`h` = the cache hits · `q` = the response is quick",
+     "check": {
+      "kind": "equiv",
+      "f": "h ⇒ q",
+      "g": "¬h ⇒ ¬q",
+      "expect": false
+     }
+    },
+    {
+     "id": "i4t4",
+     "q": "Which one is equivalent to `p ⇒ q`?",
+     "a": "**(3)** `¬q ⇒ ¬p`",
+     "why": "(3) is the contrapositive. (1) is the converse and (2) is the inverse.",
+     "options": [
+      "`q ⇒ p`",
+      "`¬p ⇒ ¬q`",
+      "`¬q ⇒ ¬p`"
+     ],
+     "correct": [
+      2
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "p ⇒ q"
+     }
+    },
+    {
+     "id": "i4t5",
+     "q": "Are the converse and the inverse equivalent **to each other**?",
+     "a": "**Yes.** `q ⇒ p` ≡ `¬p ⇒ ¬q`.",
+     "why": "The inverse is the contrapositive of the converse. Neither matches the original, but they match each other.",
+     "check": {
+      "kind": "equiv",
+      "f": "q ⇒ p",
+      "g": "¬p ⇒ ¬q",
+      "expect": true
+     }
+    },
+    {
+     "id": "i4t6",
+     "q": "True or false: if a statement is true, its converse must be true.",
+     "a": "**False.**",
+     "why": "\"If it's a dog, it's a mammal\" is true. Its converse, \"If it's a mammal, it's a dog\", is false (cats)."
+    }
+   ],
+   "trap": {
+    "tempting": "The converse means the same thing.",
+    "correct": "Only the **contrapositive** does: swap AND flip.",
+    "test": "Look for a counterexample to the converse, like France but not Paris (Lyon)."
+   },
+   "magic": "Swap AND flip = same. Swap only, or flip only = different."
+  },
+  {
+   "type": "idea",
+   "id": "i5",
+   "short": "⇒ in disguise",
+   "title": "`⇒` in disguise: `¬A ∨ B`, and what a broken promise looks like",
+   "picture": "\"If you order before noon, it ships today\" means: either you didn't order before noon, or it ships today (or both). The promise is broken exactly when you order before noon **and** it doesn't ship today.",
+   "official": "`A ⇒ B` ≡ `¬A ∨ B` ≡ `¬(A ∧ ¬B)` (the lecture's definition). **Negation:** `¬(A ⇒ B)` ≡ `A ∧ ¬B`. It is **not** `¬A ⇒ ¬B`.",
+   "watch": {
+    "q": "Rewrite `c ⇒ t` without an arrow, then say exactly when it is false.",
+    "steps": [
+     "Rule: `A ⇒ B` = `¬A ∨ B`.",
+     "So `c ⇒ t` = `¬c ∨ t`.",
+     "It is false only when `c = T` and `t = F`, which is when `c ∧ ¬t` is true."
+    ],
+    "answer": "**`¬c ∨ t`**, false exactly when **`c ∧ ¬t`**"
+   },
+   "tries": [
+    {
+     "id": "i5t1",
+     "q": "Rewrite `p ⇒ ¬q` using `∨`.",
+     "a": "`¬p ∨ ¬q`",
+     "why": "Negate the left side, keep the right side, join them with `∨`.",
+     "check": {
+      "kind": "equiv",
+      "f": "p ⇒ ¬q",
+      "g": "¬p ∨ ¬q",
+      "expect": true
+     }
+    },
+    {
+     "id": "i5t2",
+     "q": "Rewrite `¬a ∨ b` as an implication.",
+     "a": "`a ⇒ b` (or its contrapositive `¬b ⇒ ¬a`)",
+     "why": "`¬a ∨ b` is exactly the shape `¬A ∨ B`, with A = `a` and B = `b`.",
+     "check": [
+      {
+       "kind": "equiv",
+       "f": "¬a ∨ b",
+       "g": "a ⇒ b",
+       "expect": true
+      },
+      {
+       "kind": "equiv",
+       "f": "¬a ∨ b",
+       "g": "¬b ⇒ ¬a",
+       "expect": true
+      }
+     ]
+    },
+    {
+     "id": "i5t3",
+     "q": "Rewrite `x ∨ y` as an implication.",
+     "a": "`¬x ⇒ y` (or `¬y ⇒ x`)",
+     "why": "Read it as \"if not x, then y\". This is why **unless** (next idea) turns into an `∨`.",
+     "check": [
+      {
+       "kind": "equiv",
+       "f": "x ∨ y",
+       "g": "¬x ⇒ y",
+       "expect": true
+      },
+      {
+       "kind": "equiv",
+       "f": "x ∨ y",
+       "g": "¬y ⇒ x",
+       "expect": true
+      }
+     ]
+    },
+    {
+     "id": "i5t4",
+     "q": "Negate \"If you study, you pass\" in plain English.",
+     "a": "\"You study **and** you don't pass.\" (`s ∧ ¬p`)",
+     "why": "Negating a promise means describing how it gets broken.",
+     "letters": "`s` = you study · `p` = you pass",
+     "wrong": "If you said \"If you don't study, you don't pass\": that's the inverse, not the negation.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(s ⇒ p)",
+      "g": "s ∧ ¬p",
+      "expect": true
+     }
+    },
+    {
+     "id": "i5t5",
+     "q": "Is `¬(p ⇒ q)` the same as `¬p ⇒ ¬q`? Find one row that decides it.",
+     "a": "**Not the same.** Row `p = F, q = F`: `¬(p ⇒ q)` = `¬T` = F, but `¬p ⇒ ¬q` = `T ⇒ T` = T.",
+     "why": "One row where two formulas differ is enough to prove they are not equivalent.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(p ⇒ q)",
+      "g": "¬p ⇒ ¬q",
+      "expect": false
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "`¬(A ⇒ B)` = `¬A ⇒ ¬B`",
+    "correct": "`¬(A ⇒ B)` = `A ∧ ¬B`: the one broken case.",
+    "test": "The negation of an arrow has **no** arrow in it."
+   },
+   "magic": "`A ⇒ B` = `¬A ∨ B`. Broken promise = `A ∧ ¬B`."
+  },
+  {
+   "type": "idea",
+   "id": "i6",
+   "short": "Unless",
+   "title": "Unless = if not",
+   "picture": "\"I'll go swimming **unless** it rains.\" Replace *unless* with *if not*: if it does NOT rain, I swim. What about rainy days? The sentence says nothing. Maybe I swim anyway.",
+   "official": "`A unless B` ≡ `¬B ⇒ A` ≡ `A ∨ B`. In this course it does **not** also mean `B ⇒ ¬A`. The slides deliberately use this one-way reading.",
+   "watch": {
+    "q": "\"The page shows an error unless you're logged in.\" (`e` = the page shows an error, `l` = you're logged in)",
+    "steps": [
+     "Unless = if not: if you're NOT logged in, there's an error.",
+     "`¬l ⇒ e`",
+     "The same thing as an `∨`: `l ∨ e`."
+    ],
+    "answer": "**`¬l ⇒ e`** (≡ `l ∨ e`)"
+   },
+   "tries": [
+    {
+     "id": "i6t1",
+     "q": "\"You'll be late unless you leave now.\"",
+     "a": "`¬n ⇒ t` (≡ `n ∨ t`)",
+     "why": "If you do NOT leave now, you'll be late.",
+     "letters": "`t` = you'll be late · `n` = you leave now",
+     "check": {
+      "kind": "equiv",
+      "f": "¬n ⇒ t",
+      "g": "n ∨ t",
+      "expect": true
+     }
+    },
+    {
+     "id": "i6t2",
+     "q": "\"**Unless** you water it, the plant dies.\" (Unless is at the front this time.)",
+     "a": "`¬w ⇒ d`",
+     "why": "Same rule wherever *unless* sits: the part after *unless* gets a `¬` and goes on the left.",
+     "letters": "`w` = you water the plant · `d` = the plant dies"
+    },
+    {
+     "id": "i6t3",
+     "q": "\"The alarm won't sound unless the system is armed.\"",
+     "a": "`¬a ⇒ ¬s`, which is the same as `s ⇒ a`.",
+     "why": "Not armed → no sound. Its contrapositive says: if it sounded, it was armed.",
+     "letters": "`s` = the alarm sounds · `a` = the system is armed",
+     "check": {
+      "kind": "equiv",
+      "f": "¬a ⇒ ¬s",
+      "g": "s ⇒ a",
+      "expect": true
+     }
+    },
+    {
+     "id": "i6t4",
+     "q": "Does \"The kids play outside unless it's dark\" say that they **don't** play outside when it's dark?",
+     "a": "**No.**",
+     "why": "It only covers the light hours (`¬dark ⇒ play`). What happens after dark is left open.",
+     "wrong": "If you said yes: you added `dark ⇒ ¬play`. This course reads *unless* one way only."
+    },
+    {
+     "id": "i6t5",
+     "q": "Write `p unless q` using only `∨`.",
+     "a": "`p ∨ q`",
+     "why": "`¬q ⇒ p` = `q ∨ p`.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬q ⇒ p",
+      "g": "p ∨ q",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "\"A unless B\" also means `B ⇒ ¬A`.",
+    "correct": "Only `¬B ⇒ A` (= `A ∨ B`).",
+    "test": "Replace *unless* with *if not* and read **only** that."
+   },
+   "magic": "UNLESS = IF NOT."
+  },
+  {
+   "type": "idea",
+   "id": "i7",
+   "short": "⇔ iff",
+   "title": "`⇔`: if and only if, just in case",
+   "picture": "A light and its switch wired together: switch up ⇔ light on. Both on or both off, always.",
+   "official": "`A ⇔ B` ≡ `(A ⇒ B) ∧ (B ⇒ A)`. It is true when A and B **match**. Ways to say it: *if and only if* · *iff* · *just in case* · *exactly when* · *A is necessary and sufficient for B*. In this course **\"just in case\" means `⇔`**, not \"as a precaution\".",
+   "grid": {
+    "title": "The truth table",
+    "cols": [
+     "A",
+     "B",
+     "`A ⇔ B`"
+    ],
+    "rows": [
+     [
+      "F",
+      "F",
+      "T"
+     ],
+     [
+      "F",
+      "T",
+      "F"
+     ],
+     [
+      "T",
+      "F",
+      "F"
+     ],
+     [
+      "T",
+      "T",
+      "T"
+     ]
+    ]
+   },
+   "watch": {
+    "q": "\"You get a refund if and only if the item is unopened.\" (`r` = you get a refund, `u` = the item is unopened)",
+    "steps": [
+     "\"If and only if\" → `⇔`.",
+     "`r ⇔ u`",
+     "Split it: `r ⇒ u` (refunds need unopened items) **and** `u ⇒ r` (unopened items get refunds)."
+    ],
+    "answer": "**`r ⇔ u`**"
+   },
+   "tries": [
+    {
+     "id": "i7t1",
+     "q": "\"The program terminates just in case the input is positive.\" (an example from the Week 1 logic slides)",
+     "a": "`t ⇔ p`",
+     "why": "\"Just in case\" = `⇔` in this course.",
+     "letters": "`t` = the program terminates · `p` = the input is positive"
+    },
+    {
+     "id": "i7t2",
+     "q": "\"A triangle is equilateral exactly when all its angles are 60°.\"",
+     "a": "`e ⇔ a`",
+     "why": "\"Exactly when\" = both directions.",
+     "letters": "`e` = the triangle is equilateral · `a` = all its angles are 60°"
+    },
+    {
+     "id": "i7t3",
+     "q": "\"Being even is necessary and sufficient for being divisible by 2.\"",
+     "a": "`v ⇔ d`",
+     "why": "Sufficient gives `v ⇒ d`. Necessary gives `d ⇒ v`. Both together make `⇔`.",
+     "letters": "`v` = the number is even · `d` = the number is divisible by 2",
+     "check": {
+      "kind": "equiv",
+      "f": "(v ⇒ d) ∧ (d ⇒ v)",
+      "g": "v ⇔ d",
+      "expect": true
+     }
+    },
+    {
+     "id": "i7t4",
+     "q": "On which rows is `p ⇔ q` false?",
+     "a": "Exactly when they **differ**: `p = T, q = F` and `p = F, q = T`.",
+     "why": "`⇔` wants a match.",
+     "check": {
+      "kind": "falsifying",
+      "f": "p ⇔ q",
+      "rows": [
+       {
+        "p": true,
+        "q": false
+       },
+       {
+        "p": false,
+        "q": true
+       }
+      ]
+     }
+    },
+    {
+     "id": "i7t5",
+     "q": "Is \"A if B\" the same as \"A iff B\"?",
+     "a": "**No.**",
+     "why": "\"A if B\" is `B ⇒ A`, one direction only. \"Iff\" needs both directions.",
+     "check": {
+      "kind": "equiv",
+      "f": "B ⇒ A",
+      "g": "A ⇔ B",
+      "expect": false
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "\"Just in case\" = as a precaution.",
+    "correct": "It means `⇔`.",
+    "test": "Both sides must match: both T or both F."
+   },
+   "magic": "Just in case = `⇔` = both sides match."
+  },
+  {
+   "type": "section",
+   "id": "practice",
+   "title": "🏋️ Practice ladder",
+   "sub": "A different example every time. Think first, then reveal. Mark ✅/❌ honestly, and come back to your ❌ in 2 days."
+  },
+  {
+   "type": "practice",
+   "id": "p-green",
+   "level": "green",
+   "sub": "One idea per question.",
+   "items": [
+    {
+     "id": "g1",
+     "q": "`F ⇒ F` and `T ⇒ F`: which one is true?",
+     "a": "`F ⇒ F` is **T**. `T ⇒ F` is F.",
+     "why": "Only true-leads-to-false breaks a promise.",
+     "check": [
+      {
+       "kind": "value",
+       "f": "⊥ ⇒ ⊥",
+       "expect": true
+      },
+      {
+       "kind": "value",
+       "f": "⊤ ⇒ ⊥",
+       "expect": false
+      }
+     ]
+    },
+    {
+     "id": "g2",
+     "q": "\"If the kettle boils, it whistles.\"",
+     "a": "`b ⇒ w`",
+     "why": "Plain if–then: 1st ⇒ 2nd.",
+     "letters": "`b` = the kettle boils · `w` = it whistles"
+    },
+    {
+     "id": "g3",
+     "q": "\"The dog barks if the doorbell rings.\"",
+     "a": "`d ⇒ k`",
+     "why": "\"If\" marks the left side even when it comes second (🔄).",
+     "letters": "`k` = the dog barks · `d` = the doorbell rings"
+    },
+    {
+     "id": "g4",
+     "q": "\"It rains only if there are clouds.\"",
+     "a": "`r ⇒ c`",
+     "why": "\"Only if\" marks the right side and never flips. No clouds → no rain.",
+     "letters": "`r` = it rains · `c` = there are clouds"
+    },
+    {
+     "id": "g5",
+     "q": "\"A key card is necessary to enter the lab.\"",
+     "a": "`e ⇒ k`",
+     "why": "The necessary thing goes on the right (🔄).",
+     "letters": "`e` = you enter the lab · `k` = you have a key card"
+    },
+    {
+     "id": "g6",
+     "q": "\"Pressing Ctrl+S is sufficient to save the file.\"",
+     "a": "`c ⇒ s`",
+     "why": "The sufficient thing goes on the left.",
+     "letters": "`c` = you press Ctrl+S · `s` = the file is saved"
+    },
+    {
+     "id": "g7",
+     "q": "Converse of `m ⇒ n`?",
+     "a": "`n ⇒ m`",
+     "why": "Converse = swap only.",
+     "check": {
+      "kind": "equiv",
+      "f": "m ⇒ n",
+      "g": "n ⇒ m",
+      "expect": false
+     }
+    },
+    {
+     "id": "g8",
+     "q": "Contrapositive of `m ⇒ n`?",
+     "a": "`¬n ⇒ ¬m`",
+     "why": "Swap AND flip.",
+     "check": {
+      "kind": "equiv",
+      "f": "m ⇒ n",
+      "g": "¬n ⇒ ¬m",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-yellow",
+   "level": "yellow",
+   "sub": "Two ideas at once.",
+   "items": [
+    {
+     "id": "y1",
+     "q": "Contrapositive of \"If the tests pass, we deploy.\" Say it in English too.",
+     "a": "`¬d ⇒ ¬t`: \"If we didn't deploy, the tests didn't pass.\"",
+     "why": "Swap and flip.",
+     "letters": "`t` = the tests pass · `d` = we deploy",
+     "check": {
+      "kind": "equiv",
+      "f": "t ⇒ d",
+      "g": "¬d ⇒ ¬t",
+      "expect": true
+     }
+    },
+    {
+     "id": "y2",
+     "q": "\"You'll miss the bus unless you run.\"",
+     "a": "`¬r ⇒ m` (≡ `r ∨ m`)",
+     "why": "Unless = if not.",
+     "letters": "`m` = you'll miss the bus · `r` = you run",
+     "check": {
+      "kind": "equiv",
+      "f": "¬r ⇒ m",
+      "g": "r ∨ m",
+      "expect": true
+     }
+    },
+    {
+     "id": "y3",
+     "q": "\"The fridge light is on just in case the door is open.\"",
+     "a": "`l ⇔ o`",
+     "why": "Just in case = `⇔`: door open ⇔ light on.",
+     "letters": "`l` = the fridge light is on · `o` = the door is open"
+    },
+    {
+     "id": "y4",
+     "q": "Rewrite `a ⇒ ¬b` with `∨`.",
+     "a": "`¬a ∨ ¬b`",
+     "why": "`A ⇒ B` = `¬A ∨ B`, with B = `¬b`.",
+     "check": {
+      "kind": "equiv",
+      "f": "a ⇒ ¬b",
+      "g": "¬a ∨ ¬b",
+      "expect": true
+     }
+    },
+    {
+     "id": "y5",
+     "q": "Negate \"If it's Friday, we have pizza.\" Give the formula and the English.",
+     "a": "`f ∧ ¬z`: \"It's Friday and we don't have pizza.\"",
+     "why": "Negating a promise = the way it gets broken.",
+     "letters": "`f` = it's Friday · `z` = we have pizza",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(f ⇒ z)",
+      "g": "f ∧ ¬z",
+      "expect": true
+     }
+    },
+    {
+     "id": "y6",
+     "q": "When exactly is \"You get dessert only if you eat your vegetables\" false?",
+     "a": "Only when `d = T` and `v = F`: dessert without vegetables.",
+     "why": "The rule is `d ⇒ v`, and its only breaking row is T ⇒ F.",
+     "letters": "`d` = you get dessert · `v` = you eat your vegetables",
+     "check": {
+      "kind": "falsifying",
+      "f": "d ⇒ v",
+      "rows": [
+       {
+        "d": true,
+        "v": false
+       }
+      ]
+     }
+    },
+    {
+     "id": "y7",
+     "q": "Which one is the **inverse** of `s ⇒ t`?",
+     "a": "**(2)** `¬s ⇒ ¬t`",
+     "why": "Inverse = flip both, no swap. (1) is the converse and (3) the contrapositive. (Bonus: (1) and (2) are equivalent to each other.)",
+     "options": [
+      "`t ⇒ s`",
+      "`¬s ⇒ ¬t`",
+      "`¬t ⇒ ¬s`"
+     ],
+     "correct": [
+      1
+     ],
+     "mono": true,
+     "nocheck": "asks for a shape by name, not for equivalence"
+    },
+    {
+     "id": "y8",
+     "q": "\"Only if you RSVP will you get a seat.\"",
+     "a": "`g ⇒ v`",
+     "why": "\"Only if X, Y\" = \"Y only if X\" → `Y ⇒ X`.",
+     "letters": "`g` = you get a seat · `v` = you RSVP",
+     "wrong": "If you wrote `v ⇒ g`: an RSVP doesn't guarantee a seat."
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-red",
+   "level": "red",
+   "title": "🔴 Quiz level",
+   "sub": "The style of Quiz 2 Q3b: pick **every** option that means the same. One row where they differ is enough to reject an option.",
+   "items": [
+    {
+     "id": "r1",
+     "q": "\"You pass only if you study.\" Which options mean the same?",
+     "a": "**(2), (3), (4)**",
+     "why": "The sentence is `p ⇒ s`. (3) is its contrapositive and (4) is the `¬A ∨ B` form. (1) is the converse and (5) the inverse: they match each other, not the sentence.",
+     "letters": "`p` = you pass · `s` = you study",
+     "options": [
+      "`s ⇒ p`",
+      "`p ⇒ s`",
+      "`¬s ⇒ ¬p`",
+      "`¬p ∨ s`",
+      "`¬p ⇒ ¬s`"
+     ],
+     "correct": [
+      1,
+      2,
+      3
+     ],
+     "multi": true,
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "p ⇒ s"
+     }
+    },
+    {
+     "id": "r2",
+     "q": "\"The burglar is caught whenever the alarm is set.\" Which options mean the same?",
+     "a": "**(1), (3), (4)**",
+     "why": "\"Whenever\" marks the trigger: `a ⇒ b`. (5) is the one situation that **breaks** it.",
+     "letters": "`a` = the alarm is set · `b` = the burglar is caught",
+     "options": [
+      "`a ⇒ b`",
+      "`b ⇒ a`",
+      "`¬a ∨ b`",
+      "`¬b ⇒ ¬a`",
+      "`a ∧ ¬b`"
+     ],
+     "correct": [
+      0,
+      2,
+      3
+     ],
+     "multi": true,
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "a ⇒ b"
+     }
+    },
+    {
+     "id": "r3",
+     "q": "\"The heater is off unless it's cold.\" Which options mean the same?",
+     "a": "**(1), (2), (4)**",
+     "why": "\"Off\" is `¬h`. Unless = if not: `¬c ⇒ ¬h`. Its contrapositive is `h ⇒ c`, and as an `∨` it's `c ∨ ¬h`.",
+     "letters": "`h` = the heater is on · `c` = it's cold",
+     "options": [
+      "`¬c ⇒ ¬h`",
+      "`h ⇒ c`",
+      "`c ⇒ h`",
+      "`c ∨ ¬h`",
+      "`¬h ⇒ ¬c`"
+     ],
+     "correct": [
+      0,
+      1,
+      3
+     ],
+     "multi": true,
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "¬c ⇒ ¬h"
+     }
+    },
+    {
+     "id": "r4",
+     "q": "\"You win just in case you roll a six.\" Which options mean the same?",
+     "a": "**(1), (2), (3)**",
+     "why": "(3) says \"both or neither\". (4) is only one direction. (5) says \"exactly one\", the opposite of `⇔`.",
+     "letters": "`w` = you win · `s` = you roll a six",
+     "options": [
+      "`w ⇔ s`",
+      "`(w ⇒ s) ∧ (s ⇒ w)`",
+      "`(w ∧ s) ∨ (¬w ∧ ¬s)`",
+      "`w ⇒ s`",
+      "`(w ∧ ¬s) ∨ (¬w ∧ s)`"
+     ],
+     "correct": [
+      0,
+      1,
+      2
+     ],
+     "multi": true,
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "w ⇔ s"
+     }
+    },
+    {
+     "id": "r5",
+     "q": "Which rows make `p ⇒ q` false?",
+     "a": "**(2)** only",
+     "why": "The only breaking row is T ⇒ F.",
+     "options": [
+      "p = T, q = T",
+      "p = T, q = F",
+      "p = F, q = T",
+      "p = F, q = F"
+     ],
+     "correct": [
+      1
+     ],
+     "check": {
+      "kind": "options_falsify",
+      "f": "p ⇒ q",
+      "rows": [
+       {
+        "p": true,
+        "q": true
+       },
+       {
+        "p": true,
+        "q": false
+       },
+       {
+        "p": false,
+        "q": true
+       },
+       {
+        "p": false,
+        "q": false
+       }
+      ]
+     }
+    },
+    {
+     "id": "r6",
+     "q": "Negate `¬a ⇒ b` as simply as possible.",
+     "a": "`¬a ∧ ¬b`",
+     "why": "`¬(A ⇒ B)` = `A ∧ ¬B`, with A = `¬a` and B = `b`.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(¬a ⇒ b)",
+      "g": "¬a ∧ ¬b",
+      "expect": true
+     }
+    },
+    {
+     "id": "r7",
+     "q": "\"A passport is necessary but not sufficient for flying abroad.\" Which arrow holds, and which one is **not** guaranteed?",
+     "a": "`f ⇒ p` holds. `p ⇒ f` is **not** guaranteed.",
+     "why": "Necessary → the passport goes on the right. \"Not sufficient\" means having a passport doesn't make you fly.",
+     "letters": "`f` = you fly abroad · `p` = you have a passport"
+    },
+    {
+     "id": "r8",
+     "q": "True or false: if `a ⇒ b` is true and `a` is false, then `b` must be false.",
+     "a": "**False.** `b` can be T or F.",
+     "why": "When `a` is false, `a ⇒ b` is true whatever `b` is (`F ⇒ anything` = T).",
+     "check": [
+      {
+       "kind": "entails",
+       "premises": [
+        "a ⇒ b",
+        "¬a"
+       ],
+       "f": "¬b",
+       "expect": false
+      },
+      {
+       "kind": "entails",
+       "premises": [
+        "a ⇒ b",
+        "¬a"
+       ],
+       "f": "b",
+       "expect": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-boss",
+   "level": "boss",
+   "sub": "Beyond the quiz: this is mid-term and exam territory. Take your time.",
+   "items": [
+    {
+     "id": "b1",
+     "q": "Simplify `¬(p ⇒ ¬q)`.",
+     "a": "`p ∧ q`",
+     "why": "Double negation cancels.",
+     "steps": [
+      "`¬(A ⇒ B)` = `A ∧ ¬B`, with A = `p` and B = `¬q`.",
+      "So it's `p ∧ ¬¬q` = `p ∧ q`."
+     ],
+     "check": {
+      "kind": "equiv",
+      "f": "¬(p ⇒ ¬q)",
+      "g": "p ∧ q",
+      "expect": true
+     }
+    },
+    {
+     "id": "b2",
+     "q": "Are these the same? (i) `(m ⇒ g) ∧ (m ⇒ s)` (ii) `m ⇒ (g ∧ s)`. Say both in English.",
+     "a": "**Yes, they're equivalent.**",
+     "why": "(i) \"If it's Monday I go to the gym, and if it's Monday I study.\" (ii) \"If it's Monday I go to the gym and study.\" Same promise.",
+     "letters": "`m` = it's Monday · `g` = I go to the gym · `s` = I study",
+     "check": {
+      "kind": "equiv",
+      "f": "(m ⇒ g) ∧ (m ⇒ s)",
+      "g": "m ⇒ (g ∧ s)",
+      "expect": true
+     }
+    },
+    {
+     "id": "b3",
+     "q": "Is `(p ⇒ q) ⇒ r` the same as `p ⇒ (q ⇒ r)`?",
+     "a": "**No.** Row `p = F, q = F, r = F`: the left is `T ⇒ F` = F, the right is `F ⇒ …` = T.",
+     "why": "`⇒` is not associative, so brackets matter. Always bracket a chain of arrows.",
+     "check": {
+      "kind": "equiv",
+      "f": "(p ⇒ q) ⇒ r",
+      "g": "p ⇒ (q ⇒ r)",
+      "expect": false
+     }
+    },
+    {
+     "id": "b4",
+     "q": "Is `p ⇒ (q ⇒ r)` the same as `(p ∧ q) ⇒ r`?",
+     "a": "**Yes.**",
+     "why": "\"If it's your birthday, then if you come to the café, your coffee is free\" = \"If it's your birthday and you come to the café, your coffee is free\". This rule is called **exportation**.",
+     "check": {
+      "kind": "equiv",
+      "f": "p ⇒ (q ⇒ r)",
+      "g": "(p ∧ q) ⇒ r",
+      "expect": true
+     }
+    },
+    {
+     "id": "b5",
+     "q": "When is `(p ⇒ q) ∨ (q ⇒ p)` false?",
+     "a": "**Never.** It's true in every row (a tautology).",
+     "why": "If `q` is T, the left part is T. If `q` is F, the right part is `F ⇒ p` = T.",
+     "check": {
+      "kind": "valid",
+      "f": "(p ⇒ q) ∨ (q ⇒ p)",
+      "expect": true
+     }
+    },
+    {
+     "id": "b6",
+     "q": "Which options are equivalent to \"A unless B\"?",
+     "a": "**(1), (2), (3)**",
+     "why": "\"A unless B\" = `¬B ⇒ A` = `A ∨ B` = `¬A ⇒ B` (its contrapositive). (4) `B ⇒ ¬A` is the extra half that a two-way reading would add, and this course reads *unless* one way only. (5) says \"exactly one\".",
+     "options": [
+      "`¬A ⇒ B`",
+      "`¬B ⇒ A`",
+      "`A ∨ B`",
+      "`B ⇒ ¬A`",
+      "`(A ∨ B) ∧ ¬(A ∧ B)`"
+     ],
+     "correct": [
+      0,
+      1,
+      2
+     ],
+     "multi": true,
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "¬B ⇒ A"
+     }
+    },
+    {
+     "id": "b7",
+     "q": "`p ⇒ q` and `q ⇒ p` are both true. Say that in one symbol.",
+     "a": "`p ⇔ q`",
+     "why": "Both directions = if and only if.",
+     "check": {
+      "kind": "equiv",
+      "f": "(p ⇒ q) ∧ (q ⇒ p)",
+      "g": "p ⇔ q",
+      "expect": true
+     }
+    },
+    {
+     "id": "b8",
+     "q": "\"A request is retried only if it timed out and is idempotent.\" Translate it, then write the contrapositive in English.",
+     "a": "`r ⇒ (t ∧ i)`. Contrapositive: \"If it didn't time out, or it isn't idempotent, it isn't retried.\" (`(¬t ∨ ¬i) ⇒ ¬r`)",
+     "why": "Flipping \"t AND i\" gives \"not t OR not i\" (De Morgan's law).",
+     "letters": "`r` = the request is retried · `t` = it timed out · `i` = the request is idempotent",
+     "check": {
+      "kind": "equiv",
+      "f": "r ⇒ (t ∧ i)",
+      "g": "(¬t ∨ ¬i) ⇒ ¬r",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-retest",
+   "level": "retest",
+   "sub": "Don't do these now. Come back in 2 days and answer from memory before rereading anything.",
+   "items": [
+    {
+     "id": "rt1",
+     "q": "\"You can rent the flat only if you have a reference.\"",
+     "a": "`r ⇒ f`",
+     "why": "\"A only if B\" never flips.",
+     "letters": "`r` = you can rent the flat · `f` = you have a reference"
+    },
+    {
+     "id": "rt2",
+     "q": "Contrapositive of `q ⇒ ¬r`.",
+     "a": "`r ⇒ ¬q`",
+     "why": "Swap: `¬r ⇒ q`. Flip both: `¬¬r ⇒ ¬q`, which is `r ⇒ ¬q`.",
+     "check": {
+      "kind": "equiv",
+      "f": "q ⇒ ¬r",
+      "g": "r ⇒ ¬q",
+      "expect": true
+     }
+    },
+    {
+     "id": "rt3",
+     "q": "\"I'll call you unless I'm busy.\"",
+     "a": "`¬b ⇒ c`",
+     "why": "Unless = if not.",
+     "letters": "`c` = I'll call you · `b` = I'm busy"
+    },
+    {
+     "id": "rt4",
+     "q": "When is `x ⇔ y` false?",
+     "a": "When `x` and `y` differ.",
+     "why": "`⇔` wants a match.",
+     "check": {
+      "kind": "falsifying",
+      "f": "x ⇔ y",
+      "rows": [
+       {
+        "x": true,
+        "y": false
+       },
+       {
+        "x": false,
+        "y": true
+       }
+      ]
+     }
+    },
+    {
+     "id": "rt5",
+     "q": "Negate `m ⇒ n`.",
+     "a": "`m ∧ ¬n`",
+     "why": "The one way to break the promise.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(m ⇒ n)",
+      "g": "m ∧ ¬n",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "recap",
+   "lines": [
+    "`A ⇒ B` is false only when A = T and B = F. `F ⇒ anything` is T.",
+    "LEFT markers: if, whenever, provided, sufficient. RIGHT markers: then, only if, necessary, after \"implies\".",
+    "\"A only if B\" = `A ⇒ B`, never flipped. The test: who breaks the rule? That person is the T ⇒ F row.",
+    "Contrapositive `¬B ⇒ ¬A` = same. Converse `B ⇒ A` and inverse `¬A ⇒ ¬B` = different.",
+    "`A ⇒ B` = `¬A ∨ B`. Its negation is `A ∧ ¬B`.",
+    "A unless B = `¬B ⇒ A` = `A ∨ B`, one way only.",
+    "`⇔` (iff, just in case, exactly when, necessary and sufficient) = both sides match."
+   ]
+  },
+  {
+   "type": "links",
+   "id": "links",
+   "sub": "Free, from universities. Try them after the ladder above.",
+   "items": [
+    {
+     "title": "UW CSE 311 — Section 1 worksheet, with solutions",
+     "url": "https://courses.cs.washington.edu/courses/cse311/24au/section/section01-solutions.pdf",
+     "source": "University of Washington",
+     "checked": "24 Sep 2026",
+     "note": "Problem 2 drills *whenever / sufficient / only if / necessary*. Every answer is worked out."
+    },
+    {
+     "title": "English to propositional logic — lecture notes",
+     "url": "https://homepage.divms.uiowa.edu/~tinelli/classes/4350/Spring21/Notes/02-English-to-propositional-logic.pdf",
+     "source": "University of Iowa",
+     "checked": "24 Sep 2026",
+     "note": "A summary table of English joiners, including *only if* and *unless*."
+    },
+    {
+     "title": "Mathematics for Computer Science (Lehman, Leighton, Meyer) — Chapter 3, Logical Formulas",
+     "url": "https://courses.csail.mit.edu/6.042/spring18/mcs.pdf",
+     "source": "MIT — the book the COMP9020 slides borrow examples from",
+     "checked": "24 Sep 2026",
+     "note": "Lots of Problem 3.x exercises at the end of the chapter."
+    }
+   ]
+  }
+ ],
+ "checks": [
+  {
+   "kind": "equiv",
+   "f": "A ⇒ B",
+   "g": "¬(A ∧ ¬B)",
+   "expect": true
+  },
+  {
+   "kind": "equiv",
+   "f": "A ⇒ B",
+   "g": "¬A ∨ B",
+   "expect": true
+  },
+  {
+   "kind": "equiv",
+   "f": "s ⇒ k",
+   "g": "¬k ⇒ ¬s",
+   "expect": true
+  },
+  {
+   "kind": "equiv",
+   "f": "v ⇒ e",
+   "g": "¬e ⇒ ¬v",
+   "expect": true
+  },
+  {
+   "kind": "equiv",
+   "f": "f ⇒ s",
+   "g": "¬s ⇒ ¬f",
+   "expect": true
+  },
+  {
+   "kind": "equiv",
+   "f": "¬l ⇒ e",
+   "g": "l ∨ e",
+   "expect": true
+  },
+  {
+   "kind": "equiv",
+   "f": "A ⇔ B",
+   "g": "(A ⇒ B) ∧ (B ⇒ A)",
+   "expect": true
+  },
+  {
+   "kind": "equiv",
+   "f": "B ⇒ A",
+   "g": "¬A ⇒ ¬B",
+   "expect": true
+  },
+  {
+   "kind": "equiv",
+   "f": "¬(c ⇒ t)",
+   "g": "c ∧ ¬t",
+   "expect": true
+  }
+ ],
+ "sources": "Lecture slides: Week 1 (slides 57–63, logic) and Week 2 (logic continued). Notation follows Prof. Thielscher's slides. All practice questions are original.",
+ "prev": {
+  "href": "../",
+  "label": "COMP9020 home"
+ },
+ "next": {
+  "href": "../l2b-english-to-logic/",
+  "label": "L2B · English → Logic"
+ }
+}
