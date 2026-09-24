@@ -11,11 +11,6 @@
  "minutes": 15,
  "verified": true,
  "goal": "Spot the signal word, put each side where it belongs, and say whether the order flips. Fast.",
- "roadmap": [
-  "**Round 1:** the 16-sentence Decoder table (the same one as in L2).",
-  "**Round 2:** 12 rapid-fire sentences with no pattern column to lean on.",
-  "**Round 3:** \"Who breaks the rule?\" Pick the situation(s) that make the rule false."
- ],
  "magic": [
   "⬅️ LEFT: if · whenever · provided · the sufficient thing.",
   "➡️ RIGHT: then · only if · the necessary thing · after \"implies\".",
@@ -28,7 +23,7 @@
    "id": "round1",
    "toc": "Round 1 · Decoder",
    "title": "Round 1: the Decoder table",
-   "sub": "Say the logic and the direction out loud, then reveal. Turn on **Hard mode** to hide the Pattern and Signal columns.",
+   "sub": "Say the logic and the direction out loud, then reveal. Turn on **Hard mode** (⚙️ Options) to hide the Pattern and Signal columns.",
    "columns": [
     {
      "label": "#"
@@ -217,7 +212,8 @@
       "whatever comes after \"implies\" → ➡️ RIGHT"
      ]
     }
-   ]
+   ],
+   "summary": "The 16-sentence Decoder table from L2."
   },
   {
    "type": "practice",
@@ -311,7 +307,8 @@
      "a": "`s ⇒ f` · 🔄 2nd ⇒ 1st (flipped)",
      "why": "Necessary → right."
     }
-   ]
+   ],
+   "summary": "12 new sentences, mixed order, no pattern column."
   },
   {
    "type": "practice",
@@ -557,7 +554,8 @@
       ]
      }
     }
-   ]
+   ],
+   "summary": "Find the situation that makes a rule false."
   },
   {
    "type": "recap",

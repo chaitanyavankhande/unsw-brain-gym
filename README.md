@@ -6,13 +6,15 @@ Interactive lessons and practice drills for my UNSW Master of IT courses.
 
 ## How to use it
 
-1. 🤔 **Think.** Read an idea: a picture, the official version, one worked example.
+Each lesson goes one step at a time: **Start** (the plan) → one **idea** per screen → one **practice level** per screen → **Finish** (your score).
+
+1. 🤔 **Think.** Read the idea: a picture, the official version, then walk through one worked example.
 2. ✍️ **Try.** Answer each question in your head or on paper first.
 3. 👀 **Reveal.** Open one answer at a time, or use **Show all / Hide all**.
 4. ✅ **Mark.** Tap ✅ Got it or ❌ Missed it. Be honest.
-5. 🔁 **Redo.** Two days later, tick **Only my ❌** and do those again, then the 🔁 Retest block.
+5. 🔁 **Review.** Two days later: ⚙️ Options → **Review my ❌**, then the 🔁 Retest step.
 
-**Hard mode** hides hints and the helper columns. Progress is saved in your browser, so it's per device.
+**Hard mode** (⚙️ Options) hides hints and helper columns. Progress is saved in your browser, so it's per device.
 
 ## What's inside
 

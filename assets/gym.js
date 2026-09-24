@@ -3,9 +3,12 @@
  * Pages declare what they are on <body>:
  *   data-page="home"                      → renders catalog.json as the home page
  *   data-page="course" data-course="id"   → renders one course from catalog.json
- *   data-page="lesson"                    → renders ./lesson.json
+ *   data-page="lesson"                    → renders ./lesson.json as a step-by-step lesson
  *   data-root="../../"                    → relative path back to the site root
  *
+ * A lesson is shown ONE STEP AT A TIME (focus mode):
+ *   Start → one step per idea → one step per practice level → Finish.
+ * The URL hash is the current step (#i2, #p-red, #finish, #review).
  * Lesson format: docs/LESSON_FORMAT.md. Progress lives in localStorage (per device).
  */
 (function () {
@@ -17,6 +20,7 @@
     set: function (k, v) { try { window.localStorage.setItem(NS + k, v); } catch (e) { /* private mode */ } },
     del: function (k) { try { window.localStorage.removeItem(NS + k); } catch (e) { /* ignore */ } }
   };
+  function getJSONStore(k) { try { return JSON.parse(store.get(k) || 'null'); } catch (e) { return null; } }
 
   var ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return ESC[c]; }); }
@@ -34,6 +38,7 @@
     h = h.replace(/\u0000(\d+)\u0000/g, function (_, i) { return '<code>' + codes[+i] + '</code>'; });
     return h;
   }
+  function plain(s) { return String(s || '').replace(/[`*]/g, ''); }
 
   function el(tag, attrs, html) {
     var e = document.createElement(tag);
@@ -74,203 +79,307 @@
   /* ======================================================================
    * LESSON PAGE
    * ==================================================================== */
-  var L = null;          // the lesson data
-  var recs = [];         // every answerable thing on the page
-  var byId = {};
+  var L = null;          // lesson data
+  var steps = [];        // [{id, kind, title, short, summary, blocks, el, recs}]
+  var stepById = {};
+  var recs = [];         // every answerable thing
+  var cur = null;        // current step id
 
   var LEVELS = {
-    green: '🟢 Warm-up',
-    yellow: '🟡 Getting there',
-    red: '🔴 Quiz level',
-    boss: '🟣 Boss level',
-    retest: '🔁 Retest — come back in 2 days'
+    green: { t: '🟢 Warm-up', s: 'Warm-up' },
+    yellow: { t: '🟡 Getting there', s: 'Getting there' },
+    red: { t: '🔴 Quiz level', s: 'Quiz level' },
+    boss: { t: '🟣 Boss level', s: 'Boss level' },
+    retest: { t: '🔁 Retest in 2 days', s: 'Retest' }
   };
+
+  function buildSteps(data) {
+    var out = [{ id: 'start', kind: 'start', title: 'Start here', short: 'Start', blocks: [] }];
+    var finish = { id: 'finish', kind: 'finish', title: 'Finish line', short: 'Finish', blocks: [] };
+    var group = '', last = null, ideaN = 0;
+    (data.blocks || []).forEach(function (b) {
+      if (b.type === 'section') { group = b.title; return; }
+      if (b.type === 'recap' || b.type === 'links') { finish.blocks.push(b); return; }
+      if (b.type === 'idea') {
+        ideaN += 1;
+        last = { id: b.id, kind: 'idea', n: ideaN, title: b.title, short: b.short || b.title, summary: b.summary, group: group, blocks: [b] };
+        out.push(last);
+        return;
+      }
+      if (b.type === 'practice') {
+        var lv = LEVELS[b.level] || { t: 'Practice', s: 'Practice' };
+        last = { id: b.id, kind: 'practice', level: b.level, title: b.title || lv.t, short: b.toc || lv.s,
+          summary: b.summary || b.sub, group: group, blocks: [b] };
+        out.push(last);
+        return;
+      }
+      if (b.type === 'table' && (!last || b.step)) {
+        last = { id: b.id, kind: 'table', title: b.title, short: b.toc || b.title, summary: b.summary || b.sub, group: group, blocks: [b] };
+        out.push(last);
+        return;
+      }
+      if (last) last.blocks.push(b);
+      else { last = { id: b.id || 'part' + out.length, kind: 'misc', title: b.title || '', short: b.title || '', group: group, blocks: [b] }; out.push(last); }
+    });
+    out.push(finish);
+    var ideas = out.filter(function (s) { return s.kind === 'idea'; }).length;
+    out.forEach(function (s, i) { s.index = i; s.ideas = ideas; s.recs = []; });
+    return out;
+  }
 
   function renderLesson(data) {
     L = data;
     document.title = (L.code ? L.code + ' · ' : '') + L.title + ' — UNSW Brain Gym';
-    var courseCrumb = L.course ? [{ label: L.course.code, href: L.course.href || '../' }] : [];
-    var html = topbar(courseCrumb.concat([{ label: (L.code || '') + ' ' + L.title }]));
+    steps = buildSteps(L);
+    steps.forEach(function (s) { stepById[s.id] = s; });
 
-    html += '<section class="wrap hero">' +
-      (L.eyebrow ? '<div class="eyebrow">' + md(L.eyebrow) + '</div>' : '') +
-      '<h1>' + (L.emoji ? esc(L.emoji) + ' ' : '') + md(L.title) + '</h1>' +
-      (L.goal ? '<p class="goal">🎯 ' + md(L.goal) + '</p>' : '') +
-      '<div class="meta" id="meta"></div></section>';
-
-    html += '<div class="wrap stack">';
-    if (L.roadmap && L.roadmap.length) {
-      html += '<div class="box"><h2>🗺️ In this lesson, in this order</h2><ol>' +
-        L.roadmap.map(function (x) { return '<li>' + md(x) + '</li>'; }).join('') + '</ol></div>';
-    }
-    if (L.magic && L.magic.length) {
-      html += '<div class="box magic"><h2>🔑 The whole lesson in ' + L.magic.length + ' lines</h2><ul>' +
-        L.magic.map(function (x) { return '<li>' + md(x) + '</li>'; }).join('') + '</ul></div>';
-    }
-    html += '<nav class="toc" id="toc" aria-label="On this page"></nav></div>';
-
-    html += '<div class="controls" role="region" aria-label="Answer controls"><div class="wrap">' +
-      '<div class="seg"><button type="button" id="showAll" aria-pressed="false">Show all answers</button>' +
-      '<button type="button" id="hideAll" aria-pressed="true">Hide all</button></div>' +
-      '<label class="tog" title="Hides hints and the helper columns"><input type="checkbox" id="hard"> Hard mode</label>' +
-      '<label class="tog" id="missWrap" title="Show only the questions you marked ❌"><input type="checkbox" id="missOnly"> Only my ❌</label>' +
-      '<span class="count" id="count" aria-live="polite"></span>' +
-      '<button type="button" class="linkbtn" id="reset">Reset my marks</button>' +
-      '</div></div>';
-
-    html += '<main class="wrap" id="main"></main>';
-    app.innerHTML = html;
+    var crumbs = (L.course ? [{ label: L.course.code, href: L.course.href || '../' }] : []).concat([{ label: (L.code ? L.code + ' · ' : '') + L.title }]);
+    app.innerHTML = topbar(crumbs) +
+      '<div class="lessonbar" id="lessonbar"><div class="wrap narrow">' +
+        '<div class="lb-row"><span class="lb-step" id="lbStep"></span>' +
+        '<details class="menu" id="menu"><summary>⚙️ Options</summary><div class="menu-pop">' +
+          '<label class="tog"><input type="checkbox" id="hard"> <span><b>Hard mode</b><small>Hides hints and helper columns</small></span></label>' +
+          '<button type="button" class="menu-btn" id="reviewBtn">🔁 Review my ❌ <span id="missN"></span></button>' +
+          '<button type="button" class="menu-btn subtle" id="reset">Reset my ✅/❌ marks</button>' +
+        '</div></details></div>' +
+        '<nav class="segbar" id="segbar" aria-label="Lesson steps"></nav>' +
+      '</div></div>' +
+      '<main class="wrap narrow" id="main"></main>';
 
     var main = document.getElementById('main');
-    var container = main;
-    var ideaN = 0;
-    var toc = [];
-
-    (L.blocks || []).forEach(function (b) {
-      var node;
-      switch (b.type) {
-        case 'section':
-          node = el('section', { class: 'part', id: b.id });
-          node.innerHTML = '<h2>' + md(b.title) + '</h2>' + (b.sub ? '<p class="sub">' + md(b.sub) + '</p>' : '');
-          main.appendChild(node);
-          container = node;
-          return;
-        case 'idea':
-          ideaN += 1;
-          node = renderIdea(b, ideaN);
-          toc.push({ id: b.id, label: ideaN + ' · ' + (b.short || b.title) });
-          break;
-        case 'practice':
-          node = renderPractice(b);
-          toc.push({ id: b.id, label: b.toc || (b.title || LEVELS[b.level] || 'Practice') });
-          break;
-        case 'table':
-          node = renderRevealTable(b);
-          if (b.toc) toc.push({ id: b.id, label: b.toc });
-          break;
-        case 'grid': node = renderGridBox(b); break;
-        case 'steps': node = renderSteps(b); if (b.toc) toc.push({ id: b.id, label: b.toc }); break;
-        case 'callout': node = renderCallout(b); break;
-        case 'recap': node = renderRecap(b); break;
-        case 'links': node = renderLinks(b); toc.push({ id: b.id || 'links', label: b.toc || '📚 More practice' }); break;
-        default: node = el('div', { class: 'callout trap' }, 'Unknown block type: ' + esc(b.type));
-      }
-      container.appendChild(node);
+    steps.forEach(function (s) {
+      s.el = el('section', { class: 'step step-' + s.kind, id: 'step-' + s.id, 'data-step': s.id, hidden: true });
+      main.appendChild(s.el);
     });
+    steps.forEach(function (s) { renderStep(s); });
 
-    // footer
-    var foot = '<footer class="navfoot">';
-    foot += L.prev ? '<a href="' + esc(L.prev.href) + '">← ' + md(L.prev.label) + '</a>' : '<span></span>';
-    foot += L.next ? '<a href="' + esc(L.next.href) + '">' + md(L.next.label) + ' →</a>' : '<span></span>';
-    foot += '</footer>';
-    if (L.sources) main.appendChild(el('p', { class: 'sources' }, '📎 ' + md(L.sources)));
-    main.insertAdjacentHTML('beforeend', foot);
-
-    document.getElementById('toc').innerHTML = toc.map(function (t) {
-      return '<a href="#' + esc(t.id) + '">' + md(t.label) + '</a>';
+    document.getElementById('segbar').innerHTML = steps.map(function (s) {
+      return '<a class="sg" href="#' + esc(s.id) + '" data-step="' + esc(s.id) + '" title="' + esc(plain(s.short)) + '" aria-label="' + esc(plain(s.short)) + '"></a>';
     }).join('');
 
-    var nItems = recs.length;
-    document.getElementById('meta').innerHTML =
-      (L.minutes ? '<span class="chip">⏱ ~' + esc(L.minutes) + ' min</span>' : '') +
-      '<span class="chip">✋ ' + nItems + ' questions</span>' +
-      (L.verified ? '<span class="chip">🧮 answers checked by code</span>' : '');
-
-    wireControls();
+    wireLessonControls();
     restoreMarks();
     updateAll();
-    store.set('last', JSON.stringify({ href: location.pathname, title: (L.code ? L.code + ' · ' : '') + L.title, course: L.course ? L.course.code : '' }));
+    window.addEventListener('hashchange', route);
+    document.addEventListener('keydown', function (e) {
+      if (e.altKey || e.metaKey || e.ctrlKey || /input|textarea|select/i.test(e.target.tagName)) return;
+      if (e.key === 'ArrowRight') { var n = neighbour(1); if (n) location.hash = n.id; }
+      if (e.key === 'ArrowLeft') { var p = neighbour(-1); if (p) location.hash = p.id; }
+    });
+    route();
   }
 
-  /* ---------- blocks ---------- */
-  function renderIdea(b, n) {
-    var a = el('article', { class: 'idea block', id: b.id });
-    var h = '<header class="idea-head"><span class="idea-num">Idea ' + n + '</span><h3>' + md(b.title) + '</h3></header>';
-    if (b.picture) h += '<div class="sec picture teach"><span class="lab">🧒 Picture it</span><p>' + md(b.picture) + '</p></div>';
-    if (b.official) h += '<div class="sec official teach"><span class="lab">🎓 Official version</span><p>' + md(b.official) + '</p></div>';
-    if (b.grid) h += '<div class="sec teach">' + (b.grid.title ? '<span class="lab">' + md(b.grid.title) + '</span>' : '') + gridTable(b.grid) + '</div>';
-    if (b.watch) {
-      h += '<div class="sec watch teach"><span class="lab">👀 Watch me do one</span>' +
-        '<p>' + md(b.watch.q) + '</p>' +
-        (b.watch.steps ? '<ol>' + b.watch.steps.map(function (s) { return '<li>' + md(s) + '</li>'; }).join('') + '</ol>' : '') +
-        (b.watch.answer ? '<p class="final">➜ ' + md(b.watch.answer) + '</p>' : '') + '</div>';
+  function neighbour(d) {
+    var s = stepById[cur];
+    if (!s) return null;
+    return steps[s.index + d] || null;
+  }
+
+  function route() {
+    var id = decodeURIComponent((location.hash || '').slice(1));
+    // old deep links to a block inside a step (e.g. #decoder) → open that step
+    if (id && !stepById[id] && id !== 'review') {
+      var node = document.getElementById(id) || document.getElementById('it-' + id);
+      var host = node && node.closest('.step');
+      id = host ? host.getAttribute('data-step') : 'start';
     }
-    a.innerHTML = h;
-    if (b.tries && b.tries.length) {
-      var sec = el('div', { class: 'sec' });
-      sec.appendChild(el('span', { class: 'lab teach' }, '✋ Your turn — think, try, then reveal'));
-      var list = el('div', { class: 'items' });
-      b.tries.forEach(function (it, i) { list.appendChild(renderItem(it, 'T' + (i + 1), a)); });
-      sec.appendChild(list);
-      a.appendChild(sec);
+    if (!id) id = 'start';
+    document.getElementById('menu').open = false;
+    if (id === 'review') return showReview();
+    document.body.classList.remove('misses');
+    cur = id;
+    steps.forEach(function (s) { s.el.hidden = s.id !== id; });
+    var s = stepById[id];
+    if (s.kind === 'finish') refreshFinish();
+    if (s.kind === 'start') refreshStart();
+    updateLessonbar();
+    window.scrollTo(0, 0);
+    if (s.kind !== 'start' && s.kind !== 'finish') {
+      store.set(L.id + ':step', id);
+      store.set('last', JSON.stringify({ href: location.pathname + '#' + id, title: (L.code ? L.code + ' · ' : '') + L.title, step: plain(s.short), course: L.course ? L.course.code : '' }));
     }
+  }
+
+  function showReview() {
+    cur = 'review';
+    document.body.classList.add('misses');
+    steps.forEach(function (s) { s.el.hidden = s.kind === 'start' || s.kind === 'finish'; });
+    var n = recs.filter(function (r) { return r.mark === 'miss'; }).length;
+    var banner = document.getElementById('reviewBanner');
+    if (!banner) {
+      banner = el('div', { class: 'review-banner', id: 'reviewBanner' });
+      document.getElementById('main').insertBefore(banner, document.getElementById('main').firstChild);
+    }
+    banner.innerHTML = n
+      ? '<h2>🔁 Review: your ' + n + ' ❌</h2><p>Only the questions you marked ❌ are shown. Try each one again before you reveal it. Mark ✅ when you get it right, and it leaves this list next time.</p><a class="navbtn next" href="#start">Done reviewing</a>'
+      : '<h2>🔁 Nothing to review</h2><p>You have no ❌ marks in this lesson. Nice.</p><a class="navbtn next" href="#start">Back to the start</a>';
+    banner.hidden = false;
+    updateLessonbar();
+    window.scrollTo(0, 0);
+  }
+
+  function updateLessonbar() {
+    var lb = document.getElementById('lbStep');
+    var rb = document.getElementById('reviewBanner');
+    if (rb && cur !== 'review') rb.hidden = true;
+    if (cur === 'review') {
+      lb.innerHTML = '<b>Review mode</b>';
+    } else {
+      var s = stepById[cur];
+      var label = s.kind === 'idea' ? 'Idea ' + s.n + ' of ' + s.ideas : (s.kind === 'practice' ? 'Practice' : '');
+      lb.innerHTML = '<span class="lb-count">' + (s.index + 1) + '/' + steps.length + '</span> ' +
+        (label ? '<span class="lb-kind">' + esc(label) + '</span> ' : '') + '<b>' + md(s.short) + '</b>';
+    }
+    document.querySelectorAll('#segbar .sg').forEach(function (a) {
+      var s = stepById[a.getAttribute('data-step')];
+      var st = stepStatus(s);
+      a.className = 'sg' + (s.id === cur ? ' cur' : '') + (st.total && st.marked === st.total ? ' done' : (st.marked ? ' part' : '')) +
+        (!st.total && visited(s) ? ' done' : '');
+    });
+  }
+
+  function visited(s) { return !!store.get(L.id + ':seen:' + s.id); }
+
+  function stepStatus(s) {
+    var t = s.recs.length, got = 0, miss = 0, open = 0;
+    s.recs.forEach(function (r) { if (r.mark === 'got') got++; if (r.mark === 'miss') miss++; if (r.open) open++; });
+    return { total: t, got: got, miss: miss, marked: got + miss, open: open };
+  }
+
+  /* ---------- step rendering ---------- */
+  function stepHead(s, eyebrow, title, sub) {
+    return '<header class="step-head"><div class="eyebrow">' + md(eyebrow) + '</div><h2>' + md(title) + '</h2>' +
+      (sub ? '<p class="step-sub">' + md(sub) + '</p>' : '') + '</header>';
+  }
+
+  function renderStep(s) {
+    var host = s.el;
+    if (s.kind === 'start') return renderStart(s);
+    if (s.kind === 'finish') return renderFinish(s);
+
+    if (s.kind === 'idea') {
+      var b = s.blocks[0];
+      host.innerHTML = stepHead(s, 'Idea ' + s.n + ' of ' + s.ideas, b.title);
+      host.appendChild(renderLearn(b));
+      if (b.tries && b.tries.length) host.appendChild(renderTurn(s, b.tries, '✋ Your turn', 'Think first, write your answer, then reveal.'));
+      s.blocks.slice(1).forEach(function (x) { host.appendChild(renderExtra(s, x)); });
+    } else if (s.kind === 'practice') {
+      var p = s.blocks[0];
+      host.innerHTML = stepHead(s, 'Practice' + (p.level === 'retest' ? ' · later' : ''), s.title, p.sub);
+      host.appendChild(renderTurn(s, p.items || [], null, null));
+      s.blocks.slice(1).forEach(function (x) { host.appendChild(renderExtra(s, x)); });
+    } else {
+      var t = s.blocks[0];
+      host.innerHTML = stepHead(s, 'Drill', t.title, t.sub);
+      s.blocks.forEach(function (x, i) { host.appendChild(i === 0 && x.type === 'table' ? renderRevealTable(s, x, true) : renderExtra(s, x)); });
+    }
+    host.appendChild(renderStepFoot(s));
+  }
+
+  function renderExtra(s, b) {
+    switch (b.type) {
+      case 'table': return renderRevealTable(s, b);
+      case 'grid': return renderGridBox(b);
+      case 'steps': return renderSteps(b);
+      case 'callout': return renderCallout(b);
+      case 'practice': return renderTurn(s, b.items || [], b.title || (LEVELS[b.level] || {}).t, b.sub);
+      default: return el('div', { class: 'callout trap' }, 'Unknown block type: ' + esc(b.type));
+    }
+  }
+
+  function renderLearn(b) {
+    var wrap = el('div', { class: 'learn teach' });
+    var h = '';
+    if (b.picture) h += '<div class="card-picture"><span class="lab">🧒 Picture it</span><p>' + md(b.picture) + '</p></div>';
+    if (b.official) h += '<div class="card-official"><span class="lab">🎓 In the lecture\'s words</span><p>' + md(b.official) + '</p></div>';
+    if (b.grid) h += '<div class="card-grid">' + (b.grid.title ? '<span class="lab">📊 ' + md(b.grid.title) + '</span>' : '') + gridTable(b.grid) + '</div>';
+    wrap.innerHTML = h;
+    if (b.watch) wrap.appendChild(renderWatch(b.watch));
     var tail = '';
     if (b.trap) {
-      tail += '<div class="sec teach"><span class="lab">🪤 The trap</span><div class="trap">' +
+      tail += '<div class="card-trap"><span class="lab">🪤 The trap</span><div class="trap">' +
         '<div class="tempt"><span class="t-lab">Tempting ❌</span>' + md(b.trap.tempting) + '</div>' +
         '<div class="right"><span class="t-lab">Correct ✅</span>' + md(b.trap.correct) + '</div></div>' +
-        (b.trap.test ? '<p class="trap-test">🔎 Catch it: ' + md(b.trap.test) + '</p>' : '') + '</div>';
+        (b.trap.test ? '<p class="trap-test">🔎 <b>Catch it:</b> ' + md(b.trap.test) + '</p>' : '') + '</div>';
     }
-    if (b.magic) tail += '<div class="sec magicline teach"><p>' + md(b.magic) + '</p></div>';
-    if (tail) a.insertAdjacentHTML('beforeend', tail);
-    return a;
+    if (b.magic) tail += '<div class="remember"><span class="lab">🔑 Remember</span><p>' + md(b.magic) + '</p></div>';
+    if (tail) wrap.insertAdjacentHTML('beforeend', tail);
+    return wrap;
   }
 
-  function gridTable(g) {
-    var emph = g.emph || [];
-    var t = '<div class="scroll"><table class="grid"><thead><tr>' +
-      g.cols.map(function (c) { return '<th scope="col">' + md(c) + '</th>'; }).join('') + '</tr></thead><tbody>';
-    g.rows.forEach(function (r, ri) {
-      var hl = emph.indexOf(ri) >= 0 ? ' class="hl"' : '';
-      t += '<tr>' + r.map(function (c) { return '<td' + hl + '>' + md(c) + '</td>'; }).join('') + '</tr>';
+  function renderWatch(w) {
+    var d = el('div', { class: 'card-watch' });
+    var n = (w.steps || []).length;
+    d.innerHTML = '<span class="lab">👀 Watch me do one</span><p class="wq">' + md(w.q) + '</p>' +
+      (n ? '<ol class="wsteps">' + w.steps.map(function (x) { return '<li hidden>' + md(x) + '</li>'; }).join('') + '</ol>' : '') +
+      (w.answer ? '<p class="final" hidden>➜ ' + md(w.answer) + '</p>' : '') +
+      '<div class="row-actions"><button type="button" class="btn solid" data-act="next">▶ Walk me through it</button>' +
+      '<button type="button" class="btn" data-act="all">Show the whole example</button></div>';
+    var lis = d.querySelectorAll('.wsteps li'), fin = d.querySelector('.final');
+    var nextB = d.querySelector('[data-act="next"]'), allB = d.querySelector('[data-act="all"]');
+    function shown() { var k = 0; lis.forEach(function (li) { if (!li.hidden) k++; }); return k; }
+    function refresh() {
+      var k = shown();
+      if (k >= n && (!fin || !fin.hidden)) { nextB.hidden = true; allB.hidden = true; return; }
+      nextB.textContent = k === 0 ? '▶ Walk me through it' : (k < n ? '▶ Next step (' + (k + 1) + ' of ' + n + ')' : '▶ Show the answer');
+    }
+    nextB.addEventListener('click', function () {
+      var k = shown();
+      if (k < n) lis[k].hidden = false; else if (fin) fin.hidden = false;
+      refresh();
     });
-    return t + '</tbody></table></div>';
-  }
-
-  function renderGridBox(b) {
-    var d = el('div', { class: 'box teach', id: b.id });
-    d.innerHTML = (b.title ? '<h2>' + md(b.title) + '</h2>' : '') + (b.sub ? '<p>' + md(b.sub) + '</p>' : '') + gridTable(b);
+    allB.addEventListener('click', function () { lis.forEach(function (li) { li.hidden = false; }); if (fin) fin.hidden = false; refresh(); });
+    if (!n && fin) { nextB.textContent = '▶ Show the answer'; allB.hidden = true; }
     return d;
   }
 
-  function renderPractice(b) {
-    var s = el('section', { class: 'level block ' + (b.level || 'green'), id: b.id });
-    s.innerHTML = '<h3>' + md(b.title || LEVELS[b.level] || 'Practice') + '</h3>' + (b.sub ? '<p class="sub">' + md(b.sub) + '</p>' : '');
+  function renderTurn(s, items, title, sub) {
+    var box = el('div', { class: 'turn block' });
+    box.innerHTML = '<div class="turn-head">' +
+      (title ? '<div><h3>' + md(title) + ' <span class="cnt">' + items.length + '</span></h3>' + (sub ? '<p>' + md(sub) + '</p>' : '') + '</div>' : '<div></div>') +
+      '<div class="mini-seg"><button type="button" data-act="show">Show all</button><button type="button" data-act="hide">Hide all</button></div></div>';
     var list = el('div', { class: 'items' });
-    var prefix = { green: 'G', yellow: 'Y', red: 'R', boss: 'B', retest: 'RT' }[b.level] || 'P';
-    (b.items || []).forEach(function (it, i) { list.appendChild(renderItem(it, prefix + (i + 1), s)); });
-    s.appendChild(list);
-    return s;
+    items.forEach(function (it, i) { list.appendChild(renderItem(it, i + 1, s, box)); });
+    box.appendChild(list);
+    box.querySelector('[data-act="show"]').addEventListener('click', function () { s.recs.forEach(function (r) { setOpen(r, true, true); }); updateAll(); });
+    box.querySelector('[data-act="hide"]').addEventListener('click', function () { s.recs.forEach(function (r) { setOpen(r, false, true); }); updateAll(); });
+    return box;
   }
 
-  function renderItem(it, label, blockEl) {
+  function lettersHTML(letters) {
+    return '<div class="letters">' + String(letters).split(/\s+·\s+/).map(function (x) {
+      return '<span class="lchip">' + md(x) + '</span>';
+    }).join('') + '</div>';
+  }
+
+  function renderItem(it, num, s, blockEl) {
     var d = el('div', { class: 'item', id: 'it-' + it.id, 'data-id': it.id });
     var labels = it.labels || '123456789';
-    var h = '<span class="badge" aria-hidden="true"></span>';
-    if (it.letters) h += '<div class="letters">🔤 ' + md(it.letters) + '</div>';
-    h += '<p class="q"><span class="num">' + esc(label) + '</span>' + md(it.q) + '</p>';
+    var h = '<div class="item-top"><span class="num">' + num + '</span>' + (it.letters ? lettersHTML(it.letters) : '') +
+      '<span class="badge" aria-hidden="true"></span></div>';
+    h += '<p class="q">' + md(it.q) + '</p>';
     if (it.hint) h += '<div class="hint">' + md(it.hint) + '</div>';
     if (it.options) {
       h += '<div class="opts" role="group" aria-label="Options' + (it.multi ? ' (pick all that apply)' : ' (pick one)') + '">' +
         it.options.map(function (o, i) {
           return '<button type="button" class="opt' + (it.mono ? ' mono' : '') + '" data-i="' + i + '" aria-pressed="false">' +
-            '<span class="ol">(' + esc(labels.charAt(i)) + ')</span><span class="ot">' + md(o) + '</span></button>';
+            '<span class="ol">' + esc(labels.charAt(i)) + '</span><span class="ot">' + md(o) + '</span></button>';
         }).join('') + '</div>';
-      if (it.multi) h += '<div class="hint">Pick <strong>all</strong> that apply.</div>';
+      if (it.multi) h += '<div class="pickall">Pick <strong>every</strong> option that fits.</div>';
     }
     h += '<div class="row-actions">' +
-      (it.options ? '<button type="button" class="btn solid chk">Check my answer</button>' : '') +
+      (it.options ? '<button type="button" class="btn solid chk">Check</button>' : '') +
       '<button type="button" class="btn rv" aria-expanded="false">Reveal answer</button></div>';
     h += '<div class="ans" hidden><div class="a">' + md(it.a) + '</div>' +
-      (it.steps ? '<ol>' + it.steps.map(function (s) { return '<li>' + md(s) + '</li>'; }).join('') + '</ol>' : '') +
+      (it.steps ? '<ol>' + it.steps.map(function (x) { return '<li>' + md(x) + '</li>'; }).join('') + '</ol>' : '') +
       (it.why ? '<p class="why">' + md(it.why) + '</p>' : '') +
       (it.wrong ? '<div class="wrong">' + md(it.wrong) + '</div>' : '') +
-      '<div class="markrow">Did you get it? <button type="button" class="mk" data-m="got" aria-pressed="false">✅ Got it</button>' +
+      '<div class="markrow"><span>How did you do?</span><button type="button" class="mk" data-m="got" aria-pressed="false">✅ Got it</button>' +
       '<button type="button" class="mk" data-m="miss" aria-pressed="false">❌ Missed it</button></div></div>';
     d.innerHTML = h;
 
     var rec = {
-      id: it.id, el: d, block: blockEl, row: null, cell: false,
+      id: it.id, el: d, step: s, block: blockEl, row: null, cell: false,
       ans: d.querySelector('.ans'), btn: d.querySelector('.rv'),
       badge: d.querySelector('.badge'), marks: d.querySelectorAll('.mk'),
       opts: it.options ? Array.prototype.slice.call(d.querySelectorAll('.opt')) : null,
@@ -293,28 +402,33 @@
     return d;
   }
 
-  function renderRevealTable(b) {
-    var s = el('section', { class: 'box block', id: b.id });
-    var head = (b.title ? '<h2>' + md(b.title) + '</h2>' : '') + (b.sub ? '<p>' + md(b.sub) + '</p>' : '');
-    var t = '<div class="scroll"><table class="rtable"><thead><tr>' +
+  function renderRevealTable(s, b, isMain) {
+    var box = el('div', { class: 'turn block' + (isMain ? '' : ' table-turn'), id: b.id });
+    var n = 0;
+    b.rows.forEach(function (r) { r.cells.forEach(function (c) { if (c && typeof c === 'object') n++; }); });
+    box.innerHTML = '<div class="turn-head"><div>' + (isMain ? '' : '<h3>' + md(b.title) + ' <span class="cnt">' + n + '</span></h3>' + (b.sub ? '<p>' + md(b.sub) + '</p>' : '')) +
+      '</div><div class="mini-seg"><button type="button" data-act="show">Show all</button><button type="button" data-act="hide">Hide all</button></div></div>' +
+      '<div class="scroll"><table class="rtable"><thead><tr>' +
       b.columns.map(function (c) { return '<th scope="col">' + md(c.label) + '</th>'; }).join('') + '</tr></thead><tbody></tbody></table></div>';
-    s.innerHTML = head + t;
-    var tbody = s.querySelector('tbody');
+    var tbody = box.querySelector('tbody');
+    var mine = [];
     b.rows.forEach(function (r) {
       var tr = el('tr', { class: 'rrow' });
       r.cells.forEach(function (c, ci) {
         var col = b.columns[ci] || {};
-        var td = el('td', { 'data-hideable': col.hideable ? 'true' : null, 'data-label': col.label.replace(/[`*]/g, '') });
-        if (c && typeof c === 'object') td.appendChild(renderCell(c, s, tr));
+        var td = el('td', { 'data-hideable': col.hideable ? 'true' : null, 'data-label': plain(col.label) });
+        if (c && typeof c === 'object') { var cell = renderCell(c, s, box, tr); td.appendChild(cell.el); mine.push(cell); }
         else td.innerHTML = '<div>' + md(c) + '</div>';
         tr.appendChild(td);
       });
       tbody.appendChild(tr);
     });
-    return s;
+    box.querySelector('[data-act="show"]').addEventListener('click', function () { mine.forEach(function (r) { setOpen(r, true, true); }); updateAll(); });
+    box.querySelector('[data-act="hide"]').addEventListener('click', function () { mine.forEach(function (r) { setOpen(r, false, true); }); updateAll(); });
+    return box;
   }
 
-  function renderCell(c, blockEl, tr) {
+  function renderCell(c, s, blockEl, tr) {
     var d = el('div', { class: 'cell cell-item', id: 'it-' + c.id, 'data-id': c.id });
     d.innerHTML = '<span class="badge" aria-hidden="true"></span><p class="s">' + md(c.s) + '</p>' +
       '<button type="button" class="btn small rv" aria-expanded="false">Reveal</button>' +
@@ -324,30 +438,34 @@
       '<div class="mini"><button type="button" class="mk" data-m="got" aria-pressed="false" title="Got it" aria-label="Got it">✅</button>' +
       '<button type="button" class="mk" data-m="miss" aria-pressed="false" title="Missed it" aria-label="Missed it">❌</button></div></div>';
     var rec = {
-      id: c.id, el: d, block: blockEl, row: tr, cell: true,
+      id: c.id, el: d, step: s, block: blockEl, row: tr, cell: true,
       ans: d.querySelector('.cans'), btn: d.querySelector('.rv'),
       badge: d.querySelector('.badge'), marks: d.querySelectorAll('.mk'),
       opts: null, correct: [], multi: false, open: false, mark: null
     };
     register(rec);
     rec.btn.addEventListener('click', function () { setOpen(rec, !rec.open); });
-    return d;
+    return rec;
+  }
+
+  function gridTable(g) {
+    var emph = g.emph || [];
+    var t = '<div class="scroll"><table class="grid"><thead><tr>' +
+      g.cols.map(function (c) { return '<th scope="col">' + md(c) + '</th>'; }).join('') + '</tr></thead><tbody>';
+    g.rows.forEach(function (r, ri) {
+      var hl = emph.indexOf(ri) >= 0 ? ' class="hl"' : '';
+      t += '<tr>' + r.map(function (c) { return '<td' + hl + '>' + md(c) + '</td>'; }).join('') + '</tr>';
+    });
+    return t + '</tbody></table></div>';
+  }
+
+  function renderGridBox(b) {
+    return el('div', { class: 'card-grid teach', id: b.id },
+      (b.title ? '<span class="lab">📊 ' + md(b.title) + '</span>' : '') + (b.sub ? '<p>' + md(b.sub) + '</p>' : '') + gridTable(b));
   }
 
   function renderSteps(b) {
-    var s = el('section', { class: 'box steps block teach', id: b.id });
-    s.innerHTML = '<h2>' + md(b.title) + '</h2>' + (b.sub ? '<p>' + md(b.sub) + '</p>' : '') +
-      '<ol>' + b.steps.map(function (x) { return '<li hidden>' + md(x) + '</li>'; }).join('') + '</ol>' +
-      '<div class="row-actions"><button type="button" class="btn" data-act="next">Show next step</button>' +
-      '<button type="button" class="btn" data-act="all">Show all steps</button></div>';
-    var lis = s.querySelectorAll('li');
-    s.querySelector('[data-act="next"]').addEventListener('click', function () {
-      for (var i = 0; i < lis.length; i++) if (lis[i].hidden) { lis[i].hidden = false; break; }
-    });
-    s.querySelector('[data-act="all"]').addEventListener('click', function () {
-      for (var i = 0; i < lis.length; i++) lis[i].hidden = false;
-    });
-    return s;
+    return renderWatch({ q: b.title + (b.sub ? '\n' + b.sub : ''), steps: b.steps });
   }
 
   function renderCallout(b) {
@@ -355,27 +473,116 @@
       (b.title ? '<h3>' + md(b.title) + '</h3>' : '') + '<p>' + md(b.body) + '</p>');
   }
 
-  function renderRecap(b) {
-    return el('div', { class: 'box recap teach', id: b.id || 'recap' },
-      '<h2>' + md(b.title || '🧠 60-second recap') + '</h2><ul>' +
-      b.lines.map(function (x) { return '<li>' + md(x) + '</li>'; }).join('') + '</ul>');
+  function renderStepFoot(s) {
+    var f = el('footer', { class: 'stepfoot' });
+    var prev = steps[s.index - 1], next = steps[s.index + 1];
+    f.innerHTML = (s.recs.length ? '<p class="stepscore" data-score="' + esc(s.id) + '"></p>' : '') +
+      '<div class="navrow">' +
+      (prev ? '<a class="navbtn prev" href="#' + esc(prev.id) + '"><small>← Back</small>' + md(prev.short) + '</a>' : '<span></span>') +
+      (next ? '<a class="navbtn next" href="#' + esc(next.id) + '"><small>Next →</small>' + md(next.short) + '</a>' : '<span></span>') +
+      '</div>';
+    return f;
   }
 
-  function renderLinks(b) {
-    return el('div', { class: 'box links teach', id: b.id || 'links' },
-      '<h2>' + md(b.title || '📚 Want more practice?') + '</h2>' + (b.sub ? '<p>' + md(b.sub) + '</p>' : '') + '<ul>' +
-      b.items.map(function (x) {
-        return '<li><a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + md(x.title) + '</a>' +
-          '<span class="src">' + md(x.source || '') + (x.checked ? ' · ✅ link checked ' + esc(x.checked) : '') + '</span>' +
-          (x.note ? '<span>' + md(x.note) + '</span>' : '') + '</li>';
-      }).join('') + '</ul>');
+  /* ---------- start + finish ---------- */
+  function renderStart(s) {
+    var h = '<div class="start-hero">' +
+      (L.eyebrow ? '<div class="eyebrow">' + md(L.eyebrow) + '</div>' : '') +
+      '<h1>' + (L.emoji ? esc(L.emoji) + ' ' : '') + md(L.title) + '</h1>' +
+      (L.goal ? '<p class="goal">' + md(L.goal) + '</p>' : '') +
+      '<div class="meta">' + (L.minutes ? '<span class="chip">⏱ ~' + esc(L.minutes) + ' min</span>' : '') +
+      '<span class="chip" id="qCount">✋ questions</span>' + (L.verified ? '<span class="chip">🧮 answers checked by code</span>' : '') + '</div>' +
+      '<div class="cta" id="startCta"></div></div>';
+
+    // What you'll learn = the steps themselves, in order (book style: the plan first)
+    var groups = [];
+    steps.forEach(function (x) {
+      if (x.kind === 'start' || x.kind === 'finish') return;
+      var g = x.ideas === 0 ? 'Rounds' : (x.kind === 'practice' ? 'Then practise' : (x.kind === 'idea' ? 'First, learn' : 'Also'));
+      if (!groups.length || groups[groups.length - 1].g !== g) groups.push({ g: g, items: [] });
+      groups[groups.length - 1].items.push(x);
+    });
+    h += '<div class="plan"><h2>🗺️ In this lesson, in this order</h2>' + groups.map(function (g) {
+      return '<div class="plan-group"><div class="plan-label">' + esc(g.g) + '</div><ol class="path">' + g.items.map(function (x) {
+        var num = x.ideas === 0 ? x.index : (x.kind === 'idea' ? x.n : (x.kind === 'practice' && LEVELS[x.level] ? LEVELS[x.level].t.split(' ')[0] : '•'));
+        return '<li><a class="prow" href="#' + esc(x.id) + '"><span class="pnum">' + esc(num) + '</span>' +
+          '<span class="ptxt"><b>' + md(x.kind === 'practice' ? x.short : x.title) + '</b>' + (x.summary ? '<small>' + md(x.summary) + '</small>' : '') + '</span>' +
+          '<span class="pst" data-pst="' + esc(x.id) + '"></span></a></li>';
+      }).join('') + '</ol></div>';
+    }).join('') + '</div>';
+
+    if (L.magic && L.magic.length) {
+      h += '<div class="summary-card"><h2>🔑 The whole lesson in ' + L.magic.length + ' lines</h2><ul>' +
+        L.magic.map(function (x) { return '<li>' + md(x) + '</li>'; }).join('') + '</ul>' +
+        '<p class="muted">Read these now, then again at the end. By then every line should make sense.</p></div>';
+    }
+    h += '<p class="howto">🤔 Think → ✍️ Try → 👀 Reveal → ✅/❌ Mark honestly → 🔁 In 2 days, open ⚙️ Options → <b>Review my ❌</b>.</p>';
+    s.el.innerHTML = h;
+  }
+
+  function refreshStart() {
+    document.getElementById('qCount').textContent = '✋ ' + recs.length + ' questions';
+    var resume = store.get(L.id + ':step');
+    var first = steps[1];
+    var rs = resume && stepById[resume] && resume !== first.id ? stepById[resume] : null;
+    document.getElementById('startCta').innerHTML = rs
+      ? '<a class="navbtn next big" href="#' + esc(rs.id) + '"><small>Continue where you left off →</small>' + md(rs.short) + '</a>' +
+        '<a class="linkish" href="#' + esc(first.id) + '">or start from the beginning</a>'
+      : '<a class="navbtn next big" href="#' + esc(first.id) + '"><small>Start →</small>' + md(first.kind === 'idea' ? 'Idea 1 · ' + plain(first.short) : first.short) + '</a>';
+    document.querySelectorAll('[data-pst]').forEach(function (e) {
+      var st = stepStatus(stepById[e.getAttribute('data-pst')]);
+      e.innerHTML = !st.total ? '' : (st.marked === 0 ? '<span class="st-none">' + st.total + ' q</span>'
+        : '<span class="st-got">✅ ' + st.got + '</span>' + (st.miss ? '<span class="st-miss">❌ ' + st.miss + '</span>' : '') + '<span class="st-of">/ ' + st.total + '</span>');
+    });
+  }
+
+  function renderFinish(s) {
+    var h = '<header class="step-head"><div class="eyebrow">Finish line</div><h2>🏁 How did it go?</h2></header>' +
+      '<div class="scorecard" id="scorecard"></div>';
+    s.el.innerHTML = h;
+    s.blocks.forEach(function (b) {
+      if (b.type === 'recap') {
+        s.el.appendChild(el('div', { class: 'summary-card recap' }, '<h2>' + md(b.title || '🧠 60-second recap') + '</h2><ul>' +
+          b.lines.map(function (x) { return '<li>' + md(x) + '</li>'; }).join('') + '</ul>'));
+      } else if (b.type === 'links') {
+        s.el.appendChild(el('div', { class: 'links-card' }, '<h2>' + md(b.title || '📚 Want more practice?') + '</h2>' +
+          (b.sub ? '<p class="muted">' + md(b.sub) + '</p>' : '') + '<ul>' +
+          b.items.map(function (x) {
+            return '<li><a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + md(x.title) + ' ↗</a>' +
+              '<span class="src">' + md(x.source || '') + (x.checked ? ' · ✅ link checked ' + esc(x.checked) : '') + '</span>' +
+              (x.note ? '<span>' + md(x.note) + '</span>' : '') + '</li>';
+          }).join('') + '</ul>'));
+      }
+    });
+    if (L.sources) s.el.appendChild(el('p', { class: 'sources' }, '📎 ' + md(L.sources)));
+    var f = el('footer', { class: 'stepfoot' });
+    var prev = steps[s.index - 1];
+    f.innerHTML = '<div class="navrow">' +
+      (prev ? '<a class="navbtn prev" href="#' + esc(prev.id) + '"><small>← Back</small>' + md(prev.short) + '</a>' : '<span></span>') +
+      (L.next ? '<a class="navbtn next" href="' + esc(L.next.href) + '"><small>Next lesson →</small>' + md(L.next.label) + '</a>' : '<span></span>') + '</div>';
+    s.el.appendChild(f);
+  }
+
+  function refreshFinish() {
+    var rows = '', tg = 0, tm = 0, tt = 0;
+    steps.forEach(function (x) {
+      if (!x.recs.length) return;
+      var st = stepStatus(x);
+      tg += st.got; tm += st.miss; tt += st.total;
+      rows += '<tr><td><a href="#' + esc(x.id) + '">' + md(x.short) + '</a></td><td>' + st.got + '</td><td>' + st.miss + '</td><td>' + (st.total - st.marked) + '</td></tr>';
+    });
+    var pct = tt ? Math.round(100 * tg / tt) : 0;
+    document.getElementById('scorecard').innerHTML =
+      '<div class="bigscore"><div class="ring" style="--p:' + pct + '"><span>' + pct + '%</span></div><div><b>✅ ' + tg + ' of ' + tt + '</b> marked right' +
+      (tm ? '<br>❌ ' + tm + ' to review' : '') + '<br><span class="muted">' + (tt - tg - tm) + ' not marked yet</span></div></div>' +
+      (tm ? '<a class="navbtn next" href="#review"><small>Worth doing in 2 days →</small>🔁 Review my ' + tm + ' ❌</a>' : '') +
+      '<div class="scroll"><table class="grid"><thead><tr><th>Step</th><th>✅</th><th>❌</th><th>Not marked</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
   }
 
   /* ---------- answer state ---------- */
   function register(rec) {
-    if (byId[rec.id]) console.warn('Duplicate item id', rec.id);
     recs.push(rec);
-    byId[rec.id] = rec;
+    rec.step.recs.push(rec);
     rec.marks.forEach(function (m) {
       m.addEventListener('click', function () {
         var v = m.getAttribute('data-m');
@@ -384,30 +591,27 @@
     });
   }
 
+  function anySelected(rec) { return rec.opts.some(function (o) { return o.classList.contains('sel'); }); }
   function paintOptions(rec) {
+    var any = anySelected(rec);
     rec.opts.forEach(function (o, i) {
-      var sel = o.classList.contains('sel');
-      var ok = rec.correct.indexOf(i) >= 0;
+      var sel = o.classList.contains('sel'), ok = rec.correct.indexOf(i) >= 0;
       o.classList.remove('ok', 'no', 'missed');
       if (ok && sel) o.classList.add('ok');
       else if (!ok && sel) o.classList.add('no');
-      else if (ok && !sel) o.classList.add(anySelected(rec) ? 'missed' : 'ok');
+      else if (ok) o.classList.add(any ? 'missed' : 'ok');
     });
   }
-  function anySelected(rec) { return rec.opts.some(function (o) { return o.classList.contains('sel'); }); }
   function clearOptions(rec) { rec.opts.forEach(function (o) { o.classList.remove('ok', 'no', 'missed'); }); }
 
   function checkOptions(rec) {
     if (!anySelected(rec)) {
-      var b = rec.el.querySelector('.chk');
-      var old = b.textContent;
+      var b = rec.el.querySelector('.chk'), old = b.textContent;
       b.textContent = 'Pick an option first';
       setTimeout(function () { b.textContent = old; }, 1400);
       return;
     }
-    var right = rec.opts.every(function (o, i) {
-      return o.classList.contains('sel') === (rec.correct.indexOf(i) >= 0);
-    });
+    var right = rec.opts.every(function (o, i) { return o.classList.contains('sel') === (rec.correct.indexOf(i) >= 0); });
     setOpen(rec, true);
     setMark(rec, right ? 'got' : 'miss');
   }
@@ -441,37 +645,30 @@
   }
 
   function updateAll() {
-    var total = recs.length, open = 0, got = 0, miss = 0;
-    recs.forEach(function (r) { if (r.open) open++; if (r.mark === 'got') got++; if (r.mark === 'miss') miss++; });
-    var c = document.getElementById('count');
-    if (c) c.textContent = '👀 ' + open + '/' + total + ' open · ✅ ' + got + ' · ❌ ' + miss;
-    var sa = document.getElementById('showAll'), ha = document.getElementById('hideAll');
-    if (sa) sa.setAttribute('aria-pressed', String(total > 0 && open === total));
-    if (ha) ha.setAttribute('aria-pressed', String(open === 0));
-
-    // which blocks / rows / sections contain a ❌
-    document.querySelectorAll('.block, tr.rrow, section.part').forEach(function (b) {
-      b.classList.toggle('has-miss', !!b.querySelector('.is-miss'));
+    var got = 0, miss = 0;
+    recs.forEach(function (r) { if (r.mark === 'got') got++; if (r.mark === 'miss') miss++; });
+    steps.forEach(function (s) {
+      var sc = s.el.querySelector('[data-score]');
+      if (sc) {
+        var st = stepStatus(s);
+        sc.innerHTML = st.marked
+          ? 'This step: <b>✅ ' + st.got + '</b>' + (st.miss ? ' · <b>❌ ' + st.miss + '</b>' : '') + ' · ' + (st.total - st.marked) + ' not marked' +
+            (st.marked === st.total ? (st.miss ? ' · done, come back for the ❌' : ' · 🎉 all ✅') : '')
+          : 'This step: ' + st.total + ' questions. Mark each one ✅ or ❌ after you reveal it.';
+      }
+      s.el.classList.toggle('has-miss', !!s.el.querySelector('.is-miss'));
     });
-    var mo = document.getElementById('missOnly'), mw = document.getElementById('missWrap');
-    if (mo) {
-      mo.disabled = miss === 0;
-      mw.classList.toggle('disabled', miss === 0);
-      if (miss === 0 && mo.checked) { mo.checked = false; document.body.classList.remove('misses'); }
+    document.querySelectorAll('.block, tr.rrow').forEach(function (b) { b.classList.toggle('has-miss', !!b.querySelector('.is-miss')); });
+    var mn = document.getElementById('missN');
+    if (mn) mn.textContent = miss ? '(' + miss + ')' : '';
+    if (cur && cur !== 'review') {
+      if (stepById[cur] && !stepById[cur].recs.length) store.set(L.id + ':seen:' + cur, '1');
+      updateLessonbar();
     }
-    store.set(L.id + ':meta', JSON.stringify({ total: total, got: got, miss: miss, t: Date.now() }));
+    store.set(L.id + ':meta', JSON.stringify({ total: recs.length, got: got, miss: miss, t: Date.now() }));
   }
 
-  function wireControls() {
-    document.getElementById('showAll').addEventListener('click', function () {
-      recs.forEach(function (r) { setOpen(r, true, true); });
-      document.querySelectorAll('.steps li').forEach(function (li) { li.hidden = false; });
-      updateAll();
-    });
-    document.getElementById('hideAll').addEventListener('click', function () {
-      recs.forEach(function (r) { setOpen(r, false, true); });
-      updateAll();
-    });
+  function wireLessonControls() {
     var hard = document.getElementById('hard');
     hard.checked = store.get('hard') === '1';
     document.body.classList.toggle('hard', hard.checked);
@@ -479,73 +676,69 @@
       document.body.classList.toggle('hard', hard.checked);
       store.set('hard', hard.checked ? '1' : '0');
     });
-    var mo = document.getElementById('missOnly');
-    mo.addEventListener('change', function () {
-      document.body.classList.toggle('misses', mo.checked);
-      if (mo.checked) window.scrollTo({ top: document.getElementById('main').offsetTop - 60 });
-    });
+    document.getElementById('reviewBtn').addEventListener('click', function () { location.hash = 'review'; });
     var reset = document.getElementById('reset'), armed = null;
     reset.addEventListener('click', function () {
       if (!armed) {
-        reset.textContent = 'Tap again to clear all ✅/❌';
-        armed = setTimeout(function () { reset.textContent = 'Reset my marks'; armed = null; }, 3000);
+        reset.textContent = 'Tap again to clear every ✅/❌';
+        armed = setTimeout(function () { reset.textContent = 'Reset my ✅/❌ marks'; armed = null; }, 3000);
         return;
       }
       clearTimeout(armed); armed = null;
-      reset.textContent = 'Reset my marks';
+      reset.textContent = 'Reset my ✅/❌ marks';
       recs.forEach(function (r) { store.del(L.id + ':' + r.id); setMark(r, null, true); });
       updateAll();
+    });
+    document.addEventListener('click', function (e) {
+      var m = document.getElementById('menu');
+      if (m.open && !m.contains(e.target)) m.open = false;
     });
   }
 
   /* ======================================================================
    * HOME + COURSE PAGES
    * ==================================================================== */
-  function unitProgress(u) {
-    var raw = store.get(u.id + ':meta');
-    if (!raw) return null;
-    try { return JSON.parse(raw); } catch (e) { return null; }
+  function unitProgress(u) { return getJSONStore(u.id + ':meta'); }
+
+  function progressBits(p) {
+    if (!p || !p.total) return { st: '<span class="st-none">Not started</span>', pct: 0 };
+    var pct = Math.round(100 * p.got / p.total);
+    return { st: '<span class="st-got">✅ ' + p.got + '</span>' + (p.miss ? '<span class="st-miss">❌ ' + p.miss + '</span>' : '') + '<span class="st-of">/ ' + p.total + '</span>', pct: pct };
   }
 
-  function progressHTML(p) {
-    if (!p || !p.total) return { st: 'Not started', bar: '' };
-    var pct = Math.round(100 * p.got / p.total);
-    return {
-      st: '✅ ' + p.got + '/' + p.total + (p.miss ? ' · ❌ ' + p.miss : ''),
-      bar: '<div class="bar" aria-hidden="true"><i style="width:' + pct + '%"></i></div>'
-    };
+  function continueCard(courseCode) {
+    var last = getJSONStore('last');
+    if (!last || !last.href || (courseCode && last.course !== courseCode)) return '';
+    return '<a class="continue" href="' + esc(last.href) + '"><span class="eyebrow">▶ Continue where you left off</span>' +
+      '<b>' + md(last.title) + '</b>' + (last.step ? '<small>' + md(last.step) + '</small>' : '') + '</a>';
   }
 
   function renderHome(cat) {
     document.title = 'UNSW Brain Gym';
     var h = topbar();
-    h += '<section class="wrap home-hero"><div class="eyebrow">Think · Try · Reveal</div>' +
-      '<h1>🧠 UNSW <span>Brain Gym</span></h1>' +
-      '<p class="goal">' + md(cat.tagline || '') + '</p></section>';
-    h += '<div class="wrap stack">';
-    var last = null;
-    try { last = JSON.parse(store.get('last') || 'null'); } catch (e) { last = null; }
-    if (last && last.href) {
-      h += '<a class="card" href="' + esc(last.href) + '"><span class="eyebrow">Continue where you left off</span><h3>' + md(last.title) + '</h3></a>';
-    }
-    h += '<div class="how">' +
-      '<div><b>🤔 Think</b>Read the idea and its one worked example.</div>' +
-      '<div><b>✍️ Try</b>Answer in your head or on paper first.</div>' +
-      '<div><b>👀 Reveal</b>Open one answer at a time.</div>' +
-      '<div><b>✅ Mark</b>Tap ✅ or ❌, honestly.</div>' +
-      '<div><b>🔁 Redo</b>In 2 days, turn on “Only my ❌”.</div></div>';
-    h += '<div class="cards">';
+    h += '<section class="wrap narrow home-hero"><div class="eyebrow">Think · Try · Reveal</div>' +
+      '<h1>🧠 UNSW <span>Brain Gym</span></h1><p class="goal">' + md(cat.tagline || '') + '</p></section>';
+    h += '<div class="wrap narrow stack">' + continueCard();
+    h += '<section><h2 class="sec-title">📚 Courses</h2><div class="cards">';
     cat.courses.forEach(function (c) {
       var ready = c.units.filter(function (u) { return u.status === 'ready'; });
       var tot = 0, got = 0;
       ready.forEach(function (u) { var p = unitProgress(u); if (p) { tot += p.total; got += p.got; } });
       var pct = tot ? Math.round(100 * got / tot) : 0;
-      h += '<a class="card" href="' + esc(c.href) + '"><span class="eyebrow">' + esc(c.term || '') + '</span>' +
-        '<h3>' + esc(c.code) + ' · ' + md(c.title) + '</h3><p class="sub">' + ready.length + ' ready · ' +
-        (c.units.length - ready.length) + ' coming' + (tot ? ' · ✅ ' + got + '/' + tot + ' answered right' : '') + '</p>' +
-        '<div class="bar" aria-hidden="true"><i style="width:' + pct + '%"></i></div></a>';
+      h += '<a class="card course-card" href="' + esc(c.href) + '"><span class="eyebrow">' + esc(c.term || '') + '</span>' +
+        '<h3>' + esc(c.code) + ' · ' + md(c.title) + '</h3><p class="sub">' + ready.length + ' ready now · ' +
+        c.units.filter(function (u) { return u.status === 'next'; }).length + ' coming next</p>' +
+        '<div class="bar" aria-hidden="true"><i style="width:' + pct + '%"></i></div>' +
+        '<span class="muted small">' + (tot ? '✅ ' + got + ' of ' + tot + ' questions right so far' : 'Not started yet') + '</span></a>';
     });
-    h += '</div></div><footer class="wrap navfoot"><span class="sources">' + md(cat.footer || '') + '</span></footer>';
+    h += '</div></section>';
+    h += '<section><h2 class="sec-title">🧭 How to use it</h2><ol class="how">' +
+      '<li><b>🤔 Think</b><span>Read one idea: a picture, the official version, one worked example.</span></li>' +
+      '<li><b>✍️ Try</b><span>Answer in your head or on paper before you look.</span></li>' +
+      '<li><b>👀 Reveal</b><span>Open one answer at a time.</span></li>' +
+      '<li><b>✅ Mark</b><span>Tap ✅ or ❌, honestly.</span></li>' +
+      '<li><b>🔁 Review</b><span>In 2 days: ⚙️ Options → Review my ❌.</span></li></ol></section>';
+    h += '</div><footer class="wrap narrow sitefoot"><span class="muted small">' + md(cat.footer || '') + '</span></footer>';
     app.innerHTML = h;
   }
 
@@ -555,33 +748,29 @@
     if (!c) return fail('Course "' + id + '" is not in catalog.json');
     document.title = c.code + ' — UNSW Brain Gym';
     var h = topbar([{ label: c.code }]);
-    h += '<section class="wrap hero"><div class="eyebrow">' + esc(c.term || '') + '</div><h1>' + esc(c.code) + ' · ' + md(c.title) + '</h1>' +
-      (c.blurb ? '<p class="goal">' + md(c.blurb) + '</p>' : '') + '</section><div class="wrap stack">';
-    var groups = [];
-    var byGroup = {};
-    c.units.forEach(function (u) {
-      var g = u.group || 'Lessons';
-      if (!byGroup[g]) { byGroup[g] = []; groups.push(g); }
-      byGroup[g].push(u);
+    h += '<section class="wrap narrow home-hero"><div class="eyebrow">' + esc(c.term || '') + '</div><h1>' + esc(c.code) + '<br><span>' + md(c.title) + '</span></h1>' +
+      (c.blurb ? '<p class="goal">' + md(c.blurb) + '</p>' : '') + '</section><div class="wrap narrow stack">';
+    h += continueCard(c.code);
+    var path = c.units.filter(function (u) { return u.status === 'ready' || u.status === 'next'; });
+    var later = c.units.filter(function (u) { return u.status !== 'ready' && u.status !== 'next'; });
+    h += '<section><h2 class="sec-title">🧭 Your path</h2><ol class="timeline">';
+    path.forEach(function (u, i) {
+      var ready = u.status === 'ready';
+      var p = progressBits(unitProgress(u));
+      var kind = u.kind === 'drill' ? '<span class="kind">drill</span>' : '';
+      var inner = '<span class="tl-code">' + esc(u.code) + '</span><span class="tl-body"><span class="tl-title">' + md(u.title) + kind + '</span>' +
+        '<span class="tl-sum">' + md(u.summary || '') + '</span>' +
+        (ready ? '<span class="tl-prog"><span class="bar"><i style="width:' + p.pct + '%"></i></span><span class="tl-st">' + p.st + (u.minutes ? '<span class="st-of">· ~' + esc(u.minutes) + ' min</span>' : '') + '</span></span>'
+               : '<span class="tl-soon">⏭ Coming next</span>') + '</span>';
+      h += '<li class="' + (ready ? 'ready' : 'soon') + '">' + (ready ? '<a class="tl-card" href="' + esc(u.path) + '">' + inner + '</a>' : '<div class="tl-card">' + inner + '</div>') + '</li>';
     });
-    groups.forEach(function (g) {
-      h += '<section class="part"><h2>' + md(g) + '</h2><div class="cards">';
-      byGroup[g].forEach(function (u) {
-        var kind = u.kind === 'drill' ? '<span class="kind">drill</span>' : '';
-        if (u.status === 'ready') {
-          var p = progressHTML(unitProgress(u));
-          h += '<a class="card unit" href="' + esc(u.path) + '"><span class="code">' + esc(u.code) + '</span>' +
-            '<span class="ttl">' + md(u.title) + kind + '</span><span class="st">' + p.st + '</span>' +
-            '<p class="sum">' + md(u.summary || '') + (u.minutes ? ' · ⏱ ~' + esc(u.minutes) + ' min' : '') + '</p>' + p.bar + '</a>';
-        } else {
-          h += '<div class="card unit planned"><span class="code">' + esc(u.code) + '</span>' +
-            '<span class="ttl">' + md(u.title) + kind + '</span><span class="st">' + (u.status === 'next' ? '⏭ Coming next' : '🗓 Planned') + '</span>' +
-            '<p class="sum">' + md(u.summary || '') + '</p></div>';
-        }
-      });
-      h += '</div></section>';
-    });
-    h += '</div><footer class="wrap navfoot"><a href="' + esc(ROOT || './') + '">← All courses</a></footer>';
+    h += '</ol></section>';
+    if (later.length) {
+      h += '<details class="later"><summary>🗓 Later in the course <span class="cnt">' + later.length + '</span></summary><ul>' +
+        later.map(function (u) { return '<li><span class="tl-code">' + esc(u.code) + '</span><span><b>' + md(u.title) + '</b><small>' + md(u.summary || '') + '</small></span></li>'; }).join('') +
+        '</ul></details>';
+    }
+    h += '</div><footer class="wrap narrow sitefoot"><a href="' + esc(ROOT || './') + '">← All courses</a></footer>';
     app.innerHTML = h;
   }
 

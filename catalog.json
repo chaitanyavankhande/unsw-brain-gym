@@ -9,7 +9,7 @@
       "title": "Foundations of Computer Science",
       "term": "UNSW · Term 3 2026",
       "href": "comp9020/",
-      "blurb": "Logic, proofs, sets and more, from zero to exam level. If implication (`⇒`) is where it gets hard, start with **L2**.",
+      "blurb": "Logic, proofs, sets and more, from zero to exam level. Follow the path from the top: it starts where `⇒` gets hard.",
       "units": [
         {
           "id": "comp9020-l2",
@@ -34,6 +34,17 @@
           "summary": "but / neither–nor / not both · brackets · the main joiner · nested conditions · Quiz 2 Q3b style"
         },
         {
+          "id": "comp9020-d1",
+          "code": "D1",
+          "title": "If–Then Decoder",
+          "kind": "drill",
+          "group": "Drills",
+          "status": "ready",
+          "path": "drill-if-then-decoder/",
+          "minutes": 15,
+          "summary": "16-sentence decoder table · 12 rapid-fire sentences · \"who breaks the rule?\""
+        },
+        {
           "id": "comp9020-l3",
           "code": "L3",
           "title": "Truth-Table Detective",
@@ -50,6 +61,15 @@
           "group": "Week 2 · Logic",
           "status": "next",
           "summary": "`⊨` · which formulas are entailed (Quiz 2 Q5b) · valid and invalid arguments · `∀ ∃`"
+        },
+        {
+          "id": "comp9020-d2",
+          "code": "D2",
+          "title": "Quiz 2 Gym",
+          "kind": "drill",
+          "group": "Drills",
+          "status": "next",
+          "summary": "Q3b (English → logic → equivalent formulas) and Q5b (entailed formulas) drills, before Thu 1 Oct"
         },
         {
           "id": "comp9020-l5",
@@ -77,26 +97,6 @@
           "group": "Week 2 · Logic",
           "status": "planned",
           "summary": "Normal forms · canonical DNF · Karnaugh maps"
-        },
-        {
-          "id": "comp9020-d1",
-          "code": "D1",
-          "title": "If–Then Decoder",
-          "kind": "drill",
-          "group": "Drills",
-          "status": "ready",
-          "path": "drill-if-then-decoder/",
-          "minutes": 15,
-          "summary": "16-sentence decoder table · 12 rapid-fire sentences · \"who breaks the rule?\""
-        },
-        {
-          "id": "comp9020-d2",
-          "code": "D2",
-          "title": "Quiz 2 Gym",
-          "kind": "drill",
-          "group": "Drills",
-          "status": "next",
-          "summary": "Q3b (English → logic → equivalent formulas) and Q5b (entailed formulas) drills, before Thu 1 Oct"
         },
         {
           "id": "comp9020-r1",

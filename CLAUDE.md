@@ -2,7 +2,8 @@
 
 A static website (GitHub Pages) of interactive lessons and practice drills for the repo owner's
 UNSW Master of IT courses. Live at **https://chaitanyavankhande.github.io/unsw-brain-gym/**.
-Every answer starts hidden: the learner thinks, tries, then reveals.
+Every answer starts hidden: the learner thinks, tries, then reveals. Lessons are shown **one step at a
+time** (Start → one idea per step → one practice level per step → Finish), never as one long page.
 
 **How to teach is in the guide below. It is not optional: read it before writing or editing any lesson.**
 
@@ -30,14 +31,14 @@ No build step, no framework, no dependencies. Plain HTML + CSS + vanilla JS + JS
    Note slide numbers. Check the problem set's "Assessment" footer: it names the next quiz questions.
 2. List the concepts **in lecture order**, with the known traps for each.
 3. Scaffold: `python3 tools/new_lesson.py <course> <folder> <id> <code> "<title>"`.
-4. Write `lesson.json` using the idea-card recipe and the practice ladder from the guide.
+4. Write `lesson.json` using the idea-step recipe and the practice ladder from the guide.
    Different example every time. Every answer labelled and explained.
 5. Add a `check` to every answer that code can verify.
 6. Run, and fix until clean:
    ```bash
    python3 tools/verify_answers.py     # must say 0 failures
    python3 tools/lint_lessons.py       # must say 0 errors
-   python3 -m http.server              # open http://localhost:8000/ at desktop and phone width
+   python3 -m http.server              # click through EVERY step at desktop and phone width (~390px)
    ```
 7. Update `catalog.json` (status `ready`, `path`), the neighbours' `prev`/`next`, and `docs/ROADMAP.md`.
 8. Commit with a clear message, then publish (below). Tell the learner the live URL of the new page.

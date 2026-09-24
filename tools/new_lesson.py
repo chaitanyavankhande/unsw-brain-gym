@@ -51,10 +51,10 @@ def main(argv):
     (d / "index.html").write_text(SHELL.format(code=code, title=title))
     skeleton = {
         "id": lid, "course": {"code": course.upper(), "href": "../"}, "code": code, "emoji": "", "title": title,
-        "eyebrow": "", "minutes": 40, "verified": False, "goal": "", "roadmap": [], "magic": [],
+        "eyebrow": "", "minutes": 40, "verified": False, "goal": "", "magic": [],
         "blocks": [
             {"type": "section", "id": "learn", "title": "💡 Learn it, one idea at a time"},
-            {"type": "idea", "id": "i1", "short": "", "title": "", "picture": "", "official": "",
+            {"type": "idea", "id": "i1", "short": "", "title": "", "summary": "", "picture": "", "official": "",
              "watch": {"q": "", "steps": [], "answer": ""}, "tries": [], "trap": {"tempting": "", "correct": "", "test": ""}, "magic": ""},
             {"type": "section", "id": "practice", "title": "🏋️ Practice ladder"},
             {"type": "practice", "id": "p-green", "level": "green", "items": []},

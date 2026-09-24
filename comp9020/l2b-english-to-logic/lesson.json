@@ -11,14 +11,6 @@
  "minutes": 45,
  "verified": true,
  "goal": "Turn any English sentence, even a long one, into a formula, then pick out **every** formula that means the same. That is Quiz 2's Q3b.",
- "roadmap": [
-  "**The small joiners:** and / but / although, or, not, neither…nor, not both, exactly one.",
-  "**Who grabs first:** `¬` before `∧ ∨` before `⇒ ⇔`, and when you must add brackets.",
-  "**The translation recipe:** letters → main joiner → halves → brackets.",
-  "**Nested conditions:** *whenever … unless …* and *… if …, provided …*",
-  "**Same or different?** Two fast ways to check whether two formulas are equivalent.",
-  "Then the **practice ladder**, ending with full Quiz 2 Q3b-style drills and 🟣 boss problems."
- ],
  "magic": [
   "and, but, although, yet, however, `;` → `∧`.",
   "Neither A nor B = `¬A ∧ ¬B`. Not both = `¬(A ∧ B)`.",
@@ -157,7 +149,8 @@
     "correct": "`¬A ∧ ¬B` (= `¬(A ∨ B)`)",
     "test": "Neither = not this **and** not that. `¬(A ∧ B)` would still allow one of them."
    },
-   "magic": "Neither A nor B = `¬A ∧ ¬B`. Not both = `¬(A ∧ B)`."
+   "magic": "Neither A nor B = `¬A ∧ ¬B`. Not both = `¬(A ∧ B)`.",
+   "summary": "and, but, or, not, neither…nor, not both, exactly one."
   },
   {
    "type": "idea",
@@ -236,7 +229,8 @@
     "correct": "`¬p ∨ q` means `(¬p) ∨ q`.",
     "test": "`¬` never reaches past a joiner unless there's a bracket."
    },
-   "magic": "`¬` grabs only the next thing. Brackets decide the rest."
+   "magic": "`¬` grabs only the next thing. Brackets decide the rest.",
+   "summary": "`¬` first, then `∧ ∨`, then `⇒ ⇔`, and when brackets are a must."
   },
   {
    "type": "idea",
@@ -295,7 +289,8 @@
     "correct": "Find the main joiner first, then translate each half.",
     "test": "Can you point to the one word that splits the sentence in two?"
    },
-   "magic": "Main joiner first. Halves second. Brackets always."
+   "magic": "Main joiner first. Halves second. Brackets always.",
+   "summary": "Letters → main joiner → halves → brackets."
   },
   {
    "type": "idea",
@@ -395,7 +390,8 @@
     "correct": "`A ⇒ (B ⇒ C)` = `(A ∧ B) ⇒ C`. Moving brackets across arrows changes the meaning.",
     "test": "The row A = F, B = F, C = F tells them apart."
    },
-   "magic": "`A ⇒ (B ⇒ C)` = `(A ∧ B) ⇒ C`."
+   "magic": "`A ⇒ (B ⇒ C)` = `(A ∧ B) ⇒ C`.",
+   "summary": "*whenever … unless …* and *… if …, provided …*"
   },
   {
    "type": "idea",
@@ -480,7 +476,8 @@
     "correct": "Equivalent means the same value in **every** row.",
     "test": "Hunt for one disagreeing row before you say yes."
    },
-   "magic": "One row where they differ = not equivalent."
+   "magic": "One row where they differ = not equivalent.",
+   "summary": "Two fast ways to tell whether two formulas mean the same."
   },
   {
    "type": "section",
@@ -553,7 +550,8 @@
       "expect": true
      }
     }
-   ]
+   ],
+   "summary": "One joiner at a time."
   },
   {
    "type": "practice",
@@ -640,7 +638,8 @@
       "expect": true
      }
     }
-   ]
+   ],
+   "summary": "Three letters, one main joiner."
   },
   {
    "type": "practice",
@@ -872,7 +871,8 @@
       "target": "¬l ⇒ (t ⇒ b)"
      }
     }
-   ]
+   ],
+   "summary": "Full Quiz 2 Q3b-style drills."
   },
   {
    "type": "practice",
@@ -990,7 +990,8 @@
      "why": "\"Failing that\" adds nothing logical. It just means \"or else\", so at least one healthy node is enough.",
      "letters": "`s` = the service is up · `p` = the primary is healthy · `r` = a replica is healthy"
     }
-   ]
+   ],
+   "summary": "Mid-term and exam depth."
   },
   {
    "type": "practice",
@@ -1048,7 +1049,8 @@
       "expect": false
      }
     }
-   ]
+   ],
+   "summary": "Come back in 2 days and answer from memory."
   },
   {
    "type": "recap",

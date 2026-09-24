@@ -88,9 +88,9 @@ def lint_lesson(path):
     for key in ("id", "title", "blocks"):
         if key not in L:
             err(rel, f"missing top-level '{key}'")
-    for key in ("goal", "roadmap", "magic"):
+    for key in ("goal", "magic"):
         if not L.get(key):
-            warn(rel, f"missing '{key}' (book-style opening: goal → roadmap → magic sentences)")
+            warn(rel, f"missing '{key}' (the Start step shows the goal, the step list, then the magic sentences)")
     walk_strings(L, str(rel))
     ids, seen_q, seen_s = set(), {}, {}
     n_items = 0
@@ -103,6 +103,8 @@ def lint_lesson(path):
                     err(where, f"idea missing '{k}'")
             if not b.get("watch"):
                 warn(where, "idea has no 'watch' worked example")
+            if not b.get("summary"):
+                warn(where, "idea has no 'summary' (one line shown in the Start step's plan)")
             if not b.get("trap"):
                 warn(where, "idea has no 'trap'")
             for it in b.get("tries", []):

@@ -11,6 +11,21 @@ comp9020/l2-if-then/
 `assets/gym.js` reads `lesson.json` and draws the page. You never write HTML for a lesson.
 The site's list of lessons lives in `catalog.json`.
 
+## How a lesson is shown: one step at a time (focus mode)
+
+The page never shows the whole lesson at once. `gym.js` turns the blocks into **steps**:
+
+| Step | Made from | Shows |
+|---|---|---|
+| **Start** | automatic | title, goal, the plan (every step with its `summary`), the `magic` lines, a Start / Continue button |
+| **One step per idea** | each `idea` block, plus any `table` / `callout` / `grid` / `steps` blocks right after it | learn (picture → official → grid → watch me step by step → trap → remember), then ✋ your turn |
+| **One step per practice level** | each `practice` block | the questions for that level |
+| **Finish** | automatic, plus every `recap` and `links` block | score ring and per-step table, recap, more-practice links, next lesson |
+
+A `table` that comes before any idea (a drill's first round) becomes its own step.
+`section` blocks don't render; they only group steps. The URL hash is the step (`#i3`, `#p-red`, `#finish`),
+and `#review` shows only the questions marked ❌ across the whole lesson.
+
 ## Text markup (inside any string)
 
 | Write | Shows as |
@@ -34,8 +49,7 @@ Everything else is escaped, so raw HTML shows as text. Keep backticks and `**` b
   "minutes": 50,
   "verified": true,                           // shows "answers checked by code" — only if verify passes
   "goal": "After this you can …",
-  "roadmap": ["First …", "Then …"],
-  "magic": ["one-liner", "…"],
+  "magic": ["one-liner", "…"],                // the whole lesson in a few lines, shown on Start
   "blocks": [ … ],
   "checks": [ … ],                            // optional: extra machine checks for claims in the text
   "sources": "Lecture slides: Week 1 slides 57–63 …",
@@ -47,15 +61,15 @@ Everything else is escaped, so raw HTML shows as text. Keep backticks and `**` b
 
 | `type` | Fields | Notes |
 |---|---|---|
-| `section` | `id`, `title`, `sub?` | Starts a big part ("💡 Learn it", "🏋️ Practice ladder"). Following blocks go inside it. |
-| `idea` | `id`, `short` (TOC label), `title`, `picture`, `official`, `grid?`, `watch {q, steps[], answer}`, `tries[]`, `trap {tempting, correct, test}`, `magic` | Numbered automatically ("Idea 1"). |
-| `practice` | `id`, `level` (`green` `yellow` `red` `boss` `retest`), `title?`, `sub?`, `toc?`, `items[]` | Default titles: 🟢 Warm-up, 🟡 Getting there, 🔴 Quiz level, 🟣 Boss level, 🔁 Retest. |
-| `table` | `id`, `title`, `sub`, `toc?`, `columns[{label, hideable?}]`, `rows[{cells[]}]` | Reveal table (the Decoder). A cell is a string, or `{id, s, a, tag?, tone?: "same"\|"rev", why?}`. `hideable` columns vanish in Hard mode. On phones each row becomes a card. |
+| `section` | `id`, `title`, `sub?` | Not rendered; groups the steps that follow ("💡 Learn it", "🏋️ Practice ladder"). |
+| `idea` | `id`, `short` (label in the progress bar and nav buttons), `title`, `summary` (one line for the Start plan), `picture`, `official`, `grid?`, `watch {q, steps[], answer}`, `tries[]`, `trap {tempting, correct, test}`, `magic` | One step. Numbered automatically ("Idea 1 of 7"). The worked example is revealed one step at a time. |
+| `practice` | `id`, `level` (`green` `yellow` `red` `boss` `retest`), `title?`, `sub?`, `summary?`, `toc?` (short label), `items[]` | One step. Default titles: 🟢 Warm-up, 🟡 Getting there, 🔴 Quiz level, 🟣 Boss level, 🔁 Retest. |
+| `table` | `id`, `title`, `sub`, `summary?`, `toc?`, `columns[{label, hideable?}]`, `rows[{cells[]}]` | Reveal table (the Decoder). A cell is a string, or `{id, s, a, tag?, tone?: "same"\|"rev", why?}`. `hideable` columns vanish in Hard mode. On phones each row becomes a card. |
 | `grid` | `id`, `title`, `sub?`, `cols[]`, `rows[[]]`, `emph?[]` | A plain visible table (row indexes in `emph` are highlighted). An idea's `grid` uses the same shape. |
 | `steps` | `id`, `title`, `sub?`, `steps[]` | Revealed one step at a time. Use for long procedures. |
 | `callout` | `tone` (`tip` `key` `trap`), `title`, `body` | |
-| `recap` | `title?`, `lines[]` | 🧠 60-second recap. |
-| `links` | `id`, `sub?`, `items[{title, url, source, checked, note}]` | Tier-1 sources only (universities, official material). `checked` = date you opened the link. |
+| `recap` | `title?`, `lines[]` | 🧠 60-second recap, shown on the Finish step. |
+| `links` | `id`, `sub?`, `items[{title, url, source, checked, note}]` | Shown on the Finish step. Tier-1 sources only (universities, official material). `checked` = date you opened the link. |
 
 ## Items (in `tries` and `practice.items`)
 
@@ -101,5 +115,5 @@ Formulas use the same symbols as the page: `¬ ∧ ∨ ⊕ ⇒ ⇔ ⊤ ⊥` and 
 3. In `catalog.json`: set the unit's `status` to `ready` and its `path` to the folder (with a trailing `/`).
 4. Link it from the previous lesson's `next` and the new lesson's `prev`.
 5. Run `python3 tools/verify_answers.py` and `python3 tools/lint_lessons.py` → 0 failures, 0 errors.
-6. Preview: `python3 -m http.server` → open `http://localhost:8000/comp9020/…/` on desktop and phone width.
+6. Preview: `python3 -m http.server` → open `http://localhost:8000/comp9020/…/`, click through **every step** on desktop and at phone width (~390px).
 7. Commit and push (see CLAUDE.md → Publishing). GitHub Pages updates in about a minute.

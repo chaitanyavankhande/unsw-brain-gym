@@ -11,16 +11,6 @@
  "minutes": 50,
  "verified": true,
  "goal": "Read any if–then sentence, write it as `A ⇒ B` the right way round, and know exactly when it is true.",
- "roadmap": [
-  "**What `A ⇒ B` means:** a promise, and its 4-row truth table.",
-  "**Eight ways English says `A ⇒ B`**, practised on the Decoder table.",
-  "**The \"only if\" trap**, and the \"who breaks the rule?\" test.",
-  "**Shuffling a promise:** converse, inverse, contrapositive.",
-  "**`⇒` in disguise:** `¬A ∨ B`, and what a broken promise looks like.",
-  "**Unless** = if not.",
-  "**`⇔`:** if and only if, just in case, necessary and sufficient.",
-  "Then the **practice ladder**: 🟢 warm-up → 🟡 → 🔴 quiz level → 🟣 boss level → 🔁 retest."
- ],
  "magic": [
   "`⇒` only lies when TRUE leads to FALSE.",
   "\"A only if B\" never flips: it is `A ⇒ B`.",
@@ -173,7 +163,8 @@
     "correct": "`F ⇒ anything` is **T**. An untested promise is not a broken promise.",
     "test": "Ask \"Did anyone break the promise?\" If no, it's T."
    },
-   "magic": "`⇒` only lies when TRUE leads to FALSE."
+   "magic": "`⇒` only lies when TRUE leads to FALSE.",
+   "summary": "What `⇒` really means, and its 4-row truth table."
   },
   {
    "type": "idea",
@@ -221,14 +212,15 @@
     "correct": "The part after a plain **if** (not *only if*) always goes on the LEFT, wherever it sits.",
     "test": "Rewrite the sentence so it starts with \"If …\", then read it again."
    },
-   "magic": "Find the signal word first. It tells you which side is which."
+   "magic": "Find the signal word first. It tells you which side is which.",
+   "summary": "if, whenever, provided, only if, sufficient, necessary, implies. Then the Decoder table."
   },
   {
    "type": "table",
    "id": "decoder",
    "toc": "🔎 Decoder table",
    "title": "✋ Your turn: the If–Then Decoder",
-   "sub": "16 sentences, 8 patterns. For each one, say the logic and the direction out loud, then reveal. **1st** = the part you read first. The direction tells you whether the logic keeps the sentence's order (➡️) or flips it (🔄). Hard mode hides the Pattern and Signal columns.",
+   "sub": "16 sentences, 8 patterns. For each one, say the logic and the direction out loud, then reveal. **1st** = the part you read first. The direction tells you whether the logic keeps the sentence's order (➡️) or flips it (🔄). **Hard mode** (⚙️ Options) hides the Pattern and Signal columns.",
    "columns": [
     {
      "label": "#"
@@ -561,7 +553,8 @@
     "correct": "`board ⇒ ticket`.",
     "test": "Ask who breaks the rule. It's the person who boards with **no** ticket: the T ⇒ F row of `board ⇒ ticket`."
    },
-   "magic": "\"Only if\" never flips: A only if B = `A ⇒ B` = no B → no A."
+   "magic": "\"Only if\" never flips: A only if B = `A ⇒ B` = no B → no A.",
+   "summary": "Why \"only if\" doesn't flip, and the who-breaks-the-rule test."
   },
   {
    "type": "idea",
@@ -697,7 +690,8 @@
     "correct": "Only the **contrapositive** does: swap AND flip.",
     "test": "Look for a counterexample to the converse, like France but not Paris (Lyon)."
    },
-   "magic": "Swap AND flip = same. Swap only, or flip only = different."
+   "magic": "Swap AND flip = same. Swap only, or flip only = different.",
+   "summary": "Which shuffles of a promise keep its meaning, and which don't."
   },
   {
    "type": "idea",
@@ -800,7 +794,8 @@
     "correct": "`¬(A ⇒ B)` = `A ∧ ¬B`: the one broken case.",
     "test": "The negation of an arrow has **no** arrow in it."
    },
-   "magic": "`A ⇒ B` = `¬A ∨ B`. Broken promise = `A ∧ ¬B`."
+   "magic": "`A ⇒ B` = `¬A ∨ B`. Broken promise = `A ∧ ¬B`.",
+   "summary": "`A ⇒ B` as `¬A ∨ B`, and how to negate a promise."
   },
   {
    "type": "idea",
@@ -877,7 +872,8 @@
     "correct": "Only `¬B ⇒ A` (= `A ∨ B`).",
     "test": "Replace *unless* with *if not* and read **only** that."
    },
-   "magic": "UNLESS = IF NOT."
+   "magic": "UNLESS = IF NOT.",
+   "summary": "Unless = if not, and why it only works one way."
   },
   {
    "type": "idea",
@@ -991,7 +987,8 @@
     "correct": "It means `⇔`.",
     "test": "Both sides must match: both T or both F."
    },
-   "magic": "Just in case = `⇔` = both sides match."
+   "magic": "Just in case = `⇔` = both sides match.",
+   "summary": "If and only if, just in case, necessary and sufficient."
   },
   {
    "type": "section",
@@ -1082,7 +1079,8 @@
       "expect": true
      }
     }
-   ]
+   ],
+   "summary": "One idea per question."
   },
   {
    "type": "practice",
@@ -1189,7 +1187,8 @@
      "letters": "`g` = you get a seat · `v` = you RSVP",
      "wrong": "If you wrote `v ⇒ g`: an RSVP doesn't guarantee a seat."
     }
-   ]
+   ],
+   "summary": "Two ideas at once."
   },
   {
    "type": "practice",
@@ -1380,7 +1379,8 @@
       }
      ]
     }
-   ]
+   ],
+   "summary": "Quiz 2 Q3b style: pick every option that fits."
   },
   {
    "type": "practice",
@@ -1501,7 +1501,8 @@
       "expect": true
      }
     }
-   ]
+   ],
+   "summary": "Mid-term and exam depth."
   },
   {
    "type": "practice",
@@ -1567,7 +1568,8 @@
       "expect": true
      }
     }
-   ]
+   ],
+   "summary": "Come back in 2 days and answer from memory."
   },
   {
    "type": "recap",

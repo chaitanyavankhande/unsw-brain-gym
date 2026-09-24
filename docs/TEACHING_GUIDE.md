@@ -24,28 +24,31 @@ Follow all of them. When a rule and your instinct disagree, the rule wins.
   Even then, long means **numbered steps or reveal-one-step-at-a-time**, never a wall of text.
 - No filler: no "as we saw", no "it's important to note", no repeated explanations.
 
-## Page order — book style: summary first, then details
+## Lesson shape — focus mode, summary first
 
-1. 🎯 **Goal**: "After this you can …" (one sentence), plus minutes.
-2. 🗺️ **Roadmap**: "First X, then Y, then Z", in the order the lesson teaches it.
-3. 🔑 **Magic sentences**: the whole lesson in 3–7 one-liners he can memorise.
-4. 💡 **Idea cards**, one idea per card, in the lecture's order (recipe below).
-5. 🏋️ **Practice ladder**: 🟢 warm-up → 🟡 getting there → 🔴 quiz level → 🟣 boss level → 🔁 retest.
-6. 🧠 **60-second recap**.
-7. 📚 **More practice**: free Tier-1 sources (universities, official course material) with the date the link was checked.
-8. 📎 Sources line: which lecture slides the lesson covers.
+The site shows **one step at a time**, never the whole lesson on one page (a single long page felt like a dump).
 
-## The idea card recipe (every card, in this order)
+1. **Start**: 🎯 goal · 🗺️ the plan (every step in order, each with a one-line `summary`) · 🔑 the whole lesson
+   in 3–7 `magic` lines. This is the book-style "here's what you'll learn, then here's the short version".
+2. **One step per idea**, in the lecture's order. Keep each idea to what fits on a couple of phone screens.
+3. **One step per practice level**: 🟢 → 🟡 → 🔴 quiz level → 🟣 boss level → 🔁 retest.
+4. **Finish**: score, 🧠 60-second recap, 📚 more practice (Tier-1 sources with the date the link was checked),
+   and the lecture slides the lesson covers.
+
+If an idea needs more than ~6 questions or two tables, split it into two ideas instead.
+
+## The idea step recipe (every idea, in this order: learn, then try)
 
 | Step | Field | What goes in it |
 |---|---|---|
 | 🧒 Picture | `picture` | An everyday scene, 1–3 short sentences. Use the **classic textbook example** for the concept (umbrella promise, ticket-to-board, light switch, Paris ⇒ France). |
 | 🎓 Official | `official` | The exact definition in the **course's own notation** (Thielscher's slides), straight after the picture. Never put all the plain parts first and all the formal parts later. |
 | 📊 Grid | `grid` (optional) | A small visible table when a table *is* the idea (truth tables, "who broke the rule?"). |
-| 👀 Watch me | `watch` | ONE fully worked example. **Label every part** (A = …, B = …, direction, why). |
-| ✋ Your turn | `tries` | 3–6 **new** examples, answers hidden, each answer fully labelled plus a one-line *why*. |
+| 👀 Watch me | `watch` | ONE fully worked example, revealed step by step. **Label every part** (A = …, B = …, direction, why). |
 | 🪤 Trap | `trap` | The #1 mistake as *Tempting ❌ vs Correct ✅*, plus a quick test that catches it. |
-| 🔑 Magic | `magic` | One line to memorise. |
+| 🔑 Remember | `magic` | One line to memorise. |
+| ✋ Your turn | `tries` | 3–6 **new** examples, answers hidden, each answer fully labelled plus a one-line *why*. |
+| 🗺️ Plan line | `summary` | One short line describing the idea, shown in the Start step's plan. |
 
 ## Examples — the rules he asked for explicitly
 
@@ -73,7 +76,7 @@ A lesson should have **15+ questions** outside the retest. Drills can be pure pr
 ## Answers — always hidden, always checked
 
 - Every practice answer starts hidden. The page gives per-question Reveal, Show all / Hide all,
-  Hard mode (hides hints and helper columns), self-marking ✅/❌ and an "Only my ❌" filter.
+  self-marking ✅/❌, and in ⚙️ Options: Hard mode (hides hints and helper columns) and **Review my ❌**.
 - **Every answer that can be checked by code, must be.** Add a `check` (see `LESSON_FORMAT.md`):
   truth values, equivalences, validity, entailment, falsifying rows, and every multi-choice option list.
   `python3 tools/verify_answers.py` must pass with 0 failures before a push.
