@@ -1,0 +1,1209 @@
+{
+ "id": "comp9020-l3",
+ "course": {
+  "code": "COMP9020",
+  "href": "../"
+ },
+ "code": "L3",
+ "emoji": "🕵️",
+ "title": "Truth-Table Detective",
+ "eyebrow": "COMP9020 · Week 2 · Satisfiability and validity",
+ "minutes": 45,
+ "verified": true,
+ "goal": "Build a truth table without mistakes, list every row that makes a formula true, and say whether it is valid, satisfiable or unsatisfiable.",
+ "magic": [
+  "`n` different letters → `2ⁿ` rows, rightmost letter flips fastest.",
+  "Innermost bracket first; the main joiner gets the last column.",
+  "Satisfiable = at least one T row (a model). Valid = every row T. Unsatisfiable = no T row.",
+  "`X ⇒ Y` is valid exactly when no row has X = T and Y = F: hunt for that ONE bad row.",
+  "Puzzles: each rule → a formula, `∧` them, find the rows with no F."
+ ],
+ "blocks": [
+  {
+   "type": "section",
+   "id": "learn",
+   "title": "💡 Learn it, one idea at a time"
+  },
+  {
+   "type": "idea",
+   "id": "t1",
+   "short": "Rows",
+   "title": "How many rows, and in what order",
+   "summary": "Every T/F combination of the letters gets one row: 2ⁿ rows, counted like binary.",
+   "picture": "Three light switches. Each is up (T) or down (F). How many different ways can the three switches be set? 2 × 2 × 2 = 8. A truth table is just that list of every setting.",
+   "official": "A **truth table** lists every assignment of `T`/`F` to the basic propositions, one row each. With `n` letters there are `2ⁿ` rows. The slides start at all-`F` and count up, with the **rightmost letter changing fastest**: `FF, FT, TF, TT` for two letters.",
+   "watch": {
+    "q": "List the rows for the letters `p, q, r` in the slides' order.",
+    "steps": [
+     "3 letters → `2³ = 8` rows.",
+     "Rightmost letter `r` flips every row: F T F T F T F T.",
+     "Middle letter `q` flips every 2 rows: F F T T F F T T.",
+     "Leftmost letter `p` flips every 4 rows: F F F F T T T T."
+    ],
+    "answer": "Rows: **FFF, FFT, FTF, FTT, TFF, TFT, TTF, TTT** (read as `p q r`). It's counting 000 → 111 in binary."
+   },
+   "tries": [
+    {
+     "id": "t1a",
+     "q": "How many rows does a truth table need for a formula with the letters `a, b, c, d`?",
+     "a": "**16** rows.",
+     "why": "4 letters → `2⁴ = 16`.",
+     "check": {
+      "kind": "calc",
+      "expr": "2**4",
+      "expect": 16
+     }
+    },
+    {
+     "id": "t1b",
+     "q": "The formula `(x ∧ y) ∨ (¬x ∧ y)` uses `x` twice and `y` twice. How many rows?",
+     "a": "**4** rows.",
+     "why": "Count **different** letters, not how often they appear: `x, y` → `2² = 4`.",
+     "wrong": "If you said 16: you counted 4 appearances. Only distinct letters matter.",
+     "check": {
+      "kind": "calc",
+      "expr": "2**2",
+      "expect": 4
+     }
+    },
+    {
+     "id": "t1c",
+     "q": "In the order `p q r` (FFF first), what is row 6?",
+     "a": "**`p = T, q = F, r = T`** (TFT).",
+     "why": "Row 6 is binary 101 (row 1 is 000). 1 → T, 0 → F.",
+     "check": {
+      "kind": "calc",
+      "expr": "[a+b+c for a in 'FT' for b in 'FT' for c in 'FT'][5]",
+      "is": "'TFT'"
+     }
+    },
+    {
+     "id": "t1d",
+     "q": "A formula has 6 letters. Is checking every row by hand realistic?",
+     "a": "**64 rows.** Possible, but slow: that's why the smarter tricks later in this lesson matter.",
+     "why": "`2⁶ = 64`. Each extra letter doubles the work.",
+     "check": {
+      "kind": "calc",
+      "expr": "2**6",
+      "expect": 64
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Count how many times letters appear: `p ∨ (p ∧ q)` has 3 → 8 rows.",
+    "correct": "Count **distinct** letters: `p, q` → 4 rows.",
+    "test": "Write the letters in a set first: `{p, q}`. Its size is `n`."
+   },
+   "magic": "`n` different letters → `2ⁿ` rows, rightmost letter flips fastest."
+  },
+  {
+   "type": "idea",
+   "id": "t2",
+   "short": "Inside-out",
+   "title": "Build it inside-out, one column per bracket",
+   "summary": "Work from the innermost bracket outward, one helper column per piece.",
+   "picture": "Like evaluating `3 × (2 + 5)` on a calculator: you do the bracket first, then the outside. A formula is the same, one row at a time.",
+   "official": "Add one helper column for each sub-formula, innermost first. Use the basic tables: `¬` flips; `∧` is T only for T,T; `∨` is F only for F,F; `⇒` is F only for T,F; `⇔` is T when both sides match.",
+   "watch": {
+    "q": "Build the table of `(p ∧ q) ⇒ ¬r`.",
+    "steps": [
+     "Helper 1: `p ∧ q` is T only in rows TTF and TTT.",
+     "Helper 2: `¬r` is T when `r = F`: rows FFF, FTF, TFF, TTF.",
+     "Main `⇒`: false only where helper 1 = T and helper 2 = F.",
+     "That happens only in row TTT (`p ∧ q` = T, `¬r` = F)."
+    ],
+    "answer": "**T in 7 rows, F only in row `p = T, q = T, r = T`.**"
+   },
+   "tries": [
+    {
+     "id": "t2a",
+     "q": "Work out `(p ⇒ q) ∧ (q ⇒ r)` on the row `p = T, q = T, r = F`.",
+     "a": "**F**",
+     "why": "`p ⇒ q` = T ⇒ T = **T**. `q ⇒ r` = T ⇒ F = **F**. T ∧ F = **F**.",
+     "check": {
+      "kind": "value",
+      "f": "(⊤ ⇒ ⊤) ∧ (⊤ ⇒ ⊥)",
+      "expect": false
+     }
+    },
+    {
+     "id": "t2b",
+     "q": "Work out `¬(a ∨ b) ⇔ c` on the row `a = F, b = F, c = F`.",
+     "a": "**F**",
+     "why": "`a ∨ b` = F, so `¬(a ∨ b)` = **T**. Then T ⇔ F = **F** (the sides don't match).",
+     "check": {
+      "kind": "value",
+      "f": "¬(⊥ ∨ ⊥) ⇔ ⊥",
+      "expect": false
+     }
+    },
+    {
+     "id": "t2c",
+     "q": "Work out `(x ∨ ¬y) ⇒ (x ∧ y)` on the row `x = F, y = F`.",
+     "a": "**F**",
+     "why": "`¬y` = T, so `x ∨ ¬y` = **T**. `x ∧ y` = **F**. T ⇒ F = **F**.",
+     "check": {
+      "kind": "value",
+      "f": "(⊥ ∨ ¬⊥) ⇒ (⊥ ∧ ⊥)",
+      "expect": false
+     }
+    },
+    {
+     "id": "t2d",
+     "q": "Fill the whole column for `¬p ∨ q` (rows FF, FT, TF, TT).",
+     "a": "**T, T, F, T**",
+     "why": "`¬p ∨ q` is only F when `¬p` = F and `q` = F, i.e. `p = T, q = F`. It's the same column as `p ⇒ q`.",
+     "check": {
+      "kind": "falsifying",
+      "f": "¬p ∨ q",
+      "rows": [
+       {
+        "p": true,
+        "q": false
+       }
+      ]
+     }
+    },
+    {
+     "id": "t2e",
+     "q": "Which helper columns would you make for `(a ⇔ b) ∨ (¬a ∧ c)`, in order?",
+     "a": "`a ⇔ b`, then `¬a`, then `¬a ∧ c`, then the main `∨`.",
+     "why": "Innermost first. `¬a` must exist before `¬a ∧ c` can be worked out."
+    }
+   ],
+   "trap": {
+    "tempting": "Evaluate left to right like reading a sentence.",
+    "correct": "Evaluate **innermost brackets first**, then the joiner that holds everything together (the main joiner) last.",
+    "test": "Circle the main joiner before you start. It gets the very last column."
+   },
+   "magic": "Innermost first. The main joiner gets the last column."
+  },
+  {
+   "type": "idea",
+   "id": "t3",
+   "short": "Satisfiable",
+   "title": "Satisfiable: at least one row comes out T",
+   "summary": "A formula is satisfiable if some row makes it true. Those rows are its models.",
+   "picture": "A group chat is trying to pick a pizza everyone accepts. If at least one pizza works for all, the order is *satisfiable*. Each pizza that works is a *solution*.",
+   "official": "A formula is **satisfiable** if it evaluates to `T` for **some** assignment of truth values (Week 2, slide 4). Each such row is a **satisfying assignment**, also called a **model**. Example from the slide: `¬(A ⇒ B)` is satisfiable (row `A = T, B = F`).",
+   "watch": {
+    "q": "Find **every** row that makes `(a ⇒ b) ∧ (b ⇒ ¬c) ∧ c` true.",
+    "steps": [
+     "It's an `∧` of three parts, so **all three** must be T.",
+     "Part 3 says `c = T`.",
+     "Part 2 `b ⇒ ¬c`: with `c = T`, `¬c` = F, so `b` must be F (otherwise T ⇒ F).",
+     "Part 1 `a ⇒ b`: with `b = F`, `a` must be F too.",
+     "Check `a = F, b = F, c = T`: F ⇒ F = T, F ⇒ F = T, T. All true ✅."
+    ],
+    "answer": "**Exactly one model: `a = F, b = F, c = T`.** So it's satisfiable."
+   },
+   "tries": [
+    {
+     "id": "t3a",
+     "q": "List every row that makes `p ∧ (q ⊕ r)` true.",
+     "a": "**2 rows:** `p = T, q = F, r = T` and `p = T, q = T, r = F`.",
+     "why": "`p` must be T. Then `q ⊕ r` needs `q` and `r` to be different: FT or TF.",
+     "check": {
+      "kind": "falsifying",
+      "f": "¬(p ∧ (q ⊕ r))",
+      "rows": [
+       {
+        "p": true,
+        "q": false,
+        "r": true
+       },
+       {
+        "p": true,
+        "q": true,
+        "r": false
+       }
+      ]
+     }
+    },
+    {
+     "id": "t3b",
+     "q": "List every row that makes `(x ⇔ y) ∧ ¬z` true.",
+     "a": "**2 rows:** `x = F, y = F, z = F` and `x = T, y = T, z = F`.",
+     "why": "`¬z` forces `z = F`. `x ⇔ y` needs `x` and `y` to match: FF or TT.",
+     "check": {
+      "kind": "falsifying",
+      "f": "¬((x ⇔ y) ∧ ¬z)",
+      "rows": [
+       {
+        "x": false,
+        "y": false,
+        "z": false
+       },
+       {
+        "x": true,
+        "y": true,
+        "z": false
+       }
+      ]
+     }
+    },
+    {
+     "id": "t3c",
+     "q": "Is `¬p ∧ (q ⇒ p)` satisfiable? If yes, give every model.",
+     "a": "**Yes, one model: `p = F, q = F`.**",
+     "why": "`¬p` forces `p = F`. Then `q ⇒ F` is only true when `q = F`.",
+     "check": {
+      "kind": "falsifying",
+      "f": "¬(¬p ∧ (q ⇒ p))",
+      "rows": [
+       {
+        "p": false,
+        "q": false
+       }
+      ]
+     }
+    },
+    {
+     "id": "t3d",
+     "q": "Is `(a ∨ b) ∧ (¬a ∨ c) ∧ ¬c` satisfiable?",
+     "a": "**Yes: `a = F, b = T, c = F`** (the only model).",
+     "why": "`¬c` → `c = F`. Then `¬a ∨ F` needs `a = F`. Then `F ∨ b` needs `b = T`.",
+     "check": {
+      "kind": "falsifying",
+      "f": "¬((a ∨ b) ∧ (¬a ∨ c) ∧ ¬c)",
+      "rows": [
+       {
+        "a": false,
+        "b": true,
+        "c": false
+       }
+      ]
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "\"Satisfiable\" means the formula is always true.",
+    "correct": "Satisfiable means **at least one** row is T. Always true has its own name: **valid**.",
+    "test": "Can you point to ONE true row? Then it's satisfiable. Done."
+   },
+   "magic": "Satisfiable = at least one T row. Each T row is a model."
+  },
+  {
+   "type": "idea",
+   "id": "t4",
+   "short": "Valid vs unsat",
+   "title": "Valid, satisfiable, or unsatisfiable?",
+   "summary": "Every formula is exactly one of: valid (all T), satisfiable but not valid (mixed), unsatisfiable (all F).",
+   "picture": "A weather app that says \"it will rain or it won't\" is always right: that's **valid**. \"It will rain and it won't\" is never right: **unsatisfiable**. \"It will rain\" is sometimes right: **satisfiable, not valid**.",
+   "official": "`φ` is **valid** (a **tautology**), written `⊨ φ`, if it is `T` in **every** row (Week 2, slide 26). It is **unsatisfiable** if it is `T` in **no** row. Valid formulas are also satisfiable. `φ` is valid exactly when `¬φ` is unsatisfiable.",
+   "grid": {
+    "title": "The three boxes every formula falls into",
+    "cols": [
+     "Name",
+     "T rows",
+     "Example",
+     "Symbol"
+    ],
+    "rows": [
+     [
+      "Valid (tautology)",
+      "all",
+      "`p ∨ ¬p`",
+      "`⊨ φ`"
+     ],
+     [
+      "Satisfiable, not valid",
+      "some, not all",
+      "`p ∧ q`",
+      "—"
+     ],
+     [
+      "Unsatisfiable (contradiction)",
+      "none",
+      "`p ∧ ¬p`",
+      "`φ ≡ ⊥`"
+     ]
+    ]
+   },
+   "watch": {
+    "q": "Classify `p ∨ (p ⇒ q)`.",
+    "steps": [
+     "Rows `p = F`: `p ⇒ q` is F ⇒ … = T. So the `∨` is T.",
+     "Rows `p = T`: the left side `p` is T. So the `∨` is T.",
+     "Every row is T."
+    ],
+    "answer": "**Valid** (a tautology), and so also satisfiable."
+   },
+   "tries": [
+    {
+     "id": "t4a",
+     "q": "Classify `q ⇒ q`.",
+     "a": "**Valid.**",
+     "why": "T ⇒ T = T and F ⇒ F = T. Both rows are T.",
+     "check": {
+      "kind": "valid",
+      "f": "q ⇒ q",
+      "expect": true
+     }
+    },
+    {
+     "id": "t4b",
+     "q": "Classify `r ⊕ r` (xor of a letter with itself).",
+     "a": "**Unsatisfiable.**",
+     "why": "`⊕` is T only when the sides differ, and `r` never differs from itself.",
+     "check": {
+      "kind": "valid",
+      "f": "¬(r ⊕ r)",
+      "expect": true
+     }
+    },
+    {
+     "id": "t4c",
+     "q": "Classify `a ⇒ ¬a`.",
+     "a": "**Satisfiable, not valid.**",
+     "why": "Row `a = F`: F ⇒ T = T. Row `a = T`: T ⇒ F = F. Mixed.",
+     "check": [
+      {
+       "kind": "valid",
+       "f": "¬(a ⇒ ¬a)",
+       "expect": false
+      },
+      {
+       "kind": "valid",
+       "f": "a ⇒ ¬a",
+       "expect": false
+      }
+     ]
+    },
+    {
+     "id": "t4d",
+     "q": "Classify `(p ⇒ q) ∨ (q ⇒ p)`.",
+     "a": "**Valid.**",
+     "why": "For the `∨` to be F, both parts must be F. `p ⇒ q` = F needs `q = F`; `q ⇒ p` = F needs `q = T`. Impossible together.",
+     "check": {
+      "kind": "valid",
+      "f": "(p ⇒ q) ∨ (q ⇒ p)",
+      "expect": true
+     }
+    },
+    {
+     "id": "t4e",
+     "q": "`φ` is valid. What can you say about `¬φ`?",
+     "a": "**`¬φ` is unsatisfiable.**",
+     "why": "`φ` is T in every row, so `¬φ` is F in every row.",
+     "check": {
+      "kind": "valid",
+      "f": "¬(¬(p ∨ ¬p))",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Not valid means unsatisfiable.",
+    "correct": "Not valid only means **some** row is F. There may still be T rows (satisfiable, not valid).",
+    "test": "Ask two separate questions: any T row? any F row?"
+   },
+   "magic": "All T = valid. Some T = satisfiable. No T = unsatisfiable."
+  },
+  {
+   "type": "idea",
+   "id": "t5",
+   "short": "Hunt one bad row",
+   "title": "Is it always true? Hunt for ONE bad row",
+   "summary": "To test `X ⇒ Y` for validity, only look for rows with `X` = T and `Y` = F.",
+   "picture": "A security guard doesn't check every visitor who's allowed in. They only look for one person who got in **without** a badge. One such person breaks the rule.",
+   "official": "An implication `X ⇒ Y` is F only when `X` = T and `Y` = F. So `X ⇒ Y` is **valid** exactly when **no** row has `X` = T and `Y` = F. To show it's not valid, **one** such row is enough (Week 2, slides 8–9: e.g. `(p ∧ (p ⇒ q)) ⇒ q` is always true).",
+   "watch": {
+    "q": "Is `((p ⇒ q) ∧ q) ⇒ p` always true?",
+    "steps": [
+     "Look for a bad row: left side T, right side `p` = F.",
+     "Set `p = F`. The left side needs `p ⇒ q` = T and `q` = T.",
+     "With `p = F`: `p ⇒ q` = F ⇒ … = T. With `q = T`: ✅.",
+     "Row `p = F, q = T` makes the left T and the right F."
+    ],
+    "answer": "**Not valid.** Bad row: `p = F, q = T`. (This is the classic mistake \"affirming the consequent\".)"
+   },
+   "tries": [
+    {
+     "id": "t5a",
+     "q": "Is `((p ⇒ q) ∧ ¬q) ⇒ ¬p` always true?",
+     "a": "**Yes, valid.**",
+     "why": "A bad row needs `¬p` = F (so `p = T`) and the left side T, so `q = F` (from `¬q`). But then `p ⇒ q` = T ⇒ F = F. The left side can't be T. No bad row.",
+     "check": {
+      "kind": "valid",
+      "f": "((p ⇒ q) ∧ ¬q) ⇒ ¬p",
+      "expect": true
+     }
+    },
+    {
+     "id": "t5b",
+     "q": "Is `((a ∨ b) ∧ ¬b) ⇒ a` always true?",
+     "a": "**Yes, valid.**",
+     "why": "A bad row needs `a = F`. Then `a ∨ b` = T forces `b = T`, but `¬b` needs `b = F`. Contradiction, so no bad row.",
+     "check": {
+      "kind": "valid",
+      "f": "((a ∨ b) ∧ ¬b) ⇒ a",
+      "expect": true
+     }
+    },
+    {
+     "id": "t5c",
+     "q": "Is `(p ⇒ q) ⇒ (q ⇒ p)` always true? If not, give a bad row.",
+     "a": "**Not valid.** Bad row: `p = F, q = T`.",
+     "why": "Left: F ⇒ T = T. Right: T ⇒ F = F. T ⇒ F = F.",
+     "check": [
+      {
+       "kind": "valid",
+       "f": "(p ⇒ q) ⇒ (q ⇒ p)",
+       "expect": false
+      },
+      {
+       "kind": "falsifying",
+       "f": "(p ⇒ q) ⇒ (q ⇒ p)",
+       "rows": [
+        {
+         "p": false,
+         "q": true
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "t5d",
+     "q": "Is `(x ∧ y) ⇒ (x ∨ z)` always true?",
+     "a": "**Yes, valid.**",
+     "why": "A bad row needs `x ∨ z` = F, so `x = F`. But then `x ∧ y` = F, so the left side isn't T.",
+     "check": {
+      "kind": "valid",
+      "f": "(x ∧ y) ⇒ (x ∨ z)",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Check all 8 rows every time.",
+    "correct": "For `X ⇒ Y`, fix `Y` = F first, then see if `X` can still be T.",
+    "test": "Write the target: \"left T, right F\". Chase what each forces."
+   },
+   "magic": "`X ⇒ Y` is valid ⇔ no row has X = T, Y = F."
+  },
+  {
+   "type": "idea",
+   "id": "t6",
+   "short": "Puzzles",
+   "title": "Puzzles as formulas (constraint satisfaction)",
+   "summary": "Turn each rule into a formula, `∧` them together, and find the models.",
+   "picture": "Planning who sits where at a wedding: each rule (\"these two apart\", \"this one only if that one\") is a constraint. A seating plan that keeps every rule is a model of the ∧ of all rules.",
+   "official": "Many timetabling and planning problems are **satisfiability** questions (Week 2, slides 5–7: the party example with John, Sarah and Kim). Write each constraint as a formula, join them with `∧`, and find the satisfying assignments. **Shortcut from the slide:** mark only where each constraint is **F**. A row with no F mark is a model.",
+   "watch": {
+    "q": "Three services: cache `c`, replica `r`, logger `l`. Rules: (1) If the cache is on, the replica must be on. (2) The replica and the logger can't both be on. (3) At least one of cache or logger is on. Which set-ups work?",
+    "steps": [
+     "(1) `c ⇒ r`. (2) `¬(r ∧ l)`. (3) `c ∨ l`. We need `(c ⇒ r) ∧ ¬(r ∧ l) ∧ (c ∨ l)`.",
+     "Case `c = T`: (1) forces `r = T`; (2) then forces `l = F`; (3) holds. ✅ `c = T, r = T, l = F`.",
+     "Case `c = F`: (3) forces `l = T`; (2) then forces `r = F`; (1) holds (F ⇒ …). ✅ `c = F, r = F, l = T`."
+    ],
+    "answer": "**Two working set-ups:** {cache, replica} or {logger only}."
+   },
+   "tries": [
+    {
+     "id": "t6a",
+     "q": "Rules for a road trip: (1) Ana drives only if Ben navigates. (2) Ben won't navigate unless Cam sits in front. (3) Cam won't sit in front. Can Ana drive?",
+     "a": "**No.** (3) → `c = F`. (2) `¬c ⇒ ¬b` → `b = F`. (1) `a ⇒ b` → `a = F`.",
+     "why": "Chase the forced values from the rule that fixes a letter outright.",
+     "letters": "`a` = Ana drives · `b` = Ben navigates · `c` = Cam sits in front",
+     "check": {
+      "kind": "falsifying",
+      "f": "¬((a ⇒ b) ∧ (¬c ⇒ ¬b) ∧ ¬c)",
+      "rows": [
+       {
+        "a": false,
+        "b": false,
+        "c": false
+       }
+      ]
+     }
+    },
+    {
+     "id": "t6b",
+     "q": "Three rules for a build: (1) `lint ∨ test`. (2) `test ⇒ ¬fast`. (3) `fast`. Which of lint/test run?",
+     "a": "**`lint = T, test = F`** (with `fast = T`).",
+     "why": "(3) `fast = T`. (2) then needs `test = F`. (1) then needs `lint = T`.",
+     "check": {
+      "kind": "falsifying",
+      "f": "¬((lint ∨ test) ∧ (test ⇒ ¬fast) ∧ fast)",
+      "rows": [
+       {
+        "lint": true,
+        "test": false,
+        "fast": true
+       }
+      ]
+     }
+    },
+    {
+     "id": "t6c",
+     "q": "Rules: (1) `p ⇔ ¬q`, (2) `q ⇒ r`, (3) `¬(p ∧ r)`. How many models?",
+     "a": "**2 models:** `p = T, q = F, r = F` and `p = F, q = T, r = T`.",
+     "why": "Split on `p`. If `p = T`: (1) → `q = F`; (3) → `r = F`; (2) holds. If `p = F`: (1) → `q = T`; (2) → `r = T`; (3) holds.",
+     "wrong": "If you said more: check rule (1). `⇔` with `¬q` means `p` and `q` must be **opposite**, so `q` is never free.",
+     "check": {
+      "kind": "falsifying",
+      "f": "¬((p ⇔ ¬q) ∧ (q ⇒ r) ∧ ¬(p ∧ r))",
+      "rows": [
+       {
+        "p": true,
+        "q": false,
+        "r": false
+       },
+       {
+        "p": false,
+        "q": true,
+        "r": true
+       }
+      ]
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Translate \"Kim won't come unless John does\" as `J ⇒ K`.",
+    "correct": "\"A unless B\" = `¬B ⇒ A`. \"Kim won't come unless John does\" = `¬J ⇒ ¬K`, i.e. `K ⇒ J` (Week 2, slide 6).",
+    "test": "Unless = if not. Rewrite the sentence with \"if not\" before writing symbols."
+   },
+   "magic": "Rules → formulas → `∧` them → find the rows with no F mark."
+  },
+  {
+   "type": "section",
+   "id": "practice",
+   "title": "🏋️ Practice ladder"
+  },
+  {
+   "type": "practice",
+   "id": "p-green",
+   "level": "green",
+   "items": [
+    {
+     "id": "g1",
+     "q": "How many rows for a formula with letters `s, t`?",
+     "a": "**4**",
+     "why": "`2² = 4`: FF, FT, TF, TT.",
+     "check": {
+      "kind": "calc",
+      "expr": "2**2",
+      "expect": 4
+     }
+    },
+    {
+     "id": "g2",
+     "q": "Value of `¬a ∧ b` on the row `a = F, b = T`?",
+     "a": "**T**",
+     "why": "`¬a` = T, `b` = T, T ∧ T = T.",
+     "check": {
+      "kind": "value",
+      "f": "¬⊥ ∧ ⊤",
+      "expect": true
+     }
+    },
+    {
+     "id": "g3",
+     "q": "Value of `a ⇔ ¬b` on the row `a = T, b = T`?",
+     "a": "**F**",
+     "why": "`¬b` = F. T ⇔ F = F (they don't match).",
+     "check": {
+      "kind": "value",
+      "f": "⊤ ⇔ ¬⊤",
+      "expect": false
+     }
+    },
+    {
+     "id": "g4",
+     "q": "Is `(p ∨ q) ∧ ¬p ∧ ¬q` satisfiable?",
+     "a": "**No, unsatisfiable.**",
+     "why": "`¬p` and `¬q` force both letters F, and then `p ∨ q` is F.",
+     "check": {
+      "kind": "valid",
+      "f": "¬((p ∨ q) ∧ ¬p ∧ ¬q)",
+      "expect": true
+     }
+    },
+    {
+     "id": "g5",
+     "q": "Is `p ∨ q` valid?",
+     "a": "**No.** It's satisfiable but not valid.",
+     "why": "Row `p = F, q = F` makes it F. Rows with any T make it T.",
+     "check": [
+      {
+       "kind": "valid",
+       "f": "p ∨ q",
+       "expect": false
+      },
+      {
+       "kind": "valid",
+       "f": "¬(p ∨ q)",
+       "expect": false
+      }
+     ]
+    },
+    {
+     "id": "g6",
+     "q": "Give one model of `m ∧ ¬n`.",
+     "a": "**`m = T, n = F`** (the only one).",
+     "why": "`∧` needs both parts T: `m` = T and `¬n` = T.",
+     "check": {
+      "kind": "falsifying",
+      "f": "¬(m ∧ ¬n)",
+      "rows": [
+       {
+        "m": true,
+        "n": false
+       }
+      ]
+     }
+    },
+    {
+     "id": "g7",
+     "q": "Is `u ⇒ (v ⇒ u)` valid?",
+     "a": "**Yes.**",
+     "why": "For F we'd need `u = T` and `v ⇒ u` = F, which needs `u = F`. Impossible.",
+     "check": {
+      "kind": "valid",
+      "f": "u ⇒ (v ⇒ u)",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-yellow",
+   "level": "yellow",
+   "items": [
+    {
+     "id": "y1",
+     "q": "List every row that makes `(p ∧ ¬q) ∨ (q ⇔ r)` true.",
+     "a": "**5 rows:** FFF, FTT, TFF, TFT, TTT (as `p q r`).",
+     "why": "`q ⇔ r` gives the rows where `q` and `r` match: FFF, FTT, TFF, TTT. `p ∧ ¬q` adds `p = T, q = F`, which brings in TFT.",
+     "check": {
+      "kind": "falsifying",
+      "f": "¬((p ∧ ¬q) ∨ (q ⇔ r))",
+      "rows": [
+       {
+        "p": false,
+        "q": false,
+        "r": false
+       },
+       {
+        "p": false,
+        "q": true,
+        "r": true
+       },
+       {
+        "p": true,
+        "q": false,
+        "r": false
+       },
+       {
+        "p": true,
+        "q": false,
+        "r": true
+       },
+       {
+        "p": true,
+        "q": true,
+        "r": true
+       }
+      ]
+     }
+    },
+    {
+     "id": "y2",
+     "q": "List every row that makes `(p ⊕ q) ∨ (q ∧ r)` true.",
+     "a": "**5 rows:** FTF, FTT, TFF, TFT, TTT (as `p q r`).",
+     "why": "`p ⊕ q` gives the 4 rows where `p ≠ q`. `q ∧ r` adds TTT (FTT is already in).",
+     "check": {
+      "kind": "falsifying",
+      "f": "¬((p ⊕ q) ∨ (q ∧ r))",
+      "rows": [
+       {
+        "p": false,
+        "q": true,
+        "r": false
+       },
+       {
+        "p": false,
+        "q": true,
+        "r": true
+       },
+       {
+        "p": true,
+        "q": false,
+        "r": false
+       },
+       {
+        "p": true,
+        "q": false,
+        "r": true
+       },
+       {
+        "p": true,
+        "q": true,
+        "r": true
+       }
+      ]
+     }
+    },
+    {
+     "id": "y3",
+     "q": "Which rows make `¬(a ∧ b) ⇒ (c ∨ a)` **false**?",
+     "a": "**2 rows:** `a = F, b = F, c = F` and `a = F, b = T, c = F`.",
+     "why": "False needs `¬(a ∧ b)` = T and `c ∨ a` = F. The second forces `a = F, c = F`; then `a ∧ b` = F automatically, so `b` is free.",
+     "check": {
+      "kind": "falsifying",
+      "f": "¬(a ∧ b) ⇒ (c ∨ a)",
+      "rows": [
+       {
+        "a": false,
+        "b": false,
+        "c": false
+       },
+       {
+        "a": false,
+        "b": true,
+        "c": false
+       }
+      ]
+     }
+    },
+    {
+     "id": "y4",
+     "q": "Classify `(p ⇒ q) ∧ (p ∧ ¬q)`.",
+     "a": "**Unsatisfiable.**",
+     "why": "The second part is exactly the one row that makes `p ⇒ q` false. They can't both be T.",
+     "check": {
+      "kind": "valid",
+      "f": "¬((p ⇒ q) ∧ (p ∧ ¬q))",
+      "expect": true
+     }
+    },
+    {
+     "id": "y5",
+     "q": "Classify `(a ∧ b) ⇒ (a ⇔ b)`.",
+     "a": "**Valid.**",
+     "why": "If `a ∧ b` is T, both are T, so `a ⇔ b` is T. No bad row.",
+     "check": {
+      "kind": "valid",
+      "f": "(a ∧ b) ⇒ (a ⇔ b)",
+      "expect": true
+     }
+    },
+    {
+     "id": "y6",
+     "q": "`¬(p ⇒ q) ∨ r` and `(p ⇒ q) ⇒ r`: same true rows?",
+     "a": "**Yes**, same 5 rows: FFT, FTT, TFF, TFT, TTT.",
+     "why": "`X ⇒ r` is the same as `¬X ∨ r` (the implication law), with `X = p ⇒ q`.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(p ⇒ q) ∨ r",
+      "g": "(p ⇒ q) ⇒ r",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-red",
+   "level": "red",
+   "sub": "Problem set 2, Q1(c) and Q3(a) style: list every satisfying row, classify formulas. Original formulas.",
+   "items": [
+    {
+     "id": "r1",
+     "q": "List **all** truth assignments to `A, B, C` that make `(A ⇒ B) ⊕ C` true.",
+     "a": "**4:** `A = F, B = F, C = F` · `A = F, B = T, C = F` · `A = T, B = F, C = T` · `A = T, B = T, C = F`.",
+     "why": "`⊕` is T when the two sides differ. `A ⇒ B` is T in every row except `A = T, B = F`. So: where `A ⇒ B` = T, need `C = F` (3 rows); where it's F (`A = T, B = F`), need `C = T` (1 row).",
+     "check": {
+      "kind": "falsifying",
+      "f": "¬((A ⇒ B) ⊕ C)",
+      "rows": [
+       {
+        "A": false,
+        "B": false,
+        "C": false
+       },
+       {
+        "A": false,
+        "B": true,
+        "C": false
+       },
+       {
+        "A": true,
+        "B": false,
+        "C": true
+       },
+       {
+        "A": true,
+        "B": true,
+        "C": false
+       }
+      ]
+     }
+    },
+    {
+     "id": "r2",
+     "q": "List **all** truth assignments to `A, B, C` that make `¬(A ∨ C) ∨ (B ⇔ C)` true.",
+     "a": "**5:** FFF, FTF, FTT, TFF, TTT (as `A B C`).",
+     "why": "`B ⇔ C` gives the rows where `B` and `C` match: FFF, FTT, TFF, TTT. `¬(A ∨ C)` adds the rows with `A = F, C = F`, bringing in FTF.",
+     "check": {
+      "kind": "falsifying",
+      "f": "¬(¬(A ∨ C) ∨ (B ⇔ C))",
+      "rows": [
+       {
+        "A": false,
+        "B": false,
+        "C": false
+       },
+       {
+        "A": false,
+        "B": true,
+        "C": false
+       },
+       {
+        "A": false,
+        "B": true,
+        "C": true
+       },
+       {
+        "A": true,
+        "B": false,
+        "C": false
+       },
+       {
+        "A": true,
+        "B": true,
+        "C": true
+       }
+      ]
+     }
+    },
+    {
+     "id": "r3",
+     "q": "List **all** truth assignments to `A, B, C` that make `(A ⇔ C) ∧ (B ∨ ¬A)` true.",
+     "a": "**3:** `A = F, B = F, C = F` · `A = F, B = T, C = F` · `A = T, B = T, C = T`.",
+     "why": "`A ⇔ C` keeps rows where `A` and `C` match. If `A = F`, `B ∨ ¬A` is T (both `B`s). If `A = T`, it needs `B = T`.",
+     "check": {
+      "kind": "falsifying",
+      "f": "¬((A ⇔ C) ∧ (B ∨ ¬A))",
+      "rows": [
+       {
+        "A": false,
+        "B": false,
+        "C": false
+       },
+       {
+        "A": false,
+        "B": true,
+        "C": false
+       },
+       {
+        "A": true,
+        "B": true,
+        "C": true
+       }
+      ]
+     }
+    },
+    {
+     "id": "r4",
+     "q": "Which of these are **tautologies**?",
+     "a": "**(1), (3), (5)**",
+     "why": "(1): if `Q ∧ S` is T then `Q` is T. (3): if exactly one is T, then at least one is T. (5): `¬Q ⇒ …` can only fail with `Q = F`, and then `Q ⇒ S` is T. (2) fails at `Q = T, S = F`; (4) fails at `Q = T, S = F`.",
+     "options": [
+      "`(Q ∧ S) ⇒ Q`",
+      "`Q ⇒ (Q ∧ S)`",
+      "`(Q ⊕ S) ⇒ (Q ∨ S)`",
+      "`(Q ∨ S) ⇒ (Q ∧ S)`",
+      "`¬Q ⇒ (Q ⇒ S)`"
+     ],
+     "correct": [
+      0,
+      2,
+      4
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_valid"
+     },
+     "multi": true
+    },
+    {
+     "id": "r5",
+     "q": "Which of these are **satisfiable**?",
+     "a": "**(1), (4)**",
+     "why": "(1) is T at `R = F`. (4) is T at `R = T, S = T`. (2) is the negation of a tautology. (3) needs `R, S` to match and differ at once.",
+     "options": [
+      "`R ⇒ (R ∧ S)`",
+      "`¬(R ∨ ¬R)`",
+      "`(R ⇔ S) ∧ (R ⊕ S)`",
+      "`R ∧ (¬R ∨ S)`"
+     ],
+     "correct": [
+      0,
+      3
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_sat"
+     },
+     "multi": true
+    },
+    {
+     "id": "r6",
+     "q": "List **all** assignments to `x, y, z` that make `(x ⇔ y) ⇒ (z ∧ ¬x)` true.",
+     "a": "**5:** FFT, FTF, FTT, TFF, TFT (as `x y z`).",
+     "why": "The `⇒` is T when `x ⇔ y` is F (the 4 rows with `x ≠ y`) or `z ∧ ¬x` is T (adds FFT).",
+     "check": {
+      "kind": "falsifying",
+      "f": "¬((x ⇔ y) ⇒ (z ∧ ¬x))",
+      "rows": [
+       {
+        "x": false,
+        "y": false,
+        "z": true
+       },
+       {
+        "x": false,
+        "y": true,
+        "z": false
+       },
+       {
+        "x": false,
+        "y": true,
+        "z": true
+       },
+       {
+        "x": true,
+        "y": false,
+        "z": false
+       },
+       {
+        "x": true,
+        "y": false,
+        "z": true
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-boss",
+   "level": "boss",
+   "items": [
+    {
+     "id": "b1",
+     "q": "Four rules for an on-call rota: (1) `a ∨ b`. (2) `a ⇒ ¬c`. (3) `b ⇒ c`. (4) `c ⇒ d`. List every model.",
+     "a": "**3 models (a b c d):** `F T T T` · `T F F F` · `T F F T`.",
+     "why": "Case `a = T`: (2) → `c = F`; (3) → `b = F`; (4) holds for any `d` → 2 models. Case `a = F`: (1) → `b = T`; (3) → `c = T`; (4) → `d = T` → 1 model.",
+     "check": {
+      "kind": "falsifying",
+      "f": "¬((a ∨ b) ∧ (a ⇒ ¬c) ∧ (b ⇒ c) ∧ (c ⇒ d))",
+      "rows": [
+       {
+        "a": false,
+        "b": true,
+        "c": true,
+        "d": true
+       },
+       {
+        "a": true,
+        "b": false,
+        "c": false,
+        "d": false
+       },
+       {
+        "a": true,
+        "b": false,
+        "c": false,
+        "d": true
+       }
+      ]
+     }
+    },
+    {
+     "id": "b2",
+     "q": "True or false: if `φ` is satisfiable and `ψ` is satisfiable, then `φ ∧ ψ` is satisfiable.",
+     "a": "**False.**",
+     "why": "Counterexample: `φ = p`, `ψ = ¬p`. Each has a model, but `p ∧ ¬p` has none.",
+     "check": [
+      {
+       "kind": "valid",
+       "f": "¬(p)",
+       "expect": false
+      },
+      {
+       "kind": "valid",
+       "f": "¬(¬p)",
+       "expect": false
+      },
+      {
+       "kind": "valid",
+       "f": "¬(p ∧ ¬p)",
+       "expect": true
+      }
+     ]
+    },
+    {
+     "id": "b3",
+     "q": "True or false: if `φ ∨ ψ` is valid, then `φ` is valid or `ψ` is valid.",
+     "a": "**False.**",
+     "why": "`p ∨ ¬p` is valid, but neither `p` nor `¬p` is valid on its own.",
+     "check": [
+      {
+       "kind": "valid",
+       "f": "p ∨ ¬p",
+       "expect": true
+      },
+      {
+       "kind": "valid",
+       "f": "p",
+       "expect": false
+      },
+      {
+       "kind": "valid",
+       "f": "¬p",
+       "expect": false
+      }
+     ]
+    },
+    {
+     "id": "b4",
+     "q": "How many of the 16 rows make `(a ⇒ b) ∧ (c ⇒ d)` true?",
+     "a": "**9**",
+     "why": "Each `⇒` is true in 3 of its 4 rows. The two parts use different letters, so 3 × 3 = 9.",
+     "check": {
+      "kind": "calc",
+      "expr": "sum(1 for a,b,c,d in product([0,1],repeat=4) if ((not a) or b) and ((not c) or d))",
+      "expect": 9
+     }
+    },
+    {
+     "id": "b5",
+     "q": "`φ` is valid. Is `φ ⇒ ψ` valid for every `ψ`?",
+     "a": "**No.** `φ ⇒ ψ` is then valid exactly when `ψ` is valid.",
+     "why": "Every row has `φ` = T, so `φ ⇒ ψ` has the same value as `ψ` in every row. Try `φ = p ∨ ¬p`, `ψ = q`: `(p ∨ ¬p) ⇒ q` is F when `q = F`.",
+     "check": {
+      "kind": "valid",
+      "f": "(p ∨ ¬p) ⇒ q",
+      "expect": false
+     }
+    },
+    {
+     "id": "b6",
+     "q": "Is `((p ⇒ q) ∧ (q ⇒ r)) ⇒ (p ⇒ r)` valid?",
+     "a": "**Yes.**",
+     "why": "A bad row needs `p = T, r = F`. Then `p ⇒ q` = T forces `q = T`, and `q ⇒ r` = T ⇒ F = F. The left side can't be T.",
+     "check": {
+      "kind": "valid",
+      "f": "((p ⇒ q) ∧ (q ⇒ r)) ⇒ (p ⇒ r)",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-retest",
+   "level": "retest",
+   "items": [
+    {
+     "id": "rt1",
+     "q": "How many rows for 5 letters?",
+     "a": "**32**",
+     "check": {
+      "kind": "calc",
+      "expr": "2**5",
+      "expect": 32
+     }
+    },
+    {
+     "id": "rt2",
+     "q": "Every model of `(p ⇒ q) ∧ p ∧ ¬r`?",
+     "a": "**`p = T, q = T, r = F`**",
+     "check": {
+      "kind": "falsifying",
+      "f": "¬((p ⇒ q) ∧ p ∧ ¬r)",
+      "rows": [
+       {
+        "p": true,
+        "q": true,
+        "r": false
+       }
+      ]
+     }
+    },
+    {
+     "id": "rt3",
+     "q": "Classify `(a ⇒ b) ∨ a`.",
+     "a": "**Valid.**",
+     "check": {
+      "kind": "valid",
+      "f": "(a ⇒ b) ∨ a",
+      "expect": true
+     }
+    },
+    {
+     "id": "rt4",
+     "q": "Is `((p ∨ q) ∧ p) ⇒ ¬q` always true? If not, a bad row.",
+     "a": "**No.** Bad row: `p = T, q = T`.",
+     "check": {
+      "kind": "falsifying",
+      "f": "((p ∨ q) ∧ p) ⇒ ¬q",
+      "rows": [
+       {
+        "p": true,
+        "q": true
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "type": "recap",
+   "lines": [
+    "Rows: `2ⁿ`, counting FFF → TTT, rightmost letter fastest.",
+    "Helper column per bracket, innermost first.",
+    "Satisfiable: ∃ a T row (a model). Valid (`⊨ φ`): all rows T. Unsatisfiable: no T row.",
+    "`φ` valid ⇔ `¬φ` unsatisfiable. Valid ⇒ satisfiable, never the other way.",
+    "For `X ⇒ Y`: set Y = F, try to make X = T. Can't? Valid. Can? That row is your counterexample.",
+    "Constraint puzzles = satisfiability. Chase forced letters first."
+   ]
+  },
+  {
+   "type": "links",
+   "id": "links",
+   "sub": "Free, from universities. Try them after the ladder above.",
+   "items": [
+    {
+     "title": "Mathematics for Computer Science — Section 3.3, Equivalence and Validity",
+     "url": "https://courses.csail.mit.edu/6.042/spring18/mcs.pdf",
+     "source": "MIT — the book the COMP9020 slides borrow examples from",
+     "checked": "24 Sep 2026",
+     "note": "Satisfiability and validity with truth tables, plus Problems 3.x at the end of Chapter 3."
+    },
+    {
+     "title": "UW CSE 311 — Section 1 worksheet, with solutions",
+     "url": "https://courses.cs.washington.edu/courses/cse311/24au/section/section01-solutions.pdf",
+     "source": "University of Washington",
+     "checked": "24 Sep 2026",
+     "note": "Truth-table practice with worked answers."
+    }
+   ]
+  }
+ ],
+ "sources": "Lecture slides: Week 1 slide 55 (truth tables) and Week 2 slides 3–9 and 26 (satisfiability, the party example, 2.7.14, validity). Notation follows Prof. Thielscher's slides. All practice formulas are original.",
+ "prev": {
+  "href": "../drill-if-then-decoder/",
+  "label": "D1 · If–Then Decoder"
+ },
+ "next": {
+  "href": "../l3b-equivalence-laws/",
+  "label": "L3B · Equivalence & the Laws"
+ }
+}

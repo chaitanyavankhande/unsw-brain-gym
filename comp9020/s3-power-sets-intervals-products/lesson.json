@@ -1,0 +1,719 @@
+{
+ "id": "comp9020-s3",
+ "course": {
+  "code": "COMP9020",
+  "href": "../"
+ },
+ "code": "S3",
+ "emoji": "🧺",
+ "title": "Power Sets, Intervals & Products",
+ "eyebrow": "COMP9020 · Week 1 · Sets",
+ "minutes": 40,
+ "verified": true,
+ "goal": "List power sets and count them, reason about `Pow` true/false claims, count intervals over ℤ vs ℝ, and build Cartesian products.",
+ "magic": [
+  "`Pow(X)` = all subsets; `|Pow(X)| = 2^|X|`; `X ∈ Pow(A) ⇔ X ⊆ A`.",
+  "`[` includes, `(` excludes; over ℤ `|[m, n]| = n − m + 1`.",
+  "`kℤ + r` = remainder `r` mod `k`.",
+  "`S × T` = ordered pairs; `|S × T| = |S||T|`; `∅ × S = ∅`.",
+  "A function: every input gets exactly one output."
+ ],
+ "blocks": [
+  {
+   "type": "section",
+   "id": "learn",
+   "title": "💡 Learn it, one idea at a time"
+  },
+  {
+   "type": "idea",
+   "id": "w1",
+   "short": "Power set",
+   "title": "The power set: the set of ALL subsets",
+   "summary": "`Pow(X)` collects every subset of `X`, including `∅` and `X` itself. It has `2^|X|` elements.",
+   "picture": "Pizza toppings {cheese, ham}. Every possible order: no toppings, cheese only, ham only, both. That menu of 4 choices is the power set.",
+   "official": "`Pow(X) = {A : A ⊆ X}` and always `|Pow(X)| = 2^|X|` (Week 1, slide 31). Examples: `Pow(∅) = {∅}` (1 element), `Pow(Pow(∅)) = Pow({∅}) = {∅, {∅}}` (2 elements), `Pow({a}) = {∅, {a}}`. Note the type: `Pow(X)` is always a **set of sets**. Lecture exercise 1.4.4: `Σ = {a, b}` has subsets `∅, {a}, {b}, {a, b}`, so `|Pow(Σ)| = 4`.",
+   "watch": {
+    "q": "List `Pow({1, 2, 3})`.",
+    "steps": [
+     "Size 0: `∅`.",
+     "Size 1: `{1}, {2}, {3}`.",
+     "Size 2: `{1, 2}, {1, 3}, {2, 3}`.",
+     "Size 3: `{1, 2, 3}`."
+    ],
+    "answer": "**8 subsets** (`2³ = 8`): list them by size so you don't miss any."
+   },
+   "tries": [
+    {
+     "id": "w1a",
+     "q": "`|Pow({a, b, c, d})|`?",
+     "a": "**16**",
+     "why": "`2⁴`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len(Pow({'a','b','c','d'}))",
+      "expect": 16
+     }
+    },
+    {
+     "id": "w1b",
+     "q": "List `Pow(Pow({1}))`.",
+     "a": "**`{∅, {∅}, {{1}}, {∅, {1}}}`**",
+     "why": "`Pow({1}) = {∅, {1}}` has 2 elements, so its power set has 4.",
+     "check": {
+      "kind": "calc",
+      "expr": "len(Pow(Pow({1})))",
+      "expect": 4
+     }
+    },
+    {
+     "id": "w1c",
+     "q": "`|Pow(Pow(Pow(∅)))|`?",
+     "a": "**4**",
+     "why": "`Pow(∅)` has 1 element, `Pow(Pow(∅))` has 2, and the next has `2² = 4`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len(Pow(Pow(Pow(set()))))",
+      "expect": 4
+     }
+    },
+    {
+     "id": "w1d",
+     "q": "Is `∅` an element of `Pow(X)` for every set `X`?",
+     "a": "**Yes.**",
+     "why": "`∅ ⊆ X` always, so `∅ ∈ Pow(X)`.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(frozenset() in Pow(A) for A in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "`Pow({1, 2})` is `{1, 2, {1, 2}}`.",
+    "correct": "Its elements are **subsets**: `∅, {1}, {2}, {1, 2}`. The plain numbers 1 and 2 are not elements.",
+    "test": "Every element of `Pow(X)` must itself be a set."
+   },
+   "magic": "`Pow(X)` = all subsets. `|Pow(X)| = 2^|X|`."
+  },
+  {
+   "type": "idea",
+   "id": "w2",
+   "short": "Pow facts",
+   "title": "Power-set facts: which claims survive every set?",
+   "summary": "`∅ ∈ Pow(A)` and `A ∈ Pow(A)` always. `Pow` works nicely with `∩` but not with `∪`.",
+   "picture": "All the playlists you can make from songs in BOTH libraries = playlists you could make in each. But combining two libraries lets you make NEW mixed playlists that neither library alone allowed.",
+   "official": "`X ∈ Pow(A) ⇔ X ⊆ A`. So `∅ ∈ Pow(A)` and `A ∈ Pow(A)`. `Pow(A ∩ B) = Pow(A) ∩ Pow(B)`, but only `Pow(A) ∪ Pow(B) ⊆ Pow(A ∪ B)` (they differ when a subset mixes elements of both). `Pow(A) ⊆ Pow(B) ⇔ A ⊆ B`. (Problem set 1, Q6 asks true/false questions of this kind.)",
+   "watch": {
+    "q": "True for all sets? `Pow(A ∪ B) = Pow(A) ∪ Pow(B)`.",
+    "steps": [
+     "Try `A = {1}`, `B = {2}`.",
+     "`{1, 2} ⊆ A ∪ B`, so `{1, 2} ∈ Pow(A ∪ B)`.",
+     "But `{1, 2}` is neither a subset of A nor of B."
+    ],
+    "answer": "**False.** Counterexample `A = {1}, B = {2}`."
+   },
+   "tries": [
+    {
+     "id": "w2a",
+     "q": "True for all sets? `Pow(A ∩ B) = Pow(A) ∩ Pow(B)`.",
+     "a": "**True.**",
+     "why": "`X ⊆ A ∩ B` ⇔ `X ⊆ A` and `X ⊆ B`.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(Pow(A & B) == (Pow(A) & Pow(B)) for A in Pow(U) for B in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "w2b",
+     "q": "True for all sets? `{A} ⊆ Pow(A)`.",
+     "a": "**True.**",
+     "why": "Its only element is `A`, and `A ∈ Pow(A)`.",
+     "check": {
+      "kind": "calc",
+      "expr": "all({A} <= Pow(A) for A in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "w2c",
+     "q": "True for all sets? `∅ ⊆ Pow(A)`.",
+     "a": "**True.**",
+     "why": "`∅` is a subset of every set, including `Pow(A)`.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(set() <= Pow(A) for A in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "`A ⊆ B` means the same as `A ∈ Pow(B)`, so `A ⊆ Pow(B)` too.",
+    "correct": "`A ∈ Pow(B)` ⇔ `A ⊆ B`. But `A ⊆ Pow(B)` would need every **element** of A to be a subset of B, a different claim.",
+    "test": "Check the type: elements of `Pow(B)` are sets."
+   },
+   "magic": "`X ∈ Pow(A) ⇔ X ⊆ A`. `Pow(A ∩ B) = Pow(A) ∩ Pow(B)`; not so for `∪`."
+  },
+  {
+   "type": "idea",
+   "id": "w3",
+   "short": "Intervals",
+   "title": "Intervals: brackets include, parentheses exclude, and the domain matters",
+   "summary": "`[a, b]` includes both ends, `(a, b)` excludes both. Over ℤ an interval is finite: `|[m, n]| = n − m + 1`.",
+   "picture": "A lift that stops at every floor from 2 to 6 inclusive stops 5 times. A ruler from 2 cm to 6 cm contains infinitely many points.",
+   "official": "Intervals apply to any number type (Week 1, slide 35): `[a, b] = {x : a ≤ x ≤ b}`, `(a, b) = {x : a < x < b}`, plus half-open `[a, b)`, `(a, b]`. `[a, b] ⊇ [a, b), (a, b] ⊇ (a, b)`. `(a, a) = (a, a] = [a, a) = ∅`, but `[a, a] = {a}`. Over ℙ, ℕ, ℤ intervals are finite: `[m, n] = {m, m + 1, …, n}`, `|[m, n]| = n − m + 1`. Lecture exercise 1.3.10: `[−1, 1]` has 3 elements over ℤ but infinitely many over ℚ or ℝ.",
+   "watch": {
+    "q": "How many elements do `[−2, 2]`, `(0, 3)` and `[3, 10)` have over ℤ?",
+    "steps": [
+     "`[−2, 2] = {−2, −1, 0, 1, 2}`: `2 − (−2) + 1 = 5`.",
+     "`(0, 3) = {1, 2}`: 2.",
+     "`[3, 10) = {3, …, 9}`: 7."
+    ],
+    "answer": "**5, 2, 7.** Over ℝ, all three are infinite."
+   },
+   "tries": [
+    {
+     "id": "w3a",
+     "q": "`|[4, 4]|` and `|(4, 4)|` (over ℤ)?",
+     "a": "**1** and **0**.",
+     "why": "`[4, 4] = {4}`; `(4, 4) = ∅`."
+    },
+    {
+     "id": "w3b",
+     "q": "`|[−5, 5)|` over ℤ?",
+     "a": "**10**",
+     "why": "`{−5, …, 4}`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len(range(-5, 5))",
+      "expect": 10
+     }
+    },
+    {
+     "id": "w3c",
+     "q": "How many elements does `(1, 2)` have over ℤ? Over ℚ?",
+     "a": "**0** over ℤ; **infinitely many** over ℚ.",
+     "why": "No integer lies strictly between 1 and 2; infinitely many fractions do."
+    }
+   ],
+   "trap": {
+    "tempting": "`|[m, n]| = n − m`.",
+    "correct": "Both ends are included, so it's `n − m + 1`. (`[1, 3] = {1, 2, 3}`, 3 elements.)",
+    "test": "Test on a tiny interval like `[5, 5]`: the count must be 1."
+   },
+   "magic": "`[` includes, `(` excludes. Over ℤ: `n − m + 1`."
+  },
+  {
+   "type": "idea",
+   "id": "w4",
+   "short": "Derived sets",
+   "title": "Derived sets like `2ℤ` and `3ℤ + 1`",
+   "summary": "`kℤ + r = {kx + r : x ∈ ℤ}`: the integers that leave remainder `r` when divided by `k`.",
+   "picture": "A clock with 3 hours: every integer lands on 0, 1 or 2. `3ℤ + 1` is everything that lands on 1.",
+   "official": "Week 1, slide 34: `2ℤ = {2x : x ∈ ℤ}` (the even numbers), `3ℤ + 1 = {3x + 1 : x ∈ ℤ}`. Also derived sets of positives: `ℕ>0 = ℤ>0 = {n ∈ ℤ : n ≥ 1} ⊂ ℚ>0 ⊂ ℝ>0`. To test `n ∈ 3ℤ + 1`, check `n mod 3 = 1`.",
+   "watch": {
+    "q": "Is `−2 ∈ 3ℤ + 1`?",
+    "steps": [
+     "We need an integer `x` with `3x + 1 = −2`.",
+     "`3x = −3`, `x = −1` ✅ (an integer).",
+     "Check with mod: `−2 mod 3 = 1` ✅."
+    ],
+    "answer": "**Yes.**"
+   },
+   "tries": [
+    {
+     "id": "w4a",
+     "q": "Is `7 ∈ 3ℤ + 1`? Is `7 ∈ 2ℤ`?",
+     "a": "**Yes; no.**",
+     "why": "`7 = 3 · 2 + 1`. 7 is odd.",
+     "check": [
+      {
+       "kind": "calc",
+       "expr": "mod(7, 3) == 1"
+      },
+      {
+       "kind": "calc",
+       "expr": "mod(7, 2) != 0"
+      }
+     ]
+    },
+    {
+     "id": "w4b",
+     "q": "Describe `2ℤ ∩ 3ℤ`.",
+     "a": "**`6ℤ`** (multiples of 6).",
+     "why": "Divisible by 2 and by 3 = divisible by `lcm(2, 3) = 6`.",
+     "check": {
+      "kind": "calc",
+      "expr": "{n for n in range(-60, 61) if n % 2 == 0} & {n for n in range(-60, 61) if n % 3 == 0} == {n for n in range(-60, 61) if n % 6 == 0}"
+     }
+    },
+    {
+     "id": "w4c",
+     "q": "`(3ℤ + 1) ∩ (3ℤ + 2)`?",
+     "a": "**`∅`**",
+     "why": "A number has only one remainder mod 3."
+    }
+   ],
+   "trap": {
+    "tempting": "`3ℤ + 1` contains only positive numbers like 1, 4, 7, …",
+    "correct": "`x` ranges over all of ℤ, so it also contains `…, −5, −2`.",
+    "test": "Plug in `x = −1, −2`."
+   },
+   "magic": "`kℤ + r` = remainder `r` mod `k`, negatives included."
+  },
+  {
+   "type": "idea",
+   "id": "w5",
+   "short": "Cartesian product",
+   "title": "Cartesian products: every ordered pair",
+   "summary": "`S × T` pairs every element of S with every element of T. Order inside a pair matters. `|S × T| = |S| · |T|`.",
+   "picture": "A menu with 3 mains and 2 drinks: every (main, drink) combo is one meal deal. `3 × 2 = 6` deals. (drink, main) would be a different listing.",
+   "official": "`S × T ≝ {(s, t) : s ∈ S, t ∈ T}`, where `(s, t)` is an **ordered pair** (Week 1, slide 39). `S² = S × S`, `S³ = S × S × S`, and in general n-tuples. Facts: `∅ × S = ∅`; `|S × T| = |S| · |T|`; `|S₁ × … × Sₙ| = |S₁| · … · |Sₙ|`.",
+   "watch": {
+    "q": "List `{1, 2} × {a, b, c}`.",
+    "steps": [
+     "Pair 1 with each letter: `(1, a), (1, b), (1, c)`.",
+     "Pair 2 with each letter: `(2, a), (2, b), (2, c)`."
+    ],
+    "answer": "**6 pairs** (`2 × 3`)."
+   },
+   "tries": [
+    {
+     "id": "w5a",
+     "q": "`|{0, 1}³|`?",
+     "a": "**8**",
+     "why": "`2 · 2 · 2`: all 3-bit strings.",
+     "check": {
+      "kind": "calc",
+      "expr": "len(cart({0,1},{0,1},{0,1}))",
+      "expect": 8
+     }
+    },
+    {
+     "id": "w5b",
+     "q": "`{x, y} × ∅`?",
+     "a": "**`∅`**",
+     "why": "There is no second component to pair with.",
+     "check": {
+      "kind": "calc",
+      "expr": "len(cart({'x','y'}, set()))",
+      "expect": 0
+     }
+    },
+    {
+     "id": "w5c",
+     "q": "Is `{1, 2} × {3} = {3} × {1, 2}`?",
+     "a": "**No.**",
+     "why": "`(1, 3) ≠ (3, 1)`: order in a pair matters.",
+     "check": {
+      "kind": "calc",
+      "expr": "cart({1,2},{3}) != cart({3},{1,2})"
+     }
+    },
+    {
+     "id": "w5d",
+     "q": "Is `(1, (2, 3))` equal to `((1, 2), 3)`?",
+     "a": "**No.**",
+     "why": "Their first parts differ: `1` versus the pair `(1, 2)`. They carry the same information, though."
+    }
+   ],
+   "trap": {
+    "tempting": "`S × T` and `T × S` are the same set.",
+    "correct": "They contain the same **number** of pairs, but the pairs are flipped. Equal only if `S = T` or one of them is empty.",
+    "test": "Write one pair from each and compare the first components."
+   },
+   "magic": "Ordered pairs; `|S × T| = |S||T|`; `∅ × S = ∅`."
+  },
+  {
+   "type": "idea",
+   "id": "w6",
+   "short": "Functions",
+   "title": "Functions as pairings: every input gets exactly one output",
+   "summary": "`f : S → T` gives each element of S exactly one element of T. `f : x ↦ y` means `f(x) = y`.",
+   "picture": "A seat assignment: every guest (S) gets exactly one seat (T). Two guests may share a table, but no guest gets two seats or none.",
+   "official": "Week 1, slide 40: functions are a set-theoretic concept: `f : S → T` assigns to **every** element `s ∈ S` a **unique** element `t ∈ T`. `f : x ↦ y` means the same as `f(x) = y`. (Functions are covered properly in Week 3.) The number of functions from S to T is `|T|^|S|`, e.g. `2ⁿ` functions from an `n`-element set to `B = {0, 1}` (Week 2, slide 73).",
+   "watch": {
+    "q": "`S = {1, 2}`, `T = {a, b}`. Is the pairing `{(1, a), (1, b), (2, a)}` a function `S → T`?",
+    "steps": [
+     "Every `s` must have exactly one partner.",
+     "`1` has two partners (`a` and `b`)."
+    ],
+    "answer": "**Not a function.**"
+   },
+   "tries": [
+    {
+     "id": "w6a",
+     "q": "Same S, T. Is `{(1, a), (2, a)}` a function?",
+     "a": "**Yes.**",
+     "why": "Each input has exactly one output; sharing an output is fine."
+    },
+    {
+     "id": "w6b",
+     "q": "Same S, T. Is `{(1, b)}` a function `S → T`?",
+     "a": "**No.**",
+     "why": "`2` gets no output."
+    },
+    {
+     "id": "w6c",
+     "q": "How many functions from `{1, 2, 3}` to `{0, 1}`?",
+     "a": "**8**",
+     "why": "Each of 3 inputs independently picks one of 2 outputs: `2³`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len(list(product([0, 1], repeat=3)))",
+      "expect": 8
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "An input may have two outputs as long as the outputs are in T.",
+    "correct": "Each input has **exactly one** output. Different inputs may share an output.",
+    "test": "Scan the inputs: exactly one arrow leaves each."
+   },
+   "magic": "Every input, exactly one output."
+  },
+  {
+   "type": "section",
+   "id": "practice",
+   "title": "🏋️ Practice ladder"
+  },
+  {
+   "type": "practice",
+   "id": "p-green",
+   "level": "green",
+   "items": [
+    {
+     "id": "g1",
+     "q": "`|Pow({x, y})|`?",
+     "a": "**4**",
+     "why": "`2²`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len(Pow({'x','y'}))",
+      "expect": 4
+     }
+    },
+    {
+     "id": "g2",
+     "q": "`Pow(∅)`?",
+     "a": "**`{∅}`**",
+     "why": "One subset: the empty set.",
+     "check": {
+      "kind": "calc",
+      "expr": "len(Pow(set()))",
+      "expect": 1
+     }
+    },
+    {
+     "id": "g3",
+     "q": "`|[10, 20]|` over ℤ?",
+     "a": "**11**",
+     "why": "`20 − 10 + 1`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len(range(10, 21))",
+      "expect": 11
+     }
+    },
+    {
+     "id": "g4",
+     "q": "`|{a, b} × {1, 2, 3, 4}|`?",
+     "a": "**8**",
+     "why": "`2 · 4`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len(cart({'a','b'},{1,2,3,4}))",
+      "expect": 8
+     }
+    },
+    {
+     "id": "g5",
+     "q": "Is `{2} ∈ Pow({1, 2})`?",
+     "a": "**Yes.**",
+     "why": "`{2} ⊆ {1, 2}`.",
+     "check": {
+      "kind": "calc",
+      "expr": "frozenset({2}) in Pow({1, 2})"
+     }
+    },
+    {
+     "id": "g6",
+     "q": "Is `2 ∈ Pow({1, 2})`?",
+     "a": "**No.**",
+     "why": "Elements of a power set are sets; 2 is a number.",
+     "check": {
+      "kind": "calc",
+      "expr": "2 not in Pow({1, 2})"
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-yellow",
+   "level": "yellow",
+   "items": [
+    {
+     "id": "y1",
+     "q": "List `{0, 1}²`.",
+     "a": "**`{(0, 0), (0, 1), (1, 0), (1, 1)}`**",
+     "why": "All ordered pairs of bits.",
+     "check": {
+      "kind": "calc",
+      "expr": "len(cart({0,1},{0,1}))",
+      "expect": 4
+     }
+    },
+    {
+     "id": "y2",
+     "q": "`|Pow({1, 2}) × {a, b}|`?",
+     "a": "**8**",
+     "why": "`|Pow({1, 2})| = 4`, times 2.",
+     "check": {
+      "kind": "calc",
+      "expr": "len(cart(Pow({1,2}), {'a','b'}))",
+      "expect": 8
+     }
+    },
+    {
+     "id": "y3",
+     "q": "How many elements does `[−1, 1)` have over ℤ? Over ℝ?",
+     "a": "**2** (`{−1, 0}`); **infinitely many**.",
+     "why": "Half-open: −1 is in, 1 is out."
+    },
+    {
+     "id": "y4",
+     "q": "Which of `−4, −1, 2, 5` are in `3ℤ + 2`?",
+     "a": "**−4, −1, 2, 5**: all of them.",
+     "why": "Each leaves remainder 2 mod 3 (`−4 = 3(−2) + 2`, `−1 = 3(−1) + 2`).",
+     "check": {
+      "kind": "calc",
+      "expr": "all(mod(n, 3) == 2 for n in [-4, -1, 2, 5])"
+     }
+    },
+    {
+     "id": "y5",
+     "q": "`|Pow(A)| = 32`. What is `|A|`?",
+     "a": "**5**",
+     "why": "`2⁵ = 32`.",
+     "check": {
+      "kind": "calc",
+      "expr": "2**5",
+      "expect": 32
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-red",
+   "level": "red",
+   "sub": "Problem set 1, Q6 style: true-for-all-sets claims about power sets and products. Original statements.",
+   "items": [
+    {
+     "id": "r1",
+     "q": "Which statements are true for **all** sets `A`, `B`?",
+     "a": "**(1), (2), (4)**",
+     "why": "(1): `∅ ⊆ A`. (2): `X ⊆ A ∩ B` ⇔ `X ⊆ A` and `X ⊆ B`. (3) fails for `A = {1}, B = {2}`. (4): subsets of A are subsets of B exactly when `A ⊆ B`.",
+     "options": [
+      "`∅ ∈ Pow(A)`",
+      "`Pow(A ∩ B) = Pow(A) ∩ Pow(B)`",
+      "`Pow(A ∪ B) = Pow(A) ∪ Pow(B)`",
+      "`Pow(A) ⊆ Pow(B)` exactly when `A ⊆ B`"
+     ],
+     "correct": [
+      0,
+      1,
+      3
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_calc",
+      "exprs": [
+       "all(frozenset() in Pow(A) for A in Pow(U))",
+       "all(Pow(A & B) == (Pow(A) & Pow(B)) for A in Pow(U) for B in Pow(U))",
+       "all(Pow(A | B) == (Pow(A) | Pow(B)) for A in Pow(U) for B in Pow(U))",
+       "all((Pow(A) <= Pow(B)) == (A <= B) for A in Pow(U) for B in Pow(U))"
+      ],
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     },
+     "multi": true
+    },
+    {
+     "id": "r2",
+     "q": "`A = {x}`. List `Pow(A) × A`.",
+     "a": "**`{(∅, x), ({x}, x)}`**",
+     "why": "`Pow(A) = {∅, {x}}`, each paired with `x`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len(cart(Pow({'x'}), {'x'}))",
+      "expect": 2
+     }
+    },
+    {
+     "id": "r3",
+     "q": "True for all sets `A`? `|Pow(A) × Pow(A)| = 4^|A|`.",
+     "a": "**True.**",
+     "why": "`2^|A| · 2^|A| = 4^|A|`.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(len(cart(Pow(A), Pow(A))) == 4**len(A) for A in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "r4",
+     "q": "True or false: `(A × B) ∩ (A × C) = A × (B ∩ C)` for all sets.",
+     "a": "**True.**",
+     "why": "A pair `(a, x)` is in both products exactly when `a ∈ A` and `x ∈ B` and `x ∈ C`.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((cart(A, B) & cart(A, C)) == cart(A, B & C) for A in Pow(U) for B in Pow(U) for C in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-boss",
+   "level": "boss",
+   "items": [
+    {
+     "id": "b1",
+     "q": "`A = {1}`, `B = {2}`, `C = {3}`. Is `A × (B × C) = (A × B) × C`? Is there a one-to-one matching between them?",
+     "a": "**Not equal:** `(1, (2, 3)) ≠ ((1, 2), 3)`. **But yes, a bijection:** `(a, (b, c)) ↦ ((a, b), c)` matches them perfectly (both have `|A||B||C|` elements).",
+     "why": "Equal only in the degenerate case where one of the sets is empty (both sides are then `∅`).",
+     "check": {
+      "kind": "calc",
+      "expr": "cart({1}, cart({2}, {3})) != cart(cart({1}, {2}), {3})"
+     }
+    },
+    {
+     "id": "b2",
+     "q": "When is `A × B = B × A`?",
+     "a": "**Exactly when `A = B`, or `A = ∅`, or `B = ∅`.**",
+     "why": "If both are non-empty and `a ∈ A \\ B`, then any `(a, b)` is in `A × B` but not in `B × A`.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((cart(A, B) == cart(B, A)) == (A == B or not A or not B) for A in Pow(U) for B in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "b3",
+     "q": "How many elements does `Pow({1, 2}) \\ Pow({1})` have? List them.",
+     "a": "**2:** `{2}` and `{1, 2}`.",
+     "why": "The subsets of `{1, 2}` that contain 2.",
+     "check": {
+      "kind": "calc",
+      "expr": "len(Pow({1, 2}) - Pow({1}))",
+      "expect": 2
+     }
+    },
+    {
+     "id": "b4",
+     "q": "How many subsets of `{1, …, 10}` contain the element 1?",
+     "a": "**512**",
+     "why": "Fix 1 in; each of the other 9 elements is in or out: `2⁹`.",
+     "check": {
+      "kind": "calc",
+      "expr": "sum(1 for S in Pow(range(1, 11)) if 1 in S)",
+      "expect": 512
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-retest",
+   "level": "retest",
+   "items": [
+    {
+     "id": "rt1",
+     "q": "List `Pow({a})`.",
+     "a": "**`{∅, {a}}`**",
+     "check": {
+      "kind": "calc",
+      "expr": "len(Pow({'a'}))",
+      "expect": 2
+     }
+    },
+    {
+     "id": "rt2",
+     "q": "`|(2, 9]|` over ℤ?",
+     "a": "**7**",
+     "check": {
+      "kind": "calc",
+      "expr": "len(range(3, 10))",
+      "expect": 7
+     }
+    },
+    {
+     "id": "rt3",
+     "q": "`|{1, 2, 3}²|`?",
+     "a": "**9**",
+     "check": {
+      "kind": "calc",
+      "expr": "len(cart({1,2,3},{1,2,3}))",
+      "expect": 9
+     }
+    },
+    {
+     "id": "rt4",
+     "q": "Is `(a, b) = (b, a)` when `a ≠ b`?",
+     "a": "**No.**"
+    }
+   ]
+  },
+  {
+   "type": "recap",
+   "lines": [
+    "`Pow(∅) = {∅}`, `Pow({a}) = {∅, {a}}`, sizes double with each new element.",
+    "`Pow(A ∩ B) = Pow(A) ∩ Pow(B)`; `Pow(A) ∪ Pow(B) ⊆ Pow(A ∪ B)` only.",
+    "Intervals: finite over ℤ, infinite over ℚ/ℝ (unless empty or a single point).",
+    "`2ℤ` evens, `3ℤ + 1` remainder 1 mod 3.",
+    "Products: order matters; `(a, (b, c)) ≠ ((a, b), c)` but they match one-to-one."
+   ]
+  },
+  {
+   "type": "links",
+   "id": "links",
+   "sub": "Free, from universities. Try them after the ladder above.",
+   "items": [
+    {
+     "title": "Mathematics for Computer Science — Sections 4.1 (Sets) and 4.3 (Functions)",
+     "url": "https://courses.csail.mit.edu/6.042/spring18/mcs.pdf",
+     "source": "MIT",
+     "checked": "24 Sep 2026",
+     "note": "Power sets, Cartesian products and functions, with problems."
+    }
+   ]
+  }
+ ],
+ "sources": "Lecture slides: Week 1 slides 31–32 (power set, 1.4.4, 1.4.7), 34–36 (number sets, intervals, 1.3.10), 39–40 (Cartesian product, functions); Week 2 slide 73. Tutorial 1 covered power sets and products. All practice sets are original.",
+ "prev": {
+  "href": "../s2-subsets-laws-proofs/",
+  "label": "S2 · Subsets, Set Laws & Set Proofs"
+ },
+ "next": {
+  "href": "../f1-words-and-alphabets/",
+  "label": "F1 · Words & Alphabets"
+ }
+}

@@ -1670,11 +1670,11 @@
  ],
  "sources": "Lecture slides: Week 1 (slides 57–63, logic) and Week 2 (logic continued). Notation follows Prof. Thielscher's slides. All practice questions are original.",
  "prev": {
-  "href": "../",
-  "label": "COMP9020 home"
+  "href": "../r1-and-or-not/",
+  "label": "R1 · AND, OR, NOT from Zero"
  },
  "next": {
   "href": "../l2b-english-to-logic/",
-  "label": "L2B · English → Logic"
+  "label": "L2B · English → Logic Translator"
  }
 }

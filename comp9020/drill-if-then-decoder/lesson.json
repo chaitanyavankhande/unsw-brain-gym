@@ -570,10 +570,10 @@
  "sources": "All sentences are original. Goes with L2 · If–Then & Friends.",
  "prev": {
   "href": "../l2b-english-to-logic/",
-  "label": "L2B · English → Logic"
+  "label": "L2B · English → Logic Translator"
  },
  "next": {
-  "href": "../",
-  "label": "COMP9020 home"
+  "href": "../l3-truth-tables/",
+  "label": "L3 · Truth-Table Detective"
  }
 }

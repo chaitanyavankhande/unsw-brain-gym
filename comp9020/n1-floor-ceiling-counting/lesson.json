@@ -1,0 +1,818 @@
+{
+ "id": "comp9020-n1",
+ "course": {
+  "code": "COMP9020",
+  "href": "../"
+ },
+ "code": "N1",
+ "emoji": "🪜",
+ "title": "Floor, Ceiling & Counting",
+ "eyebrow": "COMP9020 · Week 1 · Numbers",
+ "minutes": 40,
+ "verified": true,
+ "goal": "Compute floors, ceilings and absolute values without sign slips, and count multiples in any interval, including \"divisible by `a` or `b`\" questions.",
+ "magic": [
+  "Floor = step left to an integer; ceiling = step right. `⌊−2.7⌋ = −3`.",
+  "`⌊−x⌋ = −⌈x⌉`. `⌊x + t⌋ = ⌊x⌋ + t` only for integer `t`.",
+  "`|x|` = distance from 0; evaluate the inside first.",
+  "Multiples of `k` in `[n, m]`: `⌊m/k⌋ − ⌊(n − 1)/k⌋`.",
+  "AND → `lcm`. OR → add both, subtract the AND."
+ ],
+ "blocks": [
+  {
+   "type": "section",
+   "id": "learn",
+   "title": "💡 Learn it, one idea at a time"
+  },
+  {
+   "type": "idea",
+   "id": "f1",
+   "short": "Floor & ceiling",
+   "title": "Floor rounds down, ceiling rounds up (on the number line)",
+   "summary": "`⌊x⌋` is the nearest integer at or below `x`; `⌈x⌉` the nearest at or above. \"Down\" means towards −∞, even for negatives.",
+   "picture": "You're in a building on floor 2.7 (between floors). The floor under your feet is floor 2; the ceiling above you is floor 3. In a basement at −2.7, the floor under you is −3, not −2.",
+   "official": "`⌊·⌋ : ℝ → ℤ`, the **floor** of `x`: the greatest integer `≤ x`. `⌈·⌉ : ℝ → ℤ`, the **ceiling**: the least integer `≥ x` (Week 1, slide 10). Example: `⌊π⌋ = 3 = ⌈e⌉`. For an integer `n`, `⌊n⌋ = ⌈n⌉ = n`.",
+   "watch": {
+    "q": "Find `⌊2.7⌋`, `⌈2.7⌉`, `⌊−2.7⌋`, `⌈−2.7⌉`.",
+    "steps": [
+     "`2.7` sits between 2 and 3. Down → **2**, up → **3**.",
+     "`−2.7` sits between −3 and −2 on the number line (−3 is further left).",
+     "Down (left) → **−3**. Up (right) → **−2**."
+    ],
+    "answer": "**2, 3, −3, −2.** For negatives, floor moves away from 0."
+   },
+   "tries": [
+    {
+     "id": "f1a",
+     "q": "`⌊−0.5⌋` and `⌈−0.5⌉`?",
+     "a": "**−1** and **0**.",
+     "why": "`−0.5` is between −1 and 0.",
+     "check": [
+      {
+       "kind": "calc",
+       "expr": "floor(-0.5)",
+       "expect": -1
+      },
+      {
+       "kind": "calc",
+       "expr": "ceil(-0.5)",
+       "expect": 0
+      }
+     ]
+    },
+    {
+     "id": "f1b",
+     "q": "`⌈√10⌉`?",
+     "a": "**4**",
+     "why": "`√10 ≈ 3.16`, and the next integer up is 4.",
+     "check": {
+      "kind": "calc",
+      "expr": "ceil(sqrt(10))",
+      "expect": 4
+     }
+    },
+    {
+     "id": "f1c",
+     "q": "`⌊7⌋ + ⌈7⌉`?",
+     "a": "**14**",
+     "why": "An integer is its own floor and ceiling.",
+     "check": {
+      "kind": "calc",
+      "expr": "floor(7) + ceil(7)",
+      "expect": 14
+     }
+    },
+    {
+     "id": "f1d",
+     "q": "`⌊10 / 4⌋` and `⌈10 / 4⌉`?",
+     "a": "**2** and **3**.",
+     "why": "`10/4 = 2.5`. (In code: `10 // 4` and `-(-10 // 4)`.)",
+     "check": [
+      {
+       "kind": "calc",
+       "expr": "floor(10/4)",
+       "expect": 2
+      },
+      {
+       "kind": "calc",
+       "expr": "ceil(10/4)",
+       "expect": 3
+      }
+     ]
+    }
+   ],
+   "trap": {
+    "tempting": "`⌊−2.7⌋ = −2`: just chop off the decimals.",
+    "correct": "Chopping (truncating) goes **towards 0**. Floor always goes **down**: `⌊−2.7⌋ = −3`.",
+    "test": "Draw the number line. Floor = the integer to the **left**."
+   },
+   "magic": "Floor = step left to an integer. Ceiling = step right. Integers stay put."
+  },
+  {
+   "type": "idea",
+   "id": "f2",
+   "short": "Two rules",
+   "title": "Two rules: negatives flip, integers slide out",
+   "summary": "`⌊−x⌋ = −⌈x⌉`, and adding an integer `t` inside just adds `t` outside.",
+   "picture": "A mirror: reflect `x` to `−x`, and \"down\" becomes \"up\". And sliding everything along by whole floors doesn't change which floor you're above.",
+   "official": "Simple properties (Week 1, slide 11): `⌊−x⌋ = −⌈x⌉`, hence `⌈x⌉ = −⌊−x⌋`. `⌊x + t⌋ = ⌊x⌋ + t` and `⌈x + t⌉ = ⌈x⌉ + t` **for all `t ∈ ℤ`**.",
+   "watch": {
+    "q": "Use the rules to find `⌊−4.3⌋` and `⌊6.25 + 10⌋`.",
+    "steps": [
+     "`⌊−4.3⌋ = −⌈4.3⌉ = −5`.",
+     "`⌊6.25 + 10⌋ = ⌊6.25⌋ + 10 = 6 + 10 = 16` (10 is an integer)."
+    ],
+    "answer": "**−5** and **16**."
+   },
+   "tries": [
+    {
+     "id": "f2a",
+     "q": "`⌈−3.8⌉` using `⌈x⌉ = −⌊−x⌋`?",
+     "a": "**−3**",
+     "why": "`−⌊3.8⌋ = −3`.",
+     "check": {
+      "kind": "calc",
+      "expr": "ceil(-3.8)",
+      "expect": -3
+     }
+    },
+    {
+     "id": "f2b",
+     "q": "`⌈3⌉ + ⌊−2.5⌋`?",
+     "a": "**0**",
+     "why": "`⌈3⌉ = 3` (integer), `⌊−2.5⌋ = −3`. Sum `0`.",
+     "check": {
+      "kind": "calc",
+      "expr": "ceil(3) + floor(-2.5)",
+      "expect": 0
+     }
+    },
+    {
+     "id": "f2c",
+     "q": "Is `⌊x + 0.5⌋ = ⌊x⌋ + 0.5`?",
+     "a": "**No** (the left is an integer, the right isn't). The rule needs `t ∈ ℤ`.",
+     "why": "Try `x = 1.7`: `⌊2.2⌋ = 2`, but `⌊1.7⌋ + 0.5 = 1.5`.",
+     "check": {
+      "kind": "calc",
+      "expr": "floor(1.7 + 0.5) != floor(1.7) + 0.5"
+     }
+    },
+    {
+     "id": "f2d",
+     "q": "`⌊−7.2⌋ + ⌈7.2⌉`?",
+     "a": "**0**",
+     "why": "`⌊−7.2⌋ = −⌈7.2⌉`, so they cancel.",
+     "check": {
+      "kind": "calc",
+      "expr": "floor(-7.2) + ceil(7.2)",
+      "expect": 0
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "`⌊−x⌋ = −⌊x⌋`.",
+    "correct": "The negation turns floor into **ceiling**: `⌊−x⌋ = −⌈x⌉`. (`⌊−1.5⌋ = −2`, but `−⌊1.5⌋ = −1`.)",
+    "test": "Test with any non-integer, e.g. `x = 1.5`."
+   },
+   "magic": "`⌊−x⌋ = −⌈x⌉`. `⌊x + t⌋ = ⌊x⌋ + t` only when `t` is an integer."
+  },
+  {
+   "type": "idea",
+   "id": "f3",
+   "short": "Absolute value",
+   "title": "Absolute value: distance from 0",
+   "summary": "`|x|` is `x` if `x ≥ 0`, and `−x` if `x < 0`. Always `≥ 0`.",
+   "picture": "How far is a floor from ground level? Floor 4 and basement −4 are both 4 floors away.",
+   "official": "`|x| = x` if `x ≥ 0`, and `|x| = −x` if `x < 0` (Week 1, slide 16). So `|x| ≥ 0` always, and `|x| = |−x|`. Order matters when you mix it with floor/ceiling: do the innermost operation first.",
+   "watch": {
+    "q": "Compare `⌊|−2.5|⌋` and `|⌊−2.5⌋|`.",
+    "steps": [
+     "`|−2.5| = 2.5`, then `⌊2.5⌋ = 2`.",
+     "`⌊−2.5⌋ = −3`, then `|−3| = 3`."
+    ],
+    "answer": "**2** vs **3**: the order of operations changes the answer."
+   },
+   "tries": [
+    {
+     "id": "f3a",
+     "q": "`|3 − 8|`?",
+     "a": "**5**",
+     "why": "Compute inside first: `−5`, then drop the sign.",
+     "check": {
+      "kind": "calc",
+      "expr": "abs(3 - 8)",
+      "expect": 5
+     }
+    },
+    {
+     "id": "f3b",
+     "q": "`⌈|−1.2|⌉ − |⌈−1.2⌉|`?",
+     "a": "**1**",
+     "why": "`⌈1.2⌉ = 2`; `⌈−1.2⌉ = −1`, `|−1| = 1`. `2 − 1 = 1`.",
+     "check": {
+      "kind": "calc",
+      "expr": "ceil(abs(-1.2)) - abs(ceil(-1.2))",
+      "expect": 1
+     }
+    },
+    {
+     "id": "f3c",
+     "q": "For which `x` is `|x| = −x`?",
+     "a": "**For all `x ≤ 0`.**",
+     "why": "By the definition, `|x| = −x` when `x < 0`, and at `x = 0` both sides are 0."
+    }
+   ],
+   "trap": {
+    "tempting": "`|x|` just deletes a minus sign you can see.",
+    "correct": "`|x|` is `−x` whenever `x < 0`, even if `x` is written without a minus (e.g. `x = a − b` with `a < b`).",
+    "test": "Evaluate the inside to a number first, then apply the definition."
+   },
+   "magic": "`|x|` = distance from 0. Evaluate the inside first."
+  },
+  {
+   "type": "idea",
+   "id": "f4",
+   "short": "Floors don't add",
+   "title": "Floors of sums: `⌊x⌋ + ⌊y⌋` can be 1 less than `⌊x + y⌋`",
+   "summary": "The fractional parts can add up to more than 1, which adds an extra whole number.",
+   "picture": "Two jars each 0.6 full don't count as a full jar each, but pour them together and you get 1 full jar (plus a bit).",
+   "official": "Lecture exercise 1.1.19(a) (Week 1, slides 12–13): find `x, y` with `⌊x⌋ + ⌊y⌋ < ⌊x + y⌋`; answer `⌊3π⌋ + ⌊e⌋ = 9 + 2 = 11 < 12 = ⌊3π + e⌋`. In general `⌊x⌋ + ⌊y⌋ ≤ ⌊x + y⌋ ≤ ⌊x⌋ + ⌊y⌋ + 1`. Related: `⌈x⌉ − ⌊x⌋` is 0 if `x` is an integer, and 1 otherwise.",
+   "watch": {
+    "q": "Compare `⌊0.6⌋ + ⌊0.6⌋` with `⌊0.6 + 0.6⌋`.",
+    "steps": [
+     "`⌊0.6⌋ + ⌊0.6⌋ = 0 + 0 = 0`.",
+     "`⌊1.2⌋ = 1`."
+    ],
+    "answer": "**0 < 1**: the two fractions combine into an extra whole."
+   },
+   "tries": [
+    {
+     "id": "f4a",
+     "q": "Give `x, y` with `⌊x⌋ + ⌊y⌋ = ⌊x + y⌋`.",
+     "a": "**E.g. `x = 1.2, y = 3.3`:** `1 + 3 = 4 = ⌊4.5⌋`.",
+     "why": "Works whenever the fractional parts add to less than 1.",
+     "check": {
+      "kind": "calc",
+      "expr": "floor(1.2) + floor(3.3) == floor(1.2 + 3.3)"
+     }
+    },
+    {
+     "id": "f4b",
+     "q": "Can `⌊x⌋ + ⌊y⌋` be **bigger** than `⌊x + y⌋`?",
+     "a": "**No.**",
+     "why": "`⌊x⌋ + ⌊y⌋` is an integer `≤ x + y`, and `⌊x + y⌋` is the **greatest** such integer.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(floor(a/10) + floor(b/10) <= floor(a/10 + b/10) for a in range(-50, 50) for b in range(-50, 50))"
+     }
+    },
+    {
+     "id": "f4c",
+     "q": "`⌈x⌉ − ⌊x⌋` for `x = 4.01`, `x = −4`, `x = −4.99`?",
+     "a": "**1, 0, 1**",
+     "why": "0 exactly for integers, 1 otherwise.",
+     "check": {
+      "kind": "calc",
+      "expr": "[ceil(4.01) - floor(4.01), ceil(-4) - floor(-4), ceil(-4.99) - floor(-4.99)]",
+      "is": "[1, 0, 1]"
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Floor distributes over `+`: `⌊x + y⌋ = ⌊x⌋ + ⌊y⌋`.",
+    "correct": "Only sometimes. It fails when the fractional parts add up to 1 or more.",
+    "test": "Try `x = y = 0.5`."
+   },
+   "magic": "`⌊x⌋ + ⌊y⌋ ≤ ⌊x + y⌋ ≤ ⌊x⌋ + ⌊y⌋ + 1`."
+  },
+  {
+   "type": "idea",
+   "id": "f5",
+   "short": "Counting multiples",
+   "title": "Counting multiples of `k` in `[n, m]`",
+   "summary": "Multiples of `k` up to `m`, minus those up to `n − 1`: `⌊m/k⌋ − ⌊(n − 1)/k⌋`.",
+   "picture": "How many buses leave every 15 minutes between minute 20 and minute 100? Count those up to 100, subtract those that already left before minute 20.",
+   "official": "**Fact** (Week 1, slide 11): for `k > 0` and `m ≥ n`, the number of multiples of `k` in the interval `[n, m]` is `⌊m/k⌋ − ⌊(n − 1)/k⌋`. It works for negative `n` too, as long as you take the floor correctly.",
+   "watch": {
+    "q": "How many multiples of 4 are in `[10, 50]`?",
+    "steps": [
+     "`⌊50/4⌋ = ⌊12.5⌋ = 12` multiples of 4 in `[1, 50]`.",
+     "`⌊9/4⌋ = 2` of those are below 10 (4 and 8).",
+     "`12 − 2 = 10`. Check: 12, 16, …, 48 is 10 numbers."
+    ],
+    "answer": "**10**"
+   },
+   "tries": [
+    {
+     "id": "f5a",
+     "q": "How many multiples of 5 are in `[1, 99]`?",
+     "a": "**19**",
+     "why": "`⌊99/5⌋ − ⌊0/5⌋ = 19 − 0`.",
+     "check": [
+      {
+       "kind": "calc",
+       "expr": "floor(99/5) - floor(0/5)",
+       "expect": 19
+      },
+      {
+       "kind": "calc",
+       "expr": "count_mult(5, 1, 99)",
+       "expect": 19
+      }
+     ]
+    },
+    {
+     "id": "f5b",
+     "q": "How many multiples of 3 are in `[−10, 10]`?",
+     "a": "**7**",
+     "why": "`⌊10/3⌋ − ⌊−11/3⌋ = 3 − (−4) = 7`: −9, −6, −3, 0, 3, 6, 9. Careful: `⌊−3.67⌋ = −4`.",
+     "check": [
+      {
+       "kind": "calc",
+       "expr": "floor(10/3) - floor(-11/3)",
+       "expect": 7
+      },
+      {
+       "kind": "calc",
+       "expr": "count_mult(3, -10, 10)",
+       "expect": 7
+      }
+     ]
+    },
+    {
+     "id": "f5c",
+     "q": "How many multiples of 9 are in `[−50, −1]`?",
+     "a": "**5**",
+     "why": "`⌊−1/9⌋ − ⌊−51/9⌋ = −1 − (−6) = 5`: −45, −36, −27, −18, −9.",
+     "check": [
+      {
+       "kind": "calc",
+       "expr": "floor(-1/9) - floor(-51/9)",
+       "expect": 5
+      },
+      {
+       "kind": "calc",
+       "expr": "count_mult(9, -50, -1)",
+       "expect": 5
+      }
+     ]
+    },
+    {
+     "id": "f5d",
+     "q": "How many multiples of 5 are in `[2026, 2100]`?",
+     "a": "**15**",
+     "why": "`⌊2100/5⌋ − ⌊2025/5⌋ = 420 − 405 = 15`.",
+     "check": [
+      {
+       "kind": "calc",
+       "expr": "floor(2100/5) - floor(2025/5)",
+       "expect": 15
+      },
+      {
+       "kind": "calc",
+       "expr": "count_mult(5, 2026, 2100)",
+       "expect": 15
+      }
+     ]
+    }
+   ],
+   "trap": {
+    "tempting": "Subtract `⌊n/k⌋` instead of `⌊(n − 1)/k⌋`.",
+    "correct": "That throws away `n` itself when `n` is a multiple. Subtract the multiples **strictly below** `n`: `⌊(n − 1)/k⌋`.",
+    "test": "Test on a tiny case: multiples of 5 in `[5, 5]` should be 1."
+   },
+   "magic": "`⌊m/k⌋ − ⌊(n − 1)/k⌋`. Negative bounds: floor goes down."
+  },
+  {
+   "type": "idea",
+   "id": "f6",
+   "short": "And / or counting",
+   "title": "Divisible by `a` AND `b`, or by `a` OR `b`",
+   "summary": "\"By `a` and `b`\" = by `lcm(a, b)`. \"By `a` or `b`\" = count(a) + count(b) − count(both).",
+   "picture": "At a party, 20 people like pizza and 15 like sushi. If 5 like both, only 30 people like at least one: the 5 were counted twice.",
+   "official": "A number is divisible by both `a` and `b` exactly when it is divisible by `lcm(a, b)` (Week 1, slide 15). To count \"`a` or `b`\", add the two counts and subtract the double-counted ones: `|A ∪ B| = |A| + |B| − |A ∩ B|` (Week 1, slide 33).",
+   "watch": {
+    "q": "How many numbers in `[100, 999]` are divisible by 4 or by 6?",
+    "steps": [
+     "By 4: `⌊999/4⌋ − ⌊99/4⌋ = 249 − 24 = 225`.",
+     "By 6: `⌊999/6⌋ − ⌊99/6⌋ = 166 − 16 = 150`.",
+     "By both = by `lcm(4, 6) = 12`: `⌊999/12⌋ − ⌊99/12⌋ = 83 − 8 = 75`.",
+     "Or: `225 + 150 − 75 = 300`."
+    ],
+    "answer": "**300**"
+   },
+   "tries": [
+    {
+     "id": "f6a",
+     "q": "Same interval `[100, 999]`: how many are divisible by **neither** 4 nor 6?",
+     "a": "**600**",
+     "why": "The interval has `999 − 100 + 1 = 900` numbers; subtract the 300 divisible by 4 or 6.",
+     "check": {
+      "kind": "calc",
+      "expr": "sum(1 for x in range(100, 1000) if x % 4 and x % 6)",
+      "expect": 600
+     }
+    },
+    {
+     "id": "f6b",
+     "q": "Same interval: divisible by 6 but **not** by 4?",
+     "a": "**75**",
+     "why": "By 6: 150. Remove those also divisible by 4 (that's by 12): `150 − 75`.",
+     "check": {
+      "kind": "calc",
+      "expr": "sum(1 for x in range(100, 1000) if x % 6 == 0 and x % 4)",
+      "expect": 75
+     }
+    },
+    {
+     "id": "f6c",
+     "q": "How many in `[1, 500]` are divisible by 7 or 11?",
+     "a": "**110**",
+     "why": "By 7: 71. By 11: 45. By `lcm = 77`: 6. `71 + 45 − 6 = 110`.",
+     "check": [
+      {
+       "kind": "calc",
+       "expr": "floor(500/7) + floor(500/11) - floor(500/77)",
+       "expect": 110
+      },
+      {
+       "kind": "calc",
+       "expr": "sum(1 for x in range(1, 501) if x % 7 == 0 or x % 11 == 0)",
+       "expect": 110
+      }
+     ]
+    }
+   ],
+   "trap": {
+    "tempting": "\"Divisible by 4 and 6\" means divisible by `4 × 6 = 24`.",
+    "correct": "Use `lcm(4, 6) = 12`. 12 is divisible by both 4 and 6, but not by 24.",
+    "test": "The product works only when the numbers are coprime (e.g. 7 and 11)."
+   },
+   "magic": "AND → `lcm`. OR → add both, subtract the AND."
+  },
+  {
+   "type": "section",
+   "id": "practice",
+   "title": "🏋️ Practice ladder"
+  },
+  {
+   "type": "practice",
+   "id": "p-green",
+   "level": "green",
+   "items": [
+    {
+     "id": "g1",
+     "q": "Floor of 8.99: `⌊8.99⌋`?",
+     "a": "**8**",
+     "why": "Largest integer `≤ 8.99`.",
+     "check": {
+      "kind": "calc",
+      "expr": "floor(8.99)",
+      "expect": 8
+     }
+    },
+    {
+     "id": "g2",
+     "q": "Ceiling of minus 8.99: `⌈−8.99⌉`?",
+     "a": "**−8**",
+     "why": "Smallest integer `≥ −8.99`.",
+     "check": {
+      "kind": "calc",
+      "expr": "ceil(-8.99)",
+      "expect": -8
+     }
+    },
+    {
+     "id": "g3",
+     "q": "Floor of minus 8.01: `⌊−8.01⌋`?",
+     "a": "**−9**",
+     "why": "Down means left on the number line.",
+     "check": {
+      "kind": "calc",
+      "expr": "floor(-8.01)",
+      "expect": -9
+     }
+    },
+    {
+     "id": "g4",
+     "q": "`|−12| + |12|`?",
+     "a": "**24**",
+     "why": "Both are 12 away from 0.",
+     "check": {
+      "kind": "calc",
+      "expr": "abs(-12) + abs(12)",
+      "expect": 24
+     }
+    },
+    {
+     "id": "g5",
+     "q": "How many integers are in `[3, 17]`?",
+     "a": "**15**",
+     "why": "`17 − 3 + 1`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len(range(3, 18))",
+      "expect": 15
+     }
+    },
+    {
+     "id": "g6",
+     "q": "Multiples of 7 in `[1, 100]`?",
+     "a": "**14**",
+     "why": "`⌊100/7⌋ = 14`.",
+     "check": {
+      "kind": "calc",
+      "expr": "count_mult(7, 1, 100)",
+      "expect": 14
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-yellow",
+   "level": "yellow",
+   "items": [
+    {
+     "id": "y1",
+     "q": "`⌈−1.5⌉ + ⌊1.5⌋ + ⌊−1.5⌋`?",
+     "a": "**−2**",
+     "why": "`−1 + 1 + (−2)`.",
+     "check": {
+      "kind": "calc",
+      "expr": "ceil(-1.5) + floor(1.5) + floor(-1.5)",
+      "expect": -2
+     }
+    },
+    {
+     "id": "y2",
+     "q": "`⌊π + 20⌋`?",
+     "a": "**23**",
+     "why": "`⌊π⌋ + 20` (20 is an integer).",
+     "check": {
+      "kind": "calc",
+      "expr": "floor(pi + 20)",
+      "expect": 23
+     }
+    },
+    {
+     "id": "y3",
+     "q": "Multiples of 6 in `[−20, 20]`?",
+     "a": "**7**",
+     "why": "`⌊20/6⌋ − ⌊−21/6⌋ = 3 − (−4) = 7`: −18, −12, −6, 0, 6, 12, 18.",
+     "check": {
+      "kind": "calc",
+      "expr": "count_mult(6, -20, 20)",
+      "expect": 7
+     }
+    },
+    {
+     "id": "y4",
+     "q": "Multiples of 12 in `[1000, 2000]`?",
+     "a": "**83**",
+     "why": "`⌊2000/12⌋ − ⌊999/12⌋ = 166 − 83`.",
+     "check": {
+      "kind": "calc",
+      "expr": "count_mult(12, 1000, 2000)",
+      "expect": 83
+     }
+    },
+    {
+     "id": "y5",
+     "q": "`|⌊−0.1⌋| − ⌈|−0.1|⌉`?",
+     "a": "**0**",
+     "why": "`⌊−0.1⌋ = −1`, `|−1| = 1`. `|−0.1| = 0.1`, `⌈0.1⌉ = 1`. `1 − 1 = 0`.",
+     "check": {
+      "kind": "calc",
+      "expr": "abs(floor(-0.1)) - ceil(abs(-0.1))",
+      "expect": 0
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-red",
+   "level": "red",
+   "sub": "Problem set 1, Q1(a) and Q2(b) style: floor/ceiling one-liners and counting multiples in an interval. Original numbers.",
+   "items": [
+    {
+     "id": "r1",
+     "q": "How many numbers in `[3000, 9000]` are divisible by (a) 4, (b) 10, (c) 4 and 10, (d) 4 or 10?",
+     "a": "**(a) 1501 (b) 601 (c) 301 (d) 1801**",
+     "why": "(a) `⌊9000/4⌋ − ⌊2999/4⌋ = 2250 − 749`. (b) `900 − 299`. (c) \"4 and 10\" = by `lcm(4, 10) = 20`: `450 − 149`. (d) `1501 + 601 − 301`.",
+     "wrong": "If you used 40 for (c): `4 × 10 = 40` misses 20, 60, 100, … Use the lcm.",
+     "check": [
+      {
+       "kind": "calc",
+       "expr": "count_mult(4, 3000, 9000)",
+       "expect": 1501
+      },
+      {
+       "kind": "calc",
+       "expr": "count_mult(10, 3000, 9000)",
+       "expect": 601
+      },
+      {
+       "kind": "calc",
+       "expr": "count_mult(20, 3000, 9000)",
+       "expect": 301
+      },
+      {
+       "kind": "calc",
+       "expr": "sum(1 for x in range(3000, 9001) if x % 4 == 0 or x % 10 == 0)",
+       "expect": 1801
+      }
+     ]
+    },
+    {
+     "id": "r2",
+     "q": "How many numbers in `[150, 1500]` are divisible by 6 or 9?",
+     "a": "**301**",
+     "why": "By 6: `250 − 24 = 226`. By 9: `166 − 16 = 150`. By `lcm(6, 9) = 18`: `83 − 8 = 75`. `226 + 150 − 75 = 301`.",
+     "check": {
+      "kind": "calc",
+      "expr": "sum(1 for x in range(150, 1501) if x % 6 == 0 or x % 9 == 0)",
+      "expect": 301
+     }
+    },
+    {
+     "id": "r3",
+     "q": "How many numbers in `[−100, 100]` are divisible by 3 or 4?",
+     "a": "**101**",
+     "why": "By 3: `⌊100/3⌋ − ⌊−101/3⌋ = 33 − (−34) = 67`. By 4: `25 − (−26) = 51`. By 12: `8 − (−9) = 17`. `67 + 51 − 17 = 101`.",
+     "check": {
+      "kind": "calc",
+      "expr": "sum(1 for x in range(-100, 101) if x % 3 == 0 or x % 4 == 0)",
+      "expect": 101
+     }
+    },
+    {
+     "id": "r4",
+     "q": "Calculate `⌈4⌉ + ⌊−3.6⌋ − |⌊−0.5⌋|`.",
+     "a": "**−1**",
+     "why": "`4 + (−4) − |−1| = 4 − 4 − 1`.",
+     "check": {
+      "kind": "calc",
+      "expr": "ceil(4) + floor(-3.6) - abs(floor(-0.5))",
+      "expect": -1
+     }
+    },
+    {
+     "id": "r5",
+     "q": "Use the slide-11 formula to count the even integers in `[−7, 12]`.",
+     "a": "**10**",
+     "why": "`⌊12/2⌋ − ⌊−8/2⌋ = 6 − (−4) = 10`: −6, −4, −2, 0, 2, 4, 6, 8, 10, 12.",
+     "check": [
+      {
+       "kind": "calc",
+       "expr": "floor(12/2) - floor(-8/2)",
+       "expect": 10
+      },
+      {
+       "kind": "calc",
+       "expr": "count_mult(2, -7, 12)",
+       "expect": 10
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-boss",
+   "level": "boss",
+   "items": [
+    {
+     "id": "b1",
+     "q": "How many numbers in `[1, 1000]` are divisible by 2, 3 or 5?",
+     "a": "**734**",
+     "why": "Inclusion–exclusion for three: `500 + 333 + 200 − (166 + 100 + 66) + 33 = 734` (pairs use lcm 6, 10, 15; the triple uses 30).",
+     "check": {
+      "kind": "calc",
+      "expr": "sum(1 for x in range(1, 1001) if x % 2 == 0 or x % 3 == 0 or x % 5 == 0)",
+      "expect": 734
+     }
+    },
+    {
+     "id": "b2",
+     "q": "How many perfect squares `≤ 10 000` end in the digit 1? (No calculator.)",
+     "a": "**20**",
+     "why": "`n² ≤ 10 000` means `n ≤ 100`. `n²` ends in 1 exactly when `n` ends in 1 or 9. That's 1, 9, 11, 19, …, 91, 99: 10 decades × 2.",
+     "check": {
+      "kind": "calc",
+      "expr": "sum(1 for n in range(1, 101) if (n*n) % 10 == 1)",
+      "expect": 20
+     }
+    },
+    {
+     "id": "b3",
+     "q": "The lecture's supplementary exercise 1.8.9 ends with \"try the same question for `n⁴`\": how many fourth powers `≤ 1 000 000` end in 9?",
+     "a": "**0**",
+     "why": "Last digits of `n⁴` can only be 0, 1, 5 or 6 (check `n = 0 … 9`). None ends in 9.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(set((n**4) % 10 for n in range(10)))",
+      "is": "[0, 1, 5, 6]"
+     }
+    },
+    {
+     "id": "b4",
+     "q": "How many integers `n` in `[1, 100]` have `⌊√n⌋ = 7`?",
+     "a": "**15**",
+     "why": "`⌊√n⌋ = 7` means `7 ≤ √n < 8`, i.e. `49 ≤ n < 64`: that's 49 … 63.",
+     "check": {
+      "kind": "calc",
+      "expr": "sum(1 for n in range(1, 101) if isqrt(n) == 7)",
+      "expect": 15
+     }
+    },
+    {
+     "id": "b5",
+     "q": "For which real `x` does `⌊2x⌋ = 2⌊x⌋` hold?",
+     "a": "**Exactly when the fractional part of `x` is less than ½.**",
+     "why": "Write `x = n + f` with `n = ⌊x⌋`, `0 ≤ f < 1`. Then `⌊2x⌋ = 2n + ⌊2f⌋`, and `⌊2f⌋ = 0` iff `f < ½`.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((floor(2*(k/8)) == 2*floor(k/8)) == ((k/8 - floor(k/8)) < 0.5) for k in range(-40, 41))"
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-retest",
+   "level": "retest",
+   "items": [
+    {
+     "id": "rt1",
+     "q": "`⌊−5.5⌋ + ⌈−5.5⌉`?",
+     "a": "**−11**",
+     "check": {
+      "kind": "calc",
+      "expr": "floor(-5.5) + ceil(-5.5)",
+      "expect": -11
+     }
+    },
+    {
+     "id": "rt2",
+     "q": "Formula for the number of multiples of `k` in `[n, m]`?",
+     "a": "**`⌊m/k⌋ − ⌊(n − 1)/k⌋`**"
+    },
+    {
+     "id": "rt3",
+     "q": "Multiples of 8 in `[20, 100]`?",
+     "a": "**10**",
+     "check": {
+      "kind": "calc",
+      "expr": "count_mult(8, 20, 100)",
+      "expect": 10
+     }
+    },
+    {
+     "id": "rt4",
+     "q": "In `[1, 60]`, divisible by 4 or 6?",
+     "a": "**20**",
+     "check": {
+      "kind": "calc",
+      "expr": "sum(1 for x in range(1, 61) if x % 4 == 0 or x % 6 == 0)",
+      "expect": 20
+     }
+    }
+   ]
+  },
+  {
+   "type": "recap",
+   "lines": [
+    "`⌊x⌋`: greatest integer `≤ x`. `⌈x⌉`: least integer `≥ x`. Negatives: floor moves away from 0.",
+    "`⌊−x⌋ = −⌈x⌉`; `⌊x + t⌋ = ⌊x⌋ + t` for `t ∈ ℤ`.",
+    "`|x| = x` if `x ≥ 0`, else `−x`.",
+    "`⌊x⌋ + ⌊y⌋ ≤ ⌊x + y⌋ ≤ ⌊x⌋ + ⌊y⌋ + 1`.",
+    "Count multiples: `⌊m/k⌋ − ⌊(n − 1)/k⌋`. Both → lcm. Either → `A + B − both`."
+   ]
+  },
+  {
+   "type": "links",
+   "id": "links",
+   "sub": "Free, from universities. Try them after the ladder above.",
+   "items": [
+    {
+     "title": "Mathematics for Computer Science — Section 9.1, Divisibility",
+     "url": "https://courses.csail.mit.edu/6.042/spring18/mcs.pdf",
+     "source": "MIT",
+     "checked": "24 Sep 2026",
+     "note": "Divisibility facts behind counting multiples, with problems."
+    }
+   ]
+  }
+ ],
+ "sources": "Lecture slides: Week 1 slides 10–13 (floor, ceiling, the counting formula, 1.1.4, 1.1.19), 16 (absolute value), 33 (|A ∪ B|), 64–65 (1.8.9). Tutorial 1 covered the same skills. All practice numbers are original.",
+ "prev": {
+  "href": "../",
+  "label": "COMP9020 home"
+ },
+ "next": {
+  "href": "../n2-divisibility-gcd/",
+  "label": "N2 · Divisibility, mod, gcd & lcm"
+ }
+}

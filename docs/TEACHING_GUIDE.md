@@ -95,7 +95,8 @@ A lesson should have **15+ questions** outside the retest. Drills can be pure pr
 
 - **Never** copy problem-set text, and **never** publish problem-set answers (not even partial ones).
   The course's problem-set pages say reproducing or posting them is a copyright infringement.
-- Quiz-style drills are **original variations**, never the real questions.
+- Quiz-style drills are **original variations**, never the real questions. A relabelled copy (same formula with letters
+  renamed or negated, same sets with the numbers shifted) counts as the real question: change the structure, not just the names.
 - Lecture examples may be used briefly with a slide reference ("a lecture example").
 - Tutorial answers only if course staff already worked them in class, and even then prefer original drills.
 

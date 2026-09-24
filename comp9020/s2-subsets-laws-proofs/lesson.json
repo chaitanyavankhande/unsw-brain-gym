@@ -1,0 +1,790 @@
+{
+ "id": "comp9020-s2",
+ "course": {
+  "code": "COMP9020",
+  "href": "../"
+ },
+ "code": "S2",
+ "emoji": "⭕",
+ "title": "Subsets, Set Laws & Set Proofs",
+ "eyebrow": "COMP9020 · Week 1 · Sets",
+ "minutes": 45,
+ "verified": true,
+ "goal": "Tell `∈` from `⊆`, use the set laws, decide \"true for all sets?\" with a reason or one counterexample, and prove set identities by chasing elements.",
+ "magic": [
+  "`⊆` like `≤`, `⊂` like `<`. `∅ ⊆ X` always.",
+  "`∈`: is it listed? `⊆`: is everything inside it listed?",
+  "Set laws = logic laws with `∪ ∩ ᶜ`. `A \\ B = A ∩ Bᶜ`.",
+  "False for all sets? One counterexample. True? A general argument.",
+  "`X = Y`: prove `X ⊆ Y` and `Y ⊆ X`.",
+  "`|A ∪ B| = |A| + |B| − |A ∩ B|`."
+ ],
+ "blocks": [
+  {
+   "type": "section",
+   "id": "learn",
+   "title": "💡 Learn it, one idea at a time"
+  },
+  {
+   "type": "idea",
+   "id": "u1",
+   "short": "⊆ and ⊂",
+   "title": "Subsets: `⊆` allows equal, `⊂` doesn't",
+   "summary": "`S ⊆ T`: every element of S is in T (S = T allowed). `S ⊂ T`: a subset that's strictly smaller. `∅ ⊆` everything.",
+   "picture": "Your Spotify playlist and \"all songs you've liked\": every playlist song is liked, so playlist ⊆ liked. If there's at least one liked song not on the playlist, it's ⊂.",
+   "official": "`S ⊆ T`: all elements of S are also elements of T; this **includes** `T ⊆ T` (Week 1, slide 30). `S ⊂ T`: a **proper** subset, `S ⊆ T` and `S ≠ T`. `∅ ⊆ X` for all sets `X`.",
+   "watch": {
+    "q": "True or false: `{2, 4} ⊆ {1, 2, 3, 4}`, `{2, 4} ⊂ {2, 4}`, `∅ ⊆ {7}`.",
+    "steps": [
+     "2 and 4 are both in `{1, 2, 3, 4}` → **true**.",
+     "Equal sets: `⊆` yes, but `⊂` needs a **strictly** bigger right side → **false**.",
+     "`∅` has no element that could fail → **true**."
+    ],
+    "answer": "**True, false, true.**"
+   },
+   "tries": [
+    {
+     "id": "u1a",
+     "q": "`{1, 3} ⊆ {1, 2}`?",
+     "a": "**False.**",
+     "why": "3 is not in `{1, 2}`.",
+     "check": {
+      "kind": "calc",
+      "expr": "not ({1, 3} <= {1, 2})"
+     }
+    },
+    {
+     "id": "u1b",
+     "q": "`∅ ⊂ ∅`?",
+     "a": "**False.**",
+     "why": "`∅ ⊆ ∅`, but they're equal, so not proper.",
+     "check": {
+      "kind": "calc",
+      "expr": "not (set() < set())"
+     }
+    },
+    {
+     "id": "u1c",
+     "q": "How many subsets `S` satisfy `S ⊆ {a, b}`? How many `S ⊂ {a, b}`?",
+     "a": "**4** and **3**.",
+     "why": "`∅, {a}, {b}, {a, b}`; the proper ones exclude `{a, b}` itself.",
+     "check": [
+      {
+       "kind": "calc",
+       "expr": "len(Pow({'a','b'}))",
+       "expect": 4
+      },
+      {
+       "kind": "calc",
+       "expr": "len([S for S in Pow({'a','b'}) if S < frozenset({'a','b'})])",
+       "expect": 3
+      }
+     ]
+    }
+   ],
+   "trap": {
+    "tempting": "`⊆` means \"strictly smaller\".",
+    "correct": "`⊆` allows equality (`X ⊆ X` always). Only `⊂` demands strictly smaller.",
+    "test": "Like `≤` vs `<`."
+   },
+   "magic": "`⊆` is like `≤`, `⊂` is like `<`. `∅ ⊆ X` always."
+  },
+  {
+   "type": "idea",
+   "id": "u2",
+   "short": "∈ vs ⊆",
+   "title": "`∈` (is an element of) versus `⊆` (is a subset of)",
+   "summary": "`x ∈ S`: `x` is one of the things listed. `X ⊆ S`: every thing **inside** `X` is listed in `S`.",
+   "picture": "A bag of groceries S = {apple, {eggs}} where the eggs come in a carton. The apple ∈ S. The carton `{eggs}` ∈ S. But \"eggs\" alone is not an item in the bag: it's inside the carton.",
+   "official": "An element of a set and a subset of that set are different concepts (Week 1, slide 30): `a ∈ {a, b}`, but `a ⊈ {a, b}`; `{a} ⊆ {a, b}`, but `{a} ∉ {a, b}`. To test `X ⊆ S`, check every element of `X` for `∈ S`.",
+   "watch": {
+    "q": "`S = {1, {2}, {1, 2}}`. Decide `{2} ∈ S`, `{2} ⊆ S`, `{1} ⊆ S`.",
+    "steps": [
+     "`{2}` is literally listed in S → `{2} ∈ S` **true**.",
+     "`{2} ⊆ S` needs `2 ∈ S`. The elements are `1`, `{2}`, `{1, 2}`; `2` alone isn't one → **false**.",
+     "`{1} ⊆ S` needs `1 ∈ S` → **true**."
+    ],
+    "answer": "**True, false, true.**"
+   },
+   "tries": [
+    {
+     "id": "u2a",
+     "q": "`S = {1, {2}, {1, 2}}`. Is `{1, 2} ⊆ S`?",
+     "a": "**False.** `2 ∉ S`.",
+     "why": "Note `{1, 2} ∈ S` is true, a different question.",
+     "check": {
+      "kind": "calc",
+      "expr": "not ({1, 2} <= {1, frozenset({2}), frozenset({1, 2})})"
+     }
+    },
+    {
+     "id": "u2b",
+     "q": "Same S. Is `{{2}} ⊆ S`?",
+     "a": "**True.**",
+     "why": "Its only element is `{2}`, and `{2} ∈ S`.",
+     "check": {
+      "kind": "calc",
+      "expr": "{frozenset({2})} <= {1, frozenset({2}), frozenset({1, 2})}"
+     }
+    },
+    {
+     "id": "u2c",
+     "q": "`∅ ∈ {1, 2}`? `∅ ⊆ {1, 2}`?",
+     "a": "**False; true.**",
+     "why": "`∅` isn't listed as an element; but it's a subset of every set.",
+     "check": [
+      {
+       "kind": "calc",
+       "expr": "frozenset() not in {1, 2}"
+      },
+      {
+       "kind": "calc",
+       "expr": "set() <= {1, 2}"
+      }
+     ]
+    }
+   ],
+   "trap": {
+    "tempting": "`{a} ⊆ S` and `{a} ∈ S` mean the same.",
+    "correct": "`{a} ⊆ S` asks whether `a ∈ S`. `{a} ∈ S` asks whether the set `{a}` itself is listed.",
+    "test": "For `⊆`, unwrap one layer of braces and check each element. For `∈`, look for the exact object."
+   },
+   "magic": "`∈`: is it listed? `⊆`: is everything inside it listed?"
+  },
+  {
+   "type": "idea",
+   "id": "u3",
+   "short": "Set laws",
+   "title": "The set laws (and two useful extras)",
+   "summary": "The same laws as logic, with `∪` for `∨`, `∩` for `∧`, `ᶜ` for `¬`. Plus `A \\ B = A ∩ Bᶜ` and the complement laws.",
+   "picture": "Venn diagrams are the \"truth tables\" of sets: each region is one row. If two expressions shade the same regions, they're equal.",
+   "official": "Laws (Week 1, slide 29): commutativity, associativity, distribution (`A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C)`, `A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)`), idempotence, identity `A ∪ ∅ = A`, `A ∩ ∅ = ∅`, double complementation `(Aᶜ)ᶜ = A`, De Morgan `(A ∪ B)ᶜ = Aᶜ ∩ Bᶜ`, `(A ∩ B)ᶜ = Aᶜ ∪ Bᶜ`. Facts (slide 30): `A ∪ B = B ⇔ A ⊆ B`, `A ∩ B = B ⇔ A ⊇ B`. ⚠️ Not on the slide but true and often needed: `A ∪ Aᶜ = U`, `A ∩ Aᶜ = ∅`, `A \\ B = A ∩ Bᶜ`.",
+   "watch": {
+    "q": "Simplify `(A ∩ B) ∪ (A ∩ Bᶜ)`.",
+    "steps": [
+     "Distribution backwards: `A ∩ (B ∪ Bᶜ)`.",
+     "Complement law: `B ∪ Bᶜ = U`.",
+     "`A ∩ U = A`."
+    ],
+    "answer": "**`A`**: split A into \"also in B\" and \"not in B\", then glue back."
+   },
+   "tries": [
+    {
+     "id": "u3a",
+     "q": "Simplify `(A ∪ B)ᶜ ∩ A`.",
+     "a": "**`∅`**",
+     "why": "De Morgan: `Aᶜ ∩ Bᶜ ∩ A`, and `Aᶜ ∩ A = ∅`.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(((U - (A | B)) & A) == set() for A in Pow(U) for B in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "u3b",
+     "q": "Which law turns `(A ∩ B)ᶜ` into `Aᶜ ∪ Bᶜ`?",
+     "a": "**De Morgan.**",
+     "why": "Complement flips `∩` to `∪`.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((U - (A & B)) == ((U - A) | (U - B)) for A in Pow(U) for B in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "u3c",
+     "q": "`A ∪ B = B`. What can you conclude?",
+     "a": "**`A ⊆ B`.**",
+     "why": "Adding A to B changed nothing, so A was already inside B.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(((A | B) == B) == (A <= B) for A in Pow(U) for B in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "`(A ∪ B)ᶜ = Aᶜ ∪ Bᶜ`.",
+    "correct": "De Morgan flips the operation: `(A ∪ B)ᶜ = Aᶜ ∩ Bᶜ`.",
+    "test": "Test with `A = {1}`, `B = ∅`, `U = {1, 2}`: left `{2}`, but `Aᶜ ∪ Bᶜ = {1, 2}`."
+   },
+   "magic": "Logic laws with `∪ ∩ ᶜ`. `A \\ B = A ∩ Bᶜ`."
+  },
+  {
+   "type": "idea",
+   "id": "u4",
+   "short": "True for all?",
+   "title": "\"True for all sets?\": a reason, or ONE counterexample",
+   "summary": "To show a set statement is false, one concrete example is enough. To show it's true, give a general reason.",
+   "picture": "\"Every swan is white\": one black swan ends the debate. But you can't prove it true by showing a thousand white swans.",
+   "official": "For claims \"for all sets `A`, `B`\": if **false**, give one specific counterexample (small sets like `A = B`, `A = ∅`, `A = {1}` usually do it). If **true**, argue with elements (\"let `x ∈ …`\") or with the laws. (This is the shape of Problem set 1, Q3 and Q6.)",
+   "watch": {
+    "q": "True for all sets? `(A \\ B) ∪ B = A`.",
+    "steps": [
+     "Try small sets. `A = ∅`, `B = {1}`.",
+     "Left: `(∅ \\ {1}) ∪ {1} = {1}`. Right: `∅`.",
+     "They differ."
+    ],
+    "answer": "**False.** Counterexample `A = ∅, B = {1}`. (It's `A ∪ B`, not `A`.)"
+   },
+   "tries": [
+    {
+     "id": "u4a",
+     "q": "True for all sets? `A \\ B ⊆ A`.",
+     "a": "**True.**",
+     "why": "Every element of `A \\ B` is, by definition, in `A`.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((A - B) <= A for A in Pow(U) for B in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "u4b",
+     "q": "True for all sets? `A ⊆ A ∩ B`.",
+     "a": "**False.** Counterexample: `A = {1}`, `B = ∅` (then `A ∩ B = ∅`).",
+     "why": "It only holds when `A ⊆ B`.",
+     "check": {
+      "kind": "calc",
+      "expr": "not all(A <= (A & B) for A in Pow(U) for B in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "u4c",
+     "q": "True for all sets? `A ∩ (B \\ A) = ∅`.",
+     "a": "**True.**",
+     "why": "An element of `B \\ A` is not in `A`, so nothing can be in both.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((A & (B - A)) == set() for A in Pow(U) for B in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "u4d",
+     "q": "True for all sets (universe `U`)? `(A ∩ B)ᶜ ⊆ Aᶜ`.",
+     "a": "**False.** Counterexample: `U = {1}`, `A = {1}`, `B = ∅`: `(A ∩ B)ᶜ = {1}` but `Aᶜ = ∅`.",
+     "why": "The complement of a smaller set is **bigger**, so the inclusion goes the other way.",
+     "check": {
+      "kind": "calc",
+      "expr": "not all((U - (A & B)) <= (U - A) for A in Pow(U) for B in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Checking two examples that work proves it.",
+    "correct": "Examples can only **disprove**. A \"for all\" claim needs a general argument.",
+    "test": "True? Write \"Let `x ∈ …`\" and follow `x`. False? Find the smallest sets that break it."
+   },
+   "magic": "False: one counterexample. True: a general reason."
+  },
+  {
+   "type": "idea",
+   "id": "u5",
+   "short": "Element-chasing proofs",
+   "title": "Proving `X = Y`: show `X ⊆ Y` and `Y ⊆ X`",
+   "summary": "Take an arbitrary element of one side, show it's in the other. Then the reverse direction.",
+   "picture": "Two guest lists are the same if everyone on list 1 is on list 2 AND everyone on list 2 is on list 1.",
+   "official": "To prove a set identity without diagrams: (⊆) \"Let `x ∈ X`. … so `x ∈ Y`.\" (⊇) \"Let `x ∈ Y`. … so `x ∈ X`.\" Unfold each operation into logic: `x ∈ A ∪ B ⇔ x ∈ A or x ∈ B`; `x ∈ A ∩ B ⇔` and; `x ∈ A \\ B ⇔ x ∈ A and x ∉ B`. (This is the method Problem set 1, Q5(b) asks for.) With Venn diagrams: shade both sides and compare regions.",
+   "watch": {
+    "q": "Prove `A \\ (B ∪ C) = (A \\ B) ∩ (A \\ C)`.",
+    "steps": [
+     "(⊆) Let `x ∈ A \\ (B ∪ C)`. Then `x ∈ A` and `x ∉ B ∪ C`, i.e. `x ∉ B` and `x ∉ C`.",
+     "So `x ∈ A \\ B` and `x ∈ A \\ C`, i.e. `x ∈ (A \\ B) ∩ (A \\ C)`.",
+     "(⊇) Let `x ∈ (A \\ B) ∩ (A \\ C)`. Then `x ∈ A`, `x ∉ B`, `x ∉ C`.",
+     "So `x ∉ B ∪ C`, hence `x ∈ A \\ (B ∪ C)`."
+    ],
+    "answer": "Both inclusions hold, so the sets are equal. (It's De Morgan in disguise.)"
+   },
+   "tries": [
+    {
+     "id": "u5a",
+     "q": "Prove: if `A ⊆ B` then `A ∪ B = B`.",
+     "a": "(⊆) Let `x ∈ A ∪ B`. If `x ∈ A` then `x ∈ B` (since `A ⊆ B`); otherwise `x ∈ B` already. (⊇) If `x ∈ B` then `x ∈ A ∪ B`.",
+     "why": "Two directions, each a couple of lines.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((not (A <= B)) or ((A | B) == B) for A in Pow(U) for B in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "u5b",
+     "q": "Prove `(A ∪ B)ᶜ = Aᶜ ∩ Bᶜ` by chasing elements.",
+     "a": "`x ∈ (A ∪ B)ᶜ` ⇔ `x ∉ A ∪ B` ⇔ not (`x ∈ A` or `x ∈ B`) ⇔ `x ∉ A` and `x ∉ B` ⇔ `x ∈ Aᶜ ∩ Bᶜ`.",
+     "why": "A chain of `⇔` proves both directions at once; the middle step is logic's De Morgan.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((U - (A | B)) == ((U - A) & (U - B)) for A in Pow(U) for B in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "u5c",
+     "q": "Prove `A \\ (B ∩ C) = (A \\ B) ∪ (A \\ C)`.",
+     "a": "`x ∈ A \\ (B ∩ C)` ⇔ `x ∈ A` and not (`x ∈ B` and `x ∈ C`) ⇔ `x ∈ A` and (`x ∉ B` or `x ∉ C`) ⇔ (`x ∈ A`, `x ∉ B`) or (`x ∈ A`, `x ∉ C`) ⇔ `x ∈ (A \\ B) ∪ (A \\ C)`.",
+     "why": "De Morgan, then distribute \"and\" over \"or\".",
+     "check": {
+      "kind": "calc",
+      "expr": "all((A - (B & C)) == ((A - B) | (A - C)) for A in Pow(U) for B in Pow(U) for C in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Prove only one direction (`X ⊆ Y`) and conclude `X = Y`.",
+    "correct": "Equality needs **both** `X ⊆ Y` and `Y ⊆ X` (or a chain of `⇔`).",
+    "test": "Label your two paragraphs (⊆) and (⊇)."
+   },
+   "magic": "Equality = two inclusions. Unfold each operation into and/or/not."
+  },
+  {
+   "type": "idea",
+   "id": "u6",
+   "short": "Counting unions",
+   "title": "Cardinalities: `|A ∪ B| = |A| + |B| − |A ∩ B|`",
+   "summary": "Adding `|A|` and `|B|` counts the overlap twice, so subtract it once.",
+   "picture": "30 people like cats, 25 like dogs, 10 like both. At least one: `30 + 25 − 10 = 45`.",
+   "official": "Lecture exercise 1.4.8 (Week 1, slide 33): `|A ∪ B| = |A| + |B| − |A ∩ B|`, hence `|A ∪ B| + |A ∩ B| = |A| + |B|`; `|A \\ B| = |A| − |A ∩ B|`; `|A ⊕ B| = |A| + |B| − 2|A ∩ B|`.",
+   "watch": {
+    "q": "A class of 40: 25 know Java, 18 know Python, 10 know both. How many know neither?",
+    "steps": [
+     "At least one: `25 + 18 − 10 = 33`.",
+     "Neither: `40 − 33 = 7`."
+    ],
+    "answer": "**7**"
+   },
+   "tries": [
+    {
+     "id": "u6a",
+     "q": "Same class: how many know Java but not Python?",
+     "a": "**15**",
+     "why": "`|J \\ P| = 25 − 10`.",
+     "check": {
+      "kind": "calc",
+      "expr": "25 - 10",
+      "expect": 15
+     }
+    },
+    {
+     "id": "u6b",
+     "q": "Same class: how many know exactly one of the two?",
+     "a": "**23**",
+     "why": "`|J ⊕ P| = 25 + 18 − 2 · 10`.",
+     "check": {
+      "kind": "calc",
+      "expr": "25 + 18 - 2*10",
+      "expect": 23
+     }
+    },
+    {
+     "id": "u6c",
+     "q": "`|A| = 7`, `|B| = 5`, `|A ∪ B| = 9`. Find `|A ∩ B|`.",
+     "a": "**3**",
+     "why": "`7 + 5 − 9`.",
+     "check": {
+      "kind": "calc",
+      "expr": "7 + 5 - 9",
+      "expect": 3
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "`|A ∪ B| = |A| + |B|`.",
+    "correct": "Only if A and B are disjoint. Otherwise subtract the overlap `|A ∩ B|`.",
+    "test": "Draw the Venn diagram and count the middle region once."
+   },
+   "magic": "Add, then subtract the double-counted overlap."
+  },
+  {
+   "type": "section",
+   "id": "practice",
+   "title": "🏋️ Practice ladder"
+  },
+  {
+   "type": "practice",
+   "id": "p-green",
+   "level": "green",
+   "items": [
+    {
+     "id": "g1",
+     "q": "`{3} ⊆ {1, 2, 3}`?",
+     "a": "**True.**",
+     "why": "3 is in the right set.",
+     "check": {
+      "kind": "calc",
+      "expr": "{3} <= {1, 2, 3}"
+     }
+    },
+    {
+     "id": "g2",
+     "q": "`3 ⊆ {1, 2, 3}`?",
+     "a": "**Not meaningful / false:** `3` is not a set here, so ask `3 ∈ {1, 2, 3}` (true) instead.",
+     "why": "`⊆` compares a set with a set; `∈` compares an element with a set."
+    },
+    {
+     "id": "g3",
+     "q": "`{1, 2, 3} ⊂ {1, 2, 3}`?",
+     "a": "**False.**",
+     "why": "Equal, so not a proper subset.",
+     "check": {
+      "kind": "calc",
+      "expr": "not ({1,2,3} < {1,2,3})"
+     }
+    },
+    {
+     "id": "g4",
+     "q": "Name the law: `A ∩ A = A`.",
+     "a": "**Idempotence.**",
+     "why": "Same as `p ∧ p ≡ p`.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((A & A) == A for A in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "g5",
+     "q": "`|A| = 10`, `|B| = 6`, `|A ∩ B| = 4`. `|A ∪ B|`?",
+     "a": "**12**",
+     "why": "`10 + 6 − 4`.",
+     "check": {
+      "kind": "calc",
+      "expr": "10 + 6 - 4",
+      "expect": 12
+     }
+    },
+    {
+     "id": "g6",
+     "q": "Simplify `(Aᶜ)ᶜ ∪ ∅`.",
+     "a": "**`A`**",
+     "why": "Double complementation, then identity.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(((U - (U - A)) | set()) == A for A in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-yellow",
+   "level": "yellow",
+   "items": [
+    {
+     "id": "y1",
+     "q": "True for all sets? `|A \\ B| ≤ |A|`.",
+     "a": "**True.**",
+     "why": "`A \\ B ⊆ A`, and a subset can't have more elements.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(len(A - B) <= len(A) for A in Pow(U) for B in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "y2",
+     "q": "True for all sets? `A ∪ (B ∩ A) = A`.",
+     "a": "**True** (absorption).",
+     "why": "`B ∩ A ⊆ A`, so adding it to A changes nothing.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((A | (B & A)) == A for A in Pow(U) for B in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "y3",
+     "q": "True for all sets? `|A ⊕ B| ≤ |A ∪ B|`.",
+     "a": "**True.**",
+     "why": "`A ⊕ B ⊆ A ∪ B`.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(len(A ^ B) <= len(A | B) for A in Pow(U) for B in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "y4",
+     "q": "`S = {∅, {1}}`. Which are true: `∅ ∈ S`, `∅ ⊆ S`, `{1} ⊆ S`, `{{1}} ⊆ S`?",
+     "a": "**`∅ ∈ S`, `∅ ⊆ S`, `{{1}} ⊆ S`** are true; `{1} ⊆ S` is false (`1 ∉ S`).",
+     "why": "Unwrap one layer for `⊆`.",
+     "check": [
+      {
+       "kind": "calc",
+       "expr": "frozenset() in {frozenset(), frozenset({1})}"
+      },
+      {
+       "kind": "calc",
+       "expr": "not ({1} <= {frozenset(), frozenset({1})})"
+      },
+      {
+       "kind": "calc",
+       "expr": "{frozenset({1})} <= {frozenset(), frozenset({1})}"
+      }
+     ]
+    },
+    {
+     "id": "y5",
+     "q": "Simplify `(A ∪ B) ∩ (A ∪ Bᶜ)`.",
+     "a": "**`A`**",
+     "why": "Distribution: `A ∪ (B ∩ Bᶜ) = A ∪ ∅ = A`.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(((A | B) & (A | (U - B))) == A for A in Pow(U) for B in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-red",
+   "level": "red",
+   "sub": "Problem set 1, Q3 and Q5 style: true for all sets (reason or counterexample), and element-chasing proofs. Original statements.",
+   "items": [
+    {
+     "id": "r1",
+     "q": "Which statements are true for **all** sets `A`, `B` (universe `U`)?",
+     "a": "**(1), (3), (5)**",
+     "why": "(1) and (3) follow from the definitions. (2) fails for `A = {1}`, `B = ∅`. (4) fails for `A = ∅`, `B = {1}`. (5) is `A ∩ Bᶜ ⊆ A`.",
+     "options": [
+      "`A ∩ B ⊆ A ∪ B`",
+      "`A ⊆ A ∩ B`",
+      "`A ∩ (B \\ A) = ∅`",
+      "`(A \\ B) ∪ B = A`",
+      "`A \\ B ⊆ Bᶜ`"
+     ],
+     "correct": [
+      0,
+      2,
+      4
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_calc",
+      "exprs": [
+       "all((A & B) <= (A | B) for A in Pow(U) for B in Pow(U))",
+       "all(A <= (A & B) for A in Pow(U) for B in Pow(U))",
+       "all((A & (B - A)) == set() for A in Pow(U) for B in Pow(U))",
+       "all(((A - B) | B) == A for A in Pow(U) for B in Pow(U))",
+       "all((A - B) <= (U - B) for A in Pow(U) for B in Pow(U))"
+      ],
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     },
+     "multi": true
+    },
+    {
+     "id": "r2",
+     "q": "True for all sets? If false, give a counterexample: `A ∪ (B \\ C) = (A ∪ B) \\ C`.",
+     "a": "**False.** Counterexample: `A = {1}`, `B = ∅`, `C = {1}`: left `{1}`, right `∅`.",
+     "why": "The right side removes C's elements from A too; the left doesn't.",
+     "check": {
+      "kind": "calc",
+      "expr": "not all((A | (B - C)) == ((A | B) - C) for A in Pow(U) for B in Pow(U) for C in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "r3",
+     "q": "Prove `A ∩ (B \\ C) = (A ∩ B) \\ C` by chasing elements.",
+     "a": "`x ∈ A ∩ (B \\ C)` ⇔ `x ∈ A` and `x ∈ B` and `x ∉ C` ⇔ `x ∈ A ∩ B` and `x ∉ C` ⇔ `x ∈ (A ∩ B) \\ C`.",
+     "why": "Unfold, regroup the \"and\"s, fold back up.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((A & (B - C)) == ((A & B) - C) for A in Pow(U) for B in Pow(U) for C in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "r4",
+     "q": "Prove: `A ⊆ B` implies `Bᶜ ⊆ Aᶜ`.",
+     "a": "Let `x ∈ Bᶜ`, so `x ∉ B`. If `x` were in `A`, then `x ∈ B` (as `A ⊆ B`), contradiction. So `x ∉ A`, i.e. `x ∈ Aᶜ`.",
+     "why": "It's the contrapositive of \"`x ∈ A ⇒ x ∈ B`\".",
+     "check": {
+      "kind": "calc",
+      "expr": "all((not (A <= B)) or ((U - B) <= (U - A)) for A in Pow(U) for B in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-boss",
+   "level": "boss",
+   "items": [
+    {
+     "id": "b1",
+     "q": "When exactly is `(A ∪ B) \\ C = A ∪ (B \\ C)`?",
+     "a": "**Exactly when `A ∩ C = ∅`.**",
+     "why": "`(A ∪ B) \\ C = (A \\ C) ∪ (B \\ C)`. For it to equal `A ∪ (B \\ C)`, no element of A may be removed by C, i.e. `A ∩ C = ∅`. Conversely, if `A ∩ C = ∅` then `A \\ C = A`. (Same kind of question as the lecture's 1.8.2(b).)",
+     "check": {
+      "kind": "calc",
+      "expr": "all((((A | B) - C) == (A | (B - C))) == (len(A & C) == 0) for A in Pow(U) for B in Pow(U) for C in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "b2",
+     "q": "When exactly is `A ⊕ B = A ∪ B`?",
+     "a": "**Exactly when `A ∩ B = ∅`** (disjoint).",
+     "why": "`A ⊕ B = (A ∪ B) \\ (A ∩ B)`, so they're equal iff the overlap is empty.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(((A ^ B) == (A | B)) == (len(A & B) == 0) for A in Pow(U) for B in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "b3",
+     "q": "When exactly is `A \\ B = B \\ A`?",
+     "a": "**Exactly when `A = B`.**",
+     "why": "`A \\ B ⊆ A` and `B \\ A ⊆ B` are disjoint (nothing is in both A and not-A). Equal disjoint sets must both be `∅`, which means `A ⊆ B` and `B ⊆ A`.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(((A - B) == (B - A)) == (A == B) for A in Pow(U) for B in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "b4",
+     "q": "In `[1, 100]`, 50 numbers are even, 33 are multiples of 3, 16 are multiples of 6. Using set sizes only, how many are **odd and not multiples of 3**?",
+     "a": "**33**",
+     "why": "Even or multiple of 3: `50 + 33 − 16 = 67`. Neither: `100 − 67 = 33`.",
+     "check": {
+      "kind": "calc",
+      "expr": "sum(1 for n in range(1, 101) if n % 2 and n % 3)",
+      "expect": 33
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-retest",
+   "level": "retest",
+   "items": [
+    {
+     "id": "rt1",
+     "q": "`{a} ∈ {a, b}`?",
+     "a": "**False.**",
+     "check": {
+      "kind": "calc",
+      "expr": "frozenset({'a'}) not in {'a', 'b'}"
+     }
+    },
+    {
+     "id": "rt2",
+     "q": "True for all sets? `A ∩ B ⊆ B`.",
+     "a": "**True.**",
+     "check": {
+      "kind": "calc",
+      "expr": "all((A & B) <= B for A in Pow(U) for B in Pow(U))",
+      "let": {
+       "U": "{1, 2, 3}"
+      }
+     }
+    },
+    {
+     "id": "rt3",
+     "q": "`|A| = 8`, `|B| = 8`, `|A ∪ B| = 12`. `|A ⊕ B|`?",
+     "a": "**8**",
+     "check": {
+      "kind": "calc",
+      "expr": "8 + 8 - 2*(8 + 8 - 12)",
+      "expect": 8
+     }
+    },
+    {
+     "id": "rt4",
+     "q": "To prove `X = Y` by elements, what two things do you show?",
+     "a": "**`X ⊆ Y` and `Y ⊆ X`.**"
+    }
+   ]
+  },
+  {
+   "type": "recap",
+   "lines": [
+    "`S ⊆ T`: every element of S is in T (equality allowed). `S ⊂ T`: proper.",
+    "`a ∈ {a, b}` but `a ⊈ {a, b}`; `{a} ⊆ {a, b}` but `{a} ∉ {a, b}`.",
+    "Laws: commutative, associative, distributive, idempotent, identity, double complement, De Morgan; `A ∪ B = B ⇔ A ⊆ B`.",
+    "Counterexamples: try `A = B`, `A = ∅`, `A = {1}`.",
+    "Element chasing: unfold `∪ ∩ \\ ᶜ` into or / and / not, then fold back.",
+    "`|A \\ B| = |A| − |A ∩ B|`; `|A ⊕ B| = |A| + |B| − 2|A ∩ B|`."
+   ]
+  },
+  {
+   "type": "links",
+   "id": "links",
+   "sub": "Free, from universities. Try them after the ladder above.",
+   "items": [
+    {
+     "title": "Mathematics for Computer Science — Section 4.1, Sets (set identities and proving them)",
+     "url": "https://courses.csail.mit.edu/6.042/spring18/mcs.pdf",
+     "source": "MIT",
+     "checked": "24 Sep 2026",
+     "note": "Includes element-chasing proofs of set equalities and problems."
+    }
+   ]
+  }
+ ],
+ "sources": "Lecture slides: Week 1 slides 27–30 and 33 (Venn diagrams, set laws, subsets, 1.4.8) and 64–65 (1.8.2(b)). All statements and sets in the practice are original.",
+ "prev": {
+  "href": "../s1-sets-and-operations/",
+  "label": "S1 · Sets & Set Operations"
+ },
+ "next": {
+  "href": "../s3-power-sets-intervals-products/",
+  "label": "S3 · Power Sets, Intervals & Products"
+ }
+}

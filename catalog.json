@@ -9,14 +9,91 @@
       "title": "Foundations of Computer Science",
       "term": "UNSW · Term 3 2026",
       "href": "comp9020/",
-      "blurb": "Logic, proofs, sets and more, from zero to exam level. Follow the path from the top: it starts where `⇒` gets hard.",
+      "blurb": "Every Week 1–2 topic, in lecture order, from zero to exam level. **Quiz 2 (Thu 1 Oct):** L2B → L3 → L4 → D2. [Coverage map](https://github.com/chaitanyavankhande/unsw-brain-gym/blob/main/docs/COVERAGE_COMP9020.md): every slide section and problem-set question type → the unit that trains it.",
       "units": [
+        {
+          "id": "comp9020-n1",
+          "code": "N1",
+          "title": "Floor, Ceiling & Counting",
+          "kind": "lesson",
+          "group": "Week 1 · Numbers",
+          "status": "ready",
+          "path": "n1-floor-ceiling-counting/",
+          "minutes": 40,
+          "summary": "`⌊x⌋ ⌈x⌉ |x|` without sign slips · counting multiples in `[n, m]` · divisible by `a` or `b`"
+        },
+        {
+          "id": "comp9020-n2",
+          "code": "N2",
+          "title": "Divisibility, mod, gcd & lcm",
+          "kind": "lesson",
+          "group": "Week 1 · Numbers",
+          "status": "ready",
+          "path": "n2-divisibility-gcd/",
+          "minutes": 45,
+          "summary": "`m | n` · `n mod m` (negatives too) · gcd/lcm · Euclid slow and fast · Quiz 1 one-liners"
+        },
+        {
+          "id": "comp9020-s1",
+          "code": "S1",
+          "title": "Sets & Set Operations",
+          "kind": "lesson",
+          "group": "Week 1 · Sets",
+          "status": "ready",
+          "path": "s1-sets-and-operations/",
+          "minutes": 40,
+          "summary": "Counting elements · set-builder over `ℕ ℙ ℤ ℝ` · `∪ ∩ \\ ⊕ ᶜ` · Quiz 1 Q4-style expressions"
+        },
+        {
+          "id": "comp9020-s2",
+          "code": "S2",
+          "title": "Subsets, Set Laws & Set Proofs",
+          "kind": "lesson",
+          "group": "Week 1 · Sets",
+          "status": "ready",
+          "path": "s2-subsets-laws-proofs/",
+          "minutes": 45,
+          "summary": "`∈` vs `⊆` · the laws · true for all sets? · element-chasing proofs · `|A ∪ B|`"
+        },
+        {
+          "id": "comp9020-s3",
+          "code": "S3",
+          "title": "Power Sets, Intervals & Products",
+          "kind": "lesson",
+          "group": "Week 1 · Sets",
+          "status": "ready",
+          "path": "s3-power-sets-intervals-products/",
+          "minutes": 40,
+          "summary": "`Pow(X)` · intervals over `ℤ` vs `ℝ` · `2ℤ`, `3ℤ + 1` · Cartesian products · functions"
+        },
+        {
+          "id": "comp9020-f1",
+          "code": "F1",
+          "title": "Words & Alphabets",
+          "kind": "lesson",
+          "group": "Week 1 · Formal languages",
+          "status": "ready",
+          "path": "f1-words-and-alphabets/",
+          "minutes": 35,
+          "summary": "`Σ`, `λ`, `Σᵏ`, `Σ*`, `Σ⁺`, `Σ≤ⁿ` · languages as sets · grammars"
+        },
+        {
+          "id": "comp9020-r1",
+          "code": "R1",
+          "title": "AND, OR, NOT from Zero",
+          "kind": "lesson",
+          "group": "Week 1 · Logic",
+          "status": "ready",
+          "path": "r1-and-or-not/",
+          "minutes": 35,
+          "summary": "Propositions · truth-functional joiners · `¬ ∧ ∨` · well-formed formulas · reading formulas aloud"
+        },
         {
           "id": "comp9020-l2",
           "code": "L2",
           "title": "If–Then & Friends",
           "kind": "lesson",
-          "group": "Week 2 · Logic",
+          "group": "Week 1 · Logic",
           "status": "ready",
           "path": "l2-if-then/",
           "minutes": 50,
@@ -27,7 +104,7 @@
           "code": "L2B",
           "title": "English → Logic Translator",
           "kind": "lesson",
-          "group": "Week 2 · Logic",
+          "group": "Week 1 · Logic",
           "status": "ready",
           "path": "l2b-english-to-logic/",
           "minutes": 45,
@@ -38,7 +115,7 @@
           "code": "D1",
           "title": "If–Then Decoder",
           "kind": "drill",
-          "group": "Drills",
+          "group": "Week 1 · Logic",
           "status": "ready",
           "path": "drill-if-then-decoder/",
           "minutes": 15,
@@ -49,81 +126,77 @@
           "code": "L3",
           "title": "Truth-Table Detective",
           "kind": "lesson",
-          "group": "Week 2 · Logic",
-          "status": "next",
-          "summary": "Truth tables step by step · satisfiable, valid, `≡` · the laws of logic"
+          "group": "Week 2 · Truth tables & equivalence",
+          "status": "ready",
+          "path": "l3-truth-tables/",
+          "minutes": 45,
+          "summary": "Truth tables step by step · every satisfying row · satisfiable, valid, unsatisfiable · puzzles"
+        },
+        {
+          "id": "comp9020-l3b",
+          "code": "L3B",
+          "title": "Equivalence & the Laws",
+          "kind": "lesson",
+          "group": "Week 2 · Truth tables & equivalence",
+          "status": "ready",
+          "path": "l3b-equivalence-laws/",
+          "minutes": 45,
+          "summary": "`≡` · the law toolkit · chain proofs · disprove with one row · substitution · `⊕`"
         },
         {
           "id": "comp9020-l4",
           "code": "L4",
           "title": "Arguments & Entailment",
           "kind": "lesson",
-          "group": "Week 2 · Logic",
-          "status": "next",
-          "summary": "`⊨` · which formulas are entailed (Quiz 2 Q5b) · valid and invalid arguments · `∀ ∃`"
+          "group": "Week 2 · Arguments & quantifiers",
+          "status": "ready",
+          "path": "l4-arguments-entailment/",
+          "minutes": 55,
+          "summary": "`⊨` · which formulas are entailed (Quiz 2 Q5b) · specs · liars and truth-tellers · `∀ ∃`"
         },
         {
           "id": "comp9020-d2",
           "code": "D2",
           "title": "Quiz 2 Gym",
           "kind": "drill",
-          "group": "Drills",
-          "status": "next",
-          "summary": "Q3b (English → logic → equivalent formulas) and Q5b (entailed formulas) drills, before Thu 1 Oct"
+          "group": "Week 2 · Arguments & quantifiers",
+          "status": "ready",
+          "path": "drill-quiz2-gym/",
+          "minutes": 30,
+          "summary": "Original Q3(b) and Q5(b) variations, before Thu 1 Oct"
         },
         {
           "id": "comp9020-l5",
           "code": "L5",
           "title": "Proofs",
           "kind": "lesson",
-          "group": "Week 2 · Logic",
-          "status": "planned",
-          "summary": "Direct proof · proof by cases · contrapositive · contradiction · spotting a broken proof"
+          "group": "Week 2 · Proofs",
+          "status": "ready",
+          "path": "l5-proofs/",
+          "minutes": 55,
+          "summary": "Direct · cases · contrapositive · contradiction · spot the broken proof · good writing"
         },
         {
           "id": "comp9020-l6",
           "code": "L6",
           "title": "Boolean Algebra",
           "kind": "lesson",
-          "group": "Week 2 · Logic",
-          "status": "planned",
-          "summary": "`+ · ′` notation · the laws · simplifying expressions"
+          "group": "Week 2 · Boolean algebra",
+          "status": "ready",
+          "path": "l6-boolean-algebra/",
+          "minutes": 45,
+          "summary": "`+ · ′` notation · Boolean functions · what makes a BA · `2ᵏ` · simplifying · NOR"
         },
         {
           "id": "comp9020-l7",
           "code": "L7",
           "title": "CNF, DNF & K-maps",
           "kind": "lesson",
-          "group": "Week 2 · Logic",
-          "status": "planned",
-          "summary": "Normal forms · canonical DNF · Karnaugh maps"
-        },
-        {
-          "id": "comp9020-r1",
-          "code": "R1",
-          "title": "AND, OR, NOT from zero",
-          "kind": "lesson",
-          "group": "Week 1 review",
-          "status": "planned",
-          "summary": "Propositions · `¬ ∧ ∨` · building truth tables row by row"
-        },
-        {
-          "id": "comp9020-r2",
-          "code": "R2",
-          "title": "Words & alphabets",
-          "kind": "lesson",
-          "group": "Week 1 review",
-          "status": "planned",
-          "summary": "`Σ`, `λ`, `Σ*`, `Σ⁺`, counting words, languages"
-        },
-        {
-          "id": "comp9020-r3",
-          "code": "R3",
-          "title": "Power sets, intervals & products",
-          "kind": "lesson",
-          "group": "Week 1 review",
-          "status": "planned",
-          "summary": "`Pow(X)` · intervals over `ℤ` vs `ℝ` · Cartesian products"
+          "group": "Week 2 · Boolean algebra",
+          "status": "ready",
+          "path": "l7-cnf-dnf-kmaps/",
+          "minutes": 55,
+          "summary": "Normal forms · canonical DNF · 3- and 4-variable Karnaugh maps"
         }
       ]
     }

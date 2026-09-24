@@ -1,0 +1,632 @@
+{
+ "id": "comp9020-l5",
+ "course": {
+  "code": "COMP9020",
+  "href": "../"
+ },
+ "code": "L5",
+ "emoji": "🧱",
+ "title": "Proofs",
+ "eyebrow": "COMP9020 · Week 2 · Proof methods and good writing",
+ "minutes": 55,
+ "verified": true,
+ "goal": "Write short proofs four ways (direct, cases, contrapositive, contradiction) in clear sentences, and spot the broken step in a bad proof.",
+ "magic": [
+  "A proof is sentences: assume, use definitions, key step, conclude.",
+  "Direct: assume `A`, derive `B`. New unknown → new letter.",
+  "Cases: must cover everything; prove each.",
+  "Contrapositive: `¬B ⇒ ¬A` proves `A ⇒ B`.",
+  "Contradiction: assume `¬A`, **use it**, reach `B` and `¬B`.",
+  "Judge every step: false lemma? circular? converse? examples? divide by 0? sign flip?"
+ ],
+ "blocks": [
+  {
+   "type": "section",
+   "id": "learn",
+   "title": "💡 Learn it, one idea at a time"
+  },
+  {
+   "type": "idea",
+   "id": "p1",
+   "short": "What a proof is",
+   "title": "A proof is a chain of steps anyone can check",
+   "summary": "Each step follows from the ones before, starting from definitions and facts everyone accepts. Write it in sentences.",
+   "picture": "A recipe you hand to a friend who missed the class. If they can follow every step without asking you, it's a good proof.",
+   "official": "A **mathematical proof** of a proposition `p` is a chain of logical deductions leading to `p` from a base set of axioms (Week 1, slide 49). The reading *Guidelines for Good Mathematical Writing* (F. E. Su), set for Problem set 2, adds how to **write** it: write for another student in the course; use complete sentences and \"we\"; say clearly what you **assume** and what you **conclude**; in formal writing say \"for all\", \"implies\" instead of `∀`, `⇒`; don't start a sentence with a symbol; show the interesting steps, skip trivial algebra; drop details you never use; afterwards, simplify.",
+   "watch": {
+    "q": "A student writes: \"n even. n=2k. n²=4k². even.\" Rewrite it as a proper proof that the square of an even integer is even.",
+    "steps": [
+     "State what's assumed: \"Let `n` be an even integer.\"",
+     "Use the definition: \"Then `n = 2k` for some integer `k`.\"",
+     "Show the key step: \"So `n² = 4k² = 2(2k²)`.\"",
+     "Conclude, saying why: \"Since `2k²` is an integer, `n²` is even.\""
+    ],
+    "answer": "Four full sentences: assumption, definition, key algebra, conclusion with its reason."
+   },
+   "tries": [
+    {
+     "id": "p1a",
+     "q": "What's wrong with starting a sentence \"`n` is even, so …\"?",
+     "a": "**Nothing logically**, but it's poor style: don't begin a sentence with a symbol. Write \"The number `n` is even, so …\".",
+     "why": "It's one of the etiquette rules in the reading."
+    },
+    {
+     "id": "p1b",
+     "q": "A proof says \"Let `x = m/n` where `m, n` have no common factors\", and never uses the \"no common factors\" part. Problem?",
+     "a": "**Yes: a red herring.** Mentioning it makes the reader expect it to matter. Drop it.",
+     "why": "The reading: omit details that have no bearing on the solution."
+    },
+    {
+     "id": "p1c",
+     "q": "Who should you imagine reading your written solutions?",
+     "a": "**Another student in the course who hasn't done the exercise yet.**",
+     "why": "They know the lectures, but you still remind them of recently learned facts you use."
+    },
+    {
+     "id": "p1d",
+     "q": "In formal writing, should you write \"∀n ∃m s.t. m > n\"?",
+     "a": "**No.** Write \"for every `n` there exists `m` such that `m > n`\".",
+     "why": "Symbols like `∀`, `∃`, `⇒` and abbreviations like \"s.t.\" are fine on a whiteboard, not in formal writing."
+    }
+   ],
+   "trap": {
+    "tempting": "A proof is a list of equations.",
+    "correct": "A proof is **sentences** that say what's assumed, what follows, and why. Equations sit inside those sentences.",
+    "test": "Read your proof aloud. If it doesn't sound like English, add the missing words."
+   },
+   "magic": "Assume → use definitions → key step → conclude, in sentences."
+  },
+  {
+   "type": "idea",
+   "id": "p2",
+   "short": "Direct proof",
+   "title": "Direct proof: assume the \"if\", reach the \"then\"",
+   "summary": "To prove `A ⇒ B`: assume `A`, use definitions, and derive `B`.",
+   "picture": "Following a map from start to destination: begin where the statement tells you to start, and walk step by step to where it tells you to end.",
+   "official": "To prove `A ⇒ B` **directly**: assume `A` is true and derive `B`. Unfold definitions: `n` is **even** means `n = 2k` for some `k ∈ ℤ`; **odd** means `n = 2k + 1`; `m | n` means `n = k·m` for some `k ∈ ℤ` (Week 1, slide 14). Always use a **new letter** for each new \"some integer\".",
+   "watch": {
+    "q": "Prove: the sum of two odd integers is even.",
+    "steps": [
+     "Let `a`, `b` be odd integers.",
+     "Then `a = 2k + 1` and `b = 2ℓ + 1` for some integers `k`, `ℓ` (different letters!).",
+     "So `a + b = 2k + 2ℓ + 2 = 2(k + ℓ + 1)`.",
+     "Since `k + ℓ + 1` is an integer, `a + b` is even."
+    ],
+    "answer": "Done. Key habit: two different unknown integers get two different letters."
+   },
+   "tries": [
+    {
+     "id": "p2a",
+     "q": "Prove: the product of two odd integers is odd.",
+     "a": "Let `a = 2k + 1`, `b = 2ℓ + 1` with `k, ℓ ∈ ℤ`. Then `ab = 4kℓ + 2k + 2ℓ + 1 = 2(2kℓ + k + ℓ) + 1`. Since `2kℓ + k + ℓ` is an integer, `ab` is odd.",
+     "why": "Expand, then pull out a factor 2 from everything except the `+1`.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((a*b) % 2 == 1 for a in range(-21, 22, 2) for b in range(-21, 22, 2))"
+     }
+    },
+    {
+     "id": "p2b",
+     "q": "Prove: if `6 | n` then `3 | n`.",
+     "a": "Suppose `6 | n`. Then `n = 6k` for some `k ∈ ℤ`, so `n = 3(2k)`. Since `2k ∈ ℤ`, `3 | n`.",
+     "why": "Unfold the definition of `|`, then regroup.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(n % 3 == 0 for n in range(-60, 61) if n % 6 == 0)"
+     }
+    },
+    {
+     "id": "p2c",
+     "q": "Prove: if `a | b` and `b | c` then `a | c`.",
+     "a": "Suppose `b = ka` and `c = ℓb` for integers `k, ℓ`. Then `c = ℓ(ka) = (ℓk)a`. Since `ℓk ∈ ℤ`, `a | c`.",
+     "why": "Substitute one equation into the other.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(c % a == 0 for a in range(1,8) for b in range(-30,31) for c in range(-30,31) if b % a == 0 and (b != 0 and c % b == 0))"
+     }
+    },
+    {
+     "id": "p2d",
+     "q": "Prove: if `d | a` and `d | b` then `d | (a − b)`. (This is the lecture's \"why?\" step for Euclid, Week 1 slide 19.)",
+     "a": "Let `a = kd` and `b = ℓd` for integers `k, ℓ`. Then `a − b = (k − ℓ)d`, and `k − ℓ ∈ ℤ`, so `d | (a − b)`.",
+     "why": "Common divisors survive subtraction. That's exactly why `gcd(m, n) = gcd(m − n, n)`.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((a-b) % d == 0 for d in range(1,7) for a in range(-20,21) for b in range(-20,21) if a % d == 0 and b % d == 0)"
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Write `a = 2k + 1` and `b = 2k + 1` for two odd numbers.",
+    "correct": "That forces `a = b`. Each unknown integer needs its **own** letter: `a = 2k + 1`, `b = 2ℓ + 1`.",
+    "test": "Ask: did I accidentally make two different numbers equal?"
+   },
+   "magic": "Assume the left side, unfold definitions, regroup, conclude."
+  },
+  {
+   "type": "idea",
+   "id": "p3",
+   "short": "Proof by cases",
+   "title": "Proof by cases: cover every possibility",
+   "summary": "Split into cases that together cover everything, and prove the claim in each case.",
+   "picture": "Checking a lock works for every key type: master keys, staff keys, guest keys. If it works for each type, and those are all the types, it works for every key.",
+   "official": "To prove `A`, find cases `B₁, …, Bₙ` such that (1) `B₁ ∨ … ∨ Bₙ` is true and (2) `Bᵢ ⇒ A` for each `i` (Week 2, slide 32). The hard part is choosing the cases. Often `n = 2` with `B₂ = ¬B₁`, e.g. \"`n` even\" / \"`n` odd\", or \"`x ≥ 0`\" / \"`x < 0`\".",
+   "watch": {
+    "q": "Prove that `n² + n` is even for every integer `n`.",
+    "steps": [
+     "Every integer is even or odd, so two cases cover everything.",
+     "Case `n` even, `n = 2k`: `n² + n = 4k² + 2k = 2(2k² + k)`, even.",
+     "Case `n` odd, `n = 2k + 1`: `n² + n = (4k² + 4k + 1) + (2k + 1) = 2(2k² + 3k + 1)`, even.",
+     "Both cases give an even number."
+    ],
+    "answer": "Proved. (Shortcut you may spot later: `n² + n = n(n + 1)`, and one of two neighbours is even.)"
+   },
+   "tries": [
+    {
+     "id": "p3a",
+     "q": "Prove `max(a, b) + min(a, b) = a + b` for all real `a`, `b`.",
+     "a": "Case `a ≥ b`: `max = a`, `min = b`, so the sum is `a + b`. Case `a < b`: `max = b`, `min = a`, sum `b + a = a + b`. The cases cover all pairs.",
+     "why": "Two cases, `a ≥ b` or `a < b`, and each is one line.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(max(a,b)+min(a,b) == a+b for a in range(-9,10) for b in range(-9,10))"
+     }
+    },
+    {
+     "id": "p3b",
+     "q": "Prove `|xy| = |x|·|y|` for all real `x`, `y`.",
+     "a": "Cases on signs. `x, y ≥ 0`: `xy ≥ 0`, both sides are `xy`. `x ≥ 0 > y`: `xy ≤ 0`, so `|xy| = −xy = x·(−y) = |x||y|`. `y ≥ 0 > x`: symmetric. `x, y < 0`: `xy > 0`, `|xy| = xy = (−x)(−y) = |x||y|`.",
+     "why": "The definition of `|x|` (Week 1, slide 16) itself has two cases, so a case split is natural.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(abs(x*y) == abs(x)*abs(y) for x in range(-9,10) for y in range(-9,10))"
+     }
+    },
+    {
+     "id": "p3c",
+     "q": "Prove `3 | n³ − n` for every integer `n`.",
+     "a": "Cases on `n mod 3`. `n = 3k`: `n³ − n = 3(9k³ − k)`. `n = 3k + 1`: `n³ − n = n(n − 1)(n + 1)` and `n − 1 = 3k`, so it's a multiple of 3. `n = 3k + 2`: `n + 1 = 3(k + 1)`, so again a multiple of 3.",
+     "why": "Three cases because every integer leaves remainder 0, 1 or 2 when divided by 3. Factoring `n³ − n = (n − 1)n(n + 1)` makes each case one line.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((n**3 - n) % 3 == 0 for n in range(-60, 61))"
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Check a few numbers (`n = 1, 2, 3`) and call it proved.",
+    "correct": "Examples are not cases. Cases must be **general** (\"`n` odd, `n = 2k + 1`\") and together cover **every** possibility.",
+    "test": "Can you name a number that fits none of your cases? Then a case is missing."
+   },
+   "magic": "Cases must cover everything; prove the claim in each."
+  },
+  {
+   "type": "idea",
+   "id": "p4",
+   "short": "Contrapositive",
+   "title": "Prove the contrapositive when the direct way is awkward",
+   "summary": "`A ⇒ B` ≡ `¬B ⇒ ¬A`. Sometimes the second is much easier to prove.",
+   "picture": "\"If you got into the party, you were on the list.\" Easier to check: \"If you weren't on the list, the bouncer stopped you.\" Same rule, backwards.",
+   "official": "To prove `A ⇒ B`, show `¬B ⇒ ¬A` and use `(A ⇒ B) ≡ (¬B ⇒ ¬A)` (Week 2, slide 33). Lecture example: the square root of an irrational number is irrational, `∀x ∈ ℝ (x ∉ ℚ ⇒ √x ∉ ℚ)`, proved via \"if `√x` is rational then `x` is rational\". Use it when `¬B` gives you something concrete to work with (like a formula for `n`).",
+   "watch": {
+    "q": "Prove: if `n²` is even, then `n` is even.",
+    "steps": [
+     "Directly, \"`n²` even\" gives `n² = 2k`, and square roots are messy.",
+     "Contrapositive: if `n` is **odd**, then `n²` is **odd**.",
+     "Let `n = 2k + 1`. Then `n² = 4k² + 4k + 1 = 2(2k² + 2k) + 1`, odd.",
+     "The contrapositive is proved, so the original is too."
+    ],
+    "answer": "Proved by contrapositive."
+   },
+   "tries": [
+    {
+     "id": "p4a",
+     "q": "Prove: for integers `x`, `y`, if `x + y ≥ 10` then `x ≥ 5` or `y ≥ 5`.",
+     "a": "Contrapositive: if `x < 5` and `y < 5`, then `x + y < 10`. Since `x ≤ 4` and `y ≤ 4`, `x + y ≤ 8 < 10`.",
+     "why": "The negation of \"`x ≥ 5` or `y ≥ 5`\" is \"`x < 5` and `y < 5`\" (De Morgan), which is easy to add up.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((x >= 5 or y >= 5) for x in range(-20, 30) for y in range(-20, 30) if x + y >= 10)"
+     }
+    },
+    {
+     "id": "p4b",
+     "q": "Prove: if `ab` is odd, then `a` and `b` are both odd (integers).",
+     "a": "Contrapositive: if `a` is even or `b` is even, then `ab` is even. Say `a = 2k` (the `b` case is the same): `ab = 2(kb)`, even.",
+     "why": "The negation of \"both odd\" is \"at least one even\", and one even factor makes the product even.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(a % 2 == 1 and b % 2 == 1 for a in range(-15, 16) for b in range(-15, 16) if (a*b) % 2 == 1)"
+     }
+    },
+    {
+     "id": "p4c",
+     "q": "What is the contrapositive of \"if `3 ∤ n²` then `3 ∤ n`\"?",
+     "a": "**\"If `3 | n` then `3 | n²`.\"**",
+     "why": "Swap the two sides and negate both: `¬(3 ∤ n) = 3 | n`."
+    }
+   ],
+   "trap": {
+    "tempting": "Prove the converse `B ⇒ A` instead.",
+    "correct": "The converse is a **different** claim. Only the contrapositive `¬B ⇒ ¬A` is equivalent.",
+    "test": "Write both parts with `¬`. Did you swap **and** negate?"
+   },
+   "magic": "Stuck on `A ⇒ B`? Prove `¬B ⇒ ¬A`."
+  },
+  {
+   "type": "idea",
+   "id": "p5",
+   "short": "Contradiction",
+   "title": "Proof by contradiction: assume the opposite, crash into an impossibility",
+   "summary": "Assume `¬A`. Derive some `B` and also `¬B`. So `¬A` was impossible, and `A` is true.",
+   "picture": "A detective assumes the suspect is guilty and follows the consequences: he'd have to be in two cities at once. Impossible, so the assumption was wrong.",
+   "official": "To prove `A`: assume `¬A`, and derive **both** `B` and `¬B` for some proposition `B` (Week 2, slide 34). Hard part: finding `B`. Lecture examples: `√2` is irrational; there are infinitely many primes. **Important:** the assumption `¬A` must actually be **used**. If it isn't, it's not a proof by contradiction (slides 37–38).",
+   "watch": {
+    "q": "Prove: there is no largest integer.",
+    "steps": [
+     "Assume the opposite: there is a largest integer `N`.",
+     "Then `N + 1` is an integer, so by the assumption `N + 1 ≤ N`.",
+     "That gives `1 ≤ 0`, which is false.",
+     "Contradiction, so there is no largest integer."
+    ],
+    "answer": "Here `B` is \"`1 ≤ 0`\": the assumption forced it, and we know `¬B`."
+   },
+   "tries": [
+    {
+     "id": "p5a",
+     "q": "Outline the classic proof that there are infinitely many primes (a lecture example).",
+     "a": "Assume only finitely many: `p₁, …, pₖ`. Let `M = p₁·p₂·…·pₖ + 1`. `M > 1`, so some prime divides `M`; it must be some `pᵢ`. But `pᵢ` divides `p₁…pₖ`, so it would divide their difference, `1`. No prime divides 1. Contradiction.",
+     "why": "`B` is \"some `pᵢ` divides 1\". The assumption (finite list) was used to build `M`."
+    },
+    {
+     "id": "p5b",
+     "q": "Prove by contradiction: no integer `n` satisfies `4n = 10`.",
+     "a": "Assume `4n = 10` for some integer `n`. Then `2n = 5`, so `5` is even. But 5 is odd. Contradiction.",
+     "why": "`B` is \"5 is even\"; we know it's false."
+    },
+    {
+     "id": "p5c",
+     "q": "In a proof by contradiction of `A`, what exactly do you assume at the start?",
+     "a": "**`¬A`**, the negation of the claim.",
+     "why": "Then you aim for any `B` together with `¬B`."
+    }
+   ],
+   "trap": {
+    "tempting": "Start with \"Suppose not\", then give a direct proof that never uses the assumption.",
+    "correct": "If the assumption `¬A` is never used, it isn't a contradiction proof. Delete the first and last lines and you have a **direct** proof (slides 37–38; the reading's `4 | n ⇒ n` even example).",
+    "test": "Point at the line where `¬A` gets used. If there isn't one, it's a direct proof in disguise."
+   },
+   "magic": "Assume `¬A`, use it, reach `B ∧ ¬B`."
+  },
+  {
+   "type": "idea",
+   "id": "p6",
+   "short": "Spot the flaw",
+   "title": "Judging a proof: find the broken step",
+   "summary": "Check every step. The usual suspects: a false lemma, assuming the goal, proving the converse, examples instead of cases, dividing by something that could be 0.",
+   "picture": "Proof-reading a colleague's pull request: the code might even produce the right output, but if one line is wrong, the PR isn't correct.",
+   "official": "Week 2, slides 35–38 judge AI-written proofs. Example: \"For non-zero `m, n`, if `m | n` and `n | m` then `m = n`\" was \"proved\" with the **false lemma** `m | n ⇒ m ≤ n` (fails: `2 | −4` but `2 ≰ −4`). The claim itself is false too (`m = 2, n = −2`). A proof can be broken even when the claim is true, and a claim is only proved if **every** step is valid.",
+   "watch": {
+    "q": "\"Claim: for integers `p, q, r`, if `pq | qr` then `p | r`. Proof: `qr = k·pq`; cancel `q`: `r = kp`. So `p | r`.\" What's wrong?",
+    "steps": [
+     "Cancelling `q` means dividing by `q`.",
+     "That's only allowed if `q ≠ 0`.",
+     "With `q = 0`: `0 | 0` is true for any `p, r`, e.g. `p = 2, r = 3`, but `2 ∤ 3`."
+    ],
+    "answer": "**The claim is false as stated.** It needs `q ≠ 0` (then the proof is fine)."
+   },
+   "tries": [
+    {
+     "id": "p6a",
+     "q": "\"Claim: `n² − n + 11` is prime for every natural number `n`. Proof: it's prime for `n = 0, 1, 2, …, 10`.\" What's wrong?",
+     "a": "**Examples aren't a proof, and the claim is false:** `n = 11` gives `121 = 11²`.",
+     "why": "Checking some cases never proves a \"for every\" claim.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(is_prime(n*n - n + 11) for n in range(0, 11)) and not is_prime(11*11 - 11 + 11)"
+     }
+    },
+    {
+     "id": "p6b",
+     "q": "\"Claim: if `n²` is even then `n` is even. Proof: `n` is even, so `n = 2k`, so `n² = 4k²` is even.\" What's wrong?",
+     "a": "**It assumes the conclusion** (`n` is even) and proves the hypothesis. That's the converse, not the claim.",
+     "why": "Check what each line assumes. The proof must start from \"`n²` is even\"."
+    },
+    {
+     "id": "p6c",
+     "q": "\"Claim: every integer that is divisible by 4 is even. Proof: Suppose `n` is not even. Since `4 | n`, `n = 4k = 2(2k)`, which is even. Contradiction.\" Is the reasoning valid? Is it a proof by contradiction?",
+     "a": "**Valid, but not really a proof by contradiction:** the assumption \"`n` is not even\" is never used. Remove the first and last sentences for a clean direct proof.",
+     "why": "This is the reading's own example of a proof that should be simplified."
+    },
+    {
+     "id": "p6d",
+     "q": "\"Claim: `a < b ⇒ a² < b²` for all reals. Proof: multiply both sides of `a < b` by `a`, then by `b`.\" What's wrong?",
+     "a": "**Multiplying by a negative number flips `<`**, so the steps fail for negative `a` or `b`. The claim is false: `a = −3, b = 1`.",
+     "why": "Always check the sign before multiplying an inequality.",
+     "check": {
+      "kind": "calc",
+      "expr": "not ((-3)**2 < 1**2)"
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "The conclusion is true, so the proof is fine.",
+    "correct": "A true conclusion can come from broken reasoning. Judge **each step**.",
+    "test": "For each line ask: which earlier line or definition justifies this, and does it hold for **all** allowed values (zero? negatives?)."
+   },
+   "magic": "Hunt for: false lemmas, circular steps, converse, examples-as-proof, dividing by 0, sign flips."
+  },
+  {
+   "type": "section",
+   "id": "practice",
+   "title": "🏋️ Practice ladder"
+  },
+  {
+   "type": "practice",
+   "id": "p-green",
+   "level": "green",
+   "items": [
+    {
+     "id": "g1",
+     "q": "Define \"`n` is odd\".",
+     "a": "**`n = 2k + 1` for some integer `k`.**",
+     "why": "The standard definition used in every parity proof."
+    },
+    {
+     "id": "g2",
+     "q": "Define \"`m | n`\" (course notation).",
+     "a": "**`n = k·m` for some integer `k`.**",
+     "why": "Week 1, slide 14."
+    },
+    {
+     "id": "g3",
+     "q": "Which proof method: assume the claim is false and derive an impossibility?",
+     "a": "**Proof by contradiction.**",
+     "why": "Week 2, slide 34."
+    },
+    {
+     "id": "g4",
+     "q": "Which proof method: prove `¬B ⇒ ¬A` to get `A ⇒ B`?",
+     "a": "**Proof by contrapositive.**",
+     "why": "Week 2, slide 33."
+    },
+    {
+     "id": "g5",
+     "q": "Prove: if `n` is even, then `n + 7` is odd.",
+     "a": "`n = 2k`, so `n + 7 = 2k + 6 + 1 = 2(k + 3) + 1`, odd.",
+     "why": "Regroup to show the `2(…) + 1` shape.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((n + 7) % 2 == 1 for n in range(-40, 41, 2))"
+     }
+    },
+    {
+     "id": "g6",
+     "q": "Two cases \"`x ≥ 0`\" and \"`x ≤ 0`\" overlap at 0. Is that allowed in a proof by cases?",
+     "a": "**Yes.**",
+     "why": "Cases must **cover** everything (`B₁ ∨ B₂` true); overlapping is fine."
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-yellow",
+   "level": "yellow",
+   "items": [
+    {
+     "id": "y1",
+     "q": "Prove: `5 | n` implies `5 | n²`.",
+     "a": "`n = 5k`, so `n² = 25k² = 5(5k²)`, and `5k² ∈ ℤ`.",
+     "why": "Direct proof.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((n*n) % 5 == 0 for n in range(-50, 51, 5))"
+     }
+    },
+    {
+     "id": "y2",
+     "q": "Prove: the square of any integer is `3k` or `3k + 1` (never `3k + 2`).",
+     "a": "Cases on `n mod 3`: `n = 3m` → `n² = 3(3m²)`. `n = 3m + 1` → `n² = 3(3m² + 2m) + 1`. `n = 3m + 2` → `n² = 9m² + 12m + 4 = 3(3m² + 4m + 1) + 1`.",
+     "why": "Three cases cover all integers.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((n*n) % 3 in (0, 1) for n in range(-60, 61))"
+     }
+    },
+    {
+     "id": "y3",
+     "q": "Prove by contrapositive: if `n²` is odd then `n` is odd.",
+     "a": "Contrapositive: if `n` is even then `n²` is even. `n = 2k` gives `n² = 2(2k²)`.",
+     "why": "Negate both sides and swap."
+    },
+    {
+     "id": "y4",
+     "q": "\"For all integers `n`, `n² ≥ n`. Proof: `3² = 9 ≥ 3` and `5² = 25 ≥ 5`.\" Grade it.",
+     "a": "**Not a proof** (examples only). The claim is actually true for integers; a correct proof uses cases: `n ≤ 0` (then `n² ≥ 0 ≥ n`) and `n ≥ 1` (then `n² = n·n ≥ 1·n`).",
+     "why": "Separate \"is the claim true?\" from \"does this argument prove it?\".",
+     "check": {
+      "kind": "calc",
+      "expr": "all(n*n >= n for n in range(-100, 101))"
+     }
+    },
+    {
+     "id": "y5",
+     "q": "Prove: if `a` is even and `b` is odd, then `a + b` is odd.",
+     "a": "`a = 2k`, `b = 2ℓ + 1`, so `a + b = 2(k + ℓ) + 1`.",
+     "why": "Different letters for the two unknowns.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((a + b) % 2 == 1 for a in range(-20, 21, 2) for b in range(-21, 22, 2))"
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-red",
+   "level": "red",
+   "sub": "Problem set 2, Q7 style: short proofs about integers and judging a proof. All claims here are original.",
+   "items": [
+    {
+     "id": "r1",
+     "q": "Prove by cases: `n(n + 1)(n + 2)` is divisible by 3 for every integer `n`.",
+     "a": "Cases on `n mod 3`: if `n = 3k`, the factor `n` is a multiple of 3. If `n = 3k + 1`, then `n + 2 = 3(k + 1)`. If `n = 3k + 2`, then `n + 1 = 3(k + 1)`. In each case one factor is a multiple of 3, so the product is.",
+     "why": "Among any three consecutive integers, one is a multiple of 3.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((n*(n+1)*(n+2)) % 3 == 0 for n in range(-60, 61))"
+     }
+    },
+    {
+     "id": "r2",
+     "q": "Prove: for every integer `n`, `n² + 3n + 5` is odd.",
+     "a": "Case `n` even, `n = 2k`: `4k² + 6k + 5 = 2(2k² + 3k + 2) + 1`. Case `n` odd, `n = 2k + 1`: `4k² + 4k + 1 + 6k + 3 + 5 = 2(2k² + 5k + 4) + 1`. Odd in both cases.",
+     "why": "Parity cases; in each, collect everything except a final `+ 1` into `2(…)`.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((n*n + 3*n + 5) % 2 == 1 for n in range(-60, 61))"
+     }
+    },
+    {
+     "id": "r3",
+     "q": "What, if anything, is wrong? \"Claim: if `x² = 4x` then `x = 4` (reals). Proof: divide both sides by `x`.\"",
+     "a": "**Dividing by `x` assumes `x ≠ 0`.** The claim is false: `x = 0` also satisfies `x² = 4x`.",
+     "why": "Correct version: `x² − 4x = x(x − 4) = 0`, so `x = 0` or `x = 4`.",
+     "check": {
+      "kind": "calc",
+      "expr": "0**2 == 4*0 and 4**2 == 4*4"
+     }
+    },
+    {
+     "id": "r4",
+     "q": "What, if anything, is wrong? \"Claim: for all integers `a, b`, if `a | b` and `b | a` then `a = b`. Proof: `a | b` gives `a ≤ b`, and `b | a` gives `b ≤ a`.\"",
+     "a": "**False lemma, and a false claim.** `a | b` doesn't imply `a ≤ b` (`3 | −6`). Counterexample to the claim: `a = 5, b = −5`.",
+     "why": "Same flaw as the lecture's AI proof (Week 2, slide 35), with different numbers. The true statement: `a = b` or `a = −b`.",
+     "check": {
+      "kind": "calc",
+      "expr": "(-5) % 5 == 0 and 5 % (-5) == 0 and 5 != -5"
+     }
+    },
+    {
+     "id": "r5",
+     "q": "Prove by contradiction: `√3` is irrational (you may use: if `3 | n²` then `3 | n`).",
+     "a": "Assume `√3 = m/n` with integers `m, n`, `n ≠ 0`, and no common factor. Then `m² = 3n²`, so `3 | m²`, so `3 | m`: `m = 3k`. Then `9k² = 3n²`, so `n² = 3k²`, so `3 | n`. Now 3 divides both `m` and `n`, contradicting \"no common factor\".",
+     "why": "Same pattern as the lecture's `√2`. Here \"no common factor\" is used, so it's not a red herring."
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-boss",
+   "level": "boss",
+   "items": [
+    {
+     "id": "b1",
+     "q": "Grade this. \"Claim: for all real `x`, `|x + 1| ≤ |x| + 1`. Proof by cases: if `x ≥ 0`, `|x + 1| = x + 1 = |x| + 1`. If `x < 0`, `|x + 1| = −(x + 1) = −x − 1 ≤ −x + 1 = |x| + 1`.\"",
+     "a": "**Broken case 2.** For `−1 ≤ x < 0`, `x + 1 ≥ 0`, so `|x + 1| = x + 1`, not `−(x + 1)`. The claim is true, but case 2 must split again: `−1 ≤ x < 0` (then `|x + 1| = x + 1 < 1 ≤ |x| + 1`) and `x < −1`.",
+     "why": "A case split must match the definition of `|…|` for the **expression inside**, not for `x`."
+    },
+    {
+     "id": "b2",
+     "q": "Prove: `m` and `m + 2` have `gcd` 1 or 2, for every integer `m`.",
+     "a": "Let `d` be a positive common divisor. Then `d | (m + 2) − m = 2` (difference of multiples). So `d ∈ {1, 2}`, and the gcd is 1 or 2.",
+     "why": "Same trick as \"common divisors divide the difference\" (Idea 2's last try).",
+     "check": {
+      "kind": "calc",
+      "expr": "all(gcd(m, m+2) in (1, 2) for m in range(-50, 51))"
+     }
+    },
+    {
+     "id": "b3",
+     "q": "Prove: if `k | m` and `a mod m = b mod m` (positive integers), then `a mod k = b mod k`. Watch out for a common slip.",
+     "a": "`a mod m = b mod m` means `m | (a − b)`: write `a = qm + r`, `b = q'm + r`, subtract. With `m = ℓk`, `a − b = (q − q')ℓk`, so `k | (a − b)`, which means `a mod k = b mod k`. **Slip to avoid:** claiming `a mod k = r`. `r` is only below `m`, not necessarily below `k` (e.g. `a = 5, m = 6, k = 3`: `r = 5`, but `5 mod 3 = 2`).",
+     "why": "Work with the difference `a − b`; it avoids the remainder trap.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((a % k) == (b % k) for m in range(1, 13) for k in range(1, m+1) if m % k == 0 for a in range(1, 40) for b in range(1, 40) if a % m == b % m)"
+     }
+    },
+    {
+     "id": "b4",
+     "q": "A proof by cases for \"every integer `n`\" uses the cases `n > 0` and `n < 0`. Is it complete?",
+     "a": "**No: `n = 0` is missing.**",
+     "why": "The cases must cover every integer. `0` fits neither."
+    },
+    {
+     "id": "b5",
+     "q": "Prove: there is no smallest positive rational number.",
+     "a": "Assume `q` is the smallest positive rational. Then `q/2` is rational and positive, and `q/2 < q`. That contradicts \"smallest\".",
+     "why": "Contradiction, and the assumption (smallest) is really used."
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-retest",
+   "level": "retest",
+   "items": [
+    {
+     "id": "rt1",
+     "q": "Prove: the sum of an even and an odd integer is odd.",
+     "a": "`2k + (2ℓ + 1) = 2(k + ℓ) + 1`."
+    },
+    {
+     "id": "rt2",
+     "q": "What must you do with the assumption `¬A` in a proof by contradiction?",
+     "a": "**Use it** to derive some `B` and `¬B`."
+    },
+    {
+     "id": "rt3",
+     "q": "Contrapositive of \"if `n²` is divisible by 5 then `n` is divisible by 5\"?",
+     "a": "**\"If `5 ∤ n` then `5 ∤ n²`.\"**"
+    },
+    {
+     "id": "rt4",
+     "q": "\"Cancel `q` from `pq = pr`.\" What must you check first?",
+     "a": "**That `p ≠ 0`.**"
+    }
+   ]
+  },
+  {
+   "type": "recap",
+   "lines": [
+    "Even: `2k`. Odd: `2k + 1`. `m | n`: `n = km`. Different unknowns, different letters.",
+    "Cases: `B₁ ∨ … ∨ Bₙ` must be true, and each `Bᵢ ⇒ A`.",
+    "Contrapositive: swap and negate both sides. Not the converse!",
+    "Contradiction: assume `¬A`, use it, reach `B ∧ ¬B`. Unused assumption = really a direct proof.",
+    "Bad proofs: false lemma, circular, converse, examples-only, dividing by 0, multiplying by a negative, missing case.",
+    "Write for a classmate: full sentences, \"we\", no shorthand, no red herrings, then simplify."
+   ]
+  },
+  {
+   "type": "links",
+   "id": "links",
+   "sub": "Free, from universities. Try them after the ladder above.",
+   "items": [
+    {
+     "title": "Mathematics for Computer Science — Chapter 1 (Proofs), Sections 1.5–1.9",
+     "url": "https://courses.csail.mit.edu/6.042/spring18/mcs.pdf",
+     "source": "MIT — the supplementary reading the Week 2 slides recommend",
+     "checked": "24 Sep 2026",
+     "note": "Proof by cases, contrapositive, contradiction, and what makes a good proof."
+    },
+    {
+     "title": "Guidelines for Good Mathematical Writing (F. E. Su)",
+     "url": "https://math.hmc.edu/su/wp-content/uploads/sites/10/2020/08/Guidelines-for-Good-Mathematical-Writing.pdf",
+     "source": "Harvey Mudd College (the author's own site) — the reading set for Problem set 2",
+     "checked": "24 Sep 2026",
+     "note": "Short and worth rereading before every written answer."
+    }
+   ]
+  }
+ ],
+ "sources": "Lecture slides: Week 1 slides 14, 16, 19, 49; Week 2 slides 32–38 (cases, contrapositive, contradiction, judging AI proofs). Reading: F. E. Su, Guidelines for Good Mathematical Writing. All claims and flawed proofs in the practice are original.",
+ "prev": {
+  "href": "../drill-quiz2-gym/",
+  "label": "D2 · Quiz 2 Gym"
+ },
+ "next": {
+  "href": "../l6-boolean-algebra/",
+  "label": "L6 · Boolean Algebra"
+ }
+}

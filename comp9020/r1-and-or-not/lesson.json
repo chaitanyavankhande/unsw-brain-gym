@@ -1,0 +1,737 @@
+{
+ "id": "comp9020-r1",
+ "course": {
+  "code": "COMP9020",
+  "href": "../"
+ },
+ "code": "R1",
+ "emoji": "🔤",
+ "title": "AND, OR, NOT from Zero",
+ "eyebrow": "COMP9020 · Week 1 · Propositional logic basics",
+ "minutes": 35,
+ "verified": true,
+ "goal": "Tell propositions from non-propositions, use `¬ ∧ ∨` and their truth tables, know what a well-formed formula is, and read formulas aloud.",
+ "magic": [
+  "Proposition = a claim that is T or F (even if nobody knows which).",
+  "Propositional logic only handles truth-functional joiners.",
+  "`∧`: both. `∨`: at least one (both is fine). `¬`: flip. \"but\" = `∧`.",
+  "`¬` binds first, then `∧ ∨` (always bracket a mix), then `⇒ ⇔`.",
+  "Read a formula from its main joiner."
+ ],
+ "blocks": [
+  {
+   "type": "section",
+   "id": "learn",
+   "title": "💡 Learn it, one idea at a time"
+  },
+  {
+   "type": "idea",
+   "id": "a1",
+   "short": "Propositions",
+   "title": "Propositions: sentences that are true or false",
+   "summary": "A proposition is a declarative sentence: it makes a claim that is either true or false.",
+   "picture": "\"The fridge is empty\" can be checked: open the fridge. \"Close the fridge!\" can't be true or false; it's an order. Logic only works with the checkable kind.",
+   "official": "A sentence is **declarative**, or a **proposition**, if it can meaningfully be said to be either **true or false** (Week 1, slide 51). We don't have to *know* which: \"`xⁿ + yⁿ = zⁿ` has no non-trivial integer solutions for `n > 2`\" is a proposition. **Not** propositions: nonsense, commands, questions, requests (slide 52).",
+   "watch": {
+    "q": "Which of these are propositions? (a) \"Sydney is the capital of Australia.\" (b) \"Is the build green?\" (c) \"Every even number above 2 is a sum of two primes.\" (d) \"Please merge my PR.\"",
+    "steps": [
+     "(a) A claim you can check. It's false (Canberra is), but false is fine: **proposition**.",
+     "(b) A question: **not** a proposition.",
+     "(c) A claim. Nobody knows yet whether it's true (Goldbach's conjecture), but it is true or false: **proposition**.",
+     "(d) A request: **not** a proposition."
+    ],
+    "answer": "**(a) and (c)** are propositions."
+   },
+   "tries": [
+    {
+     "id": "a1a",
+     "q": "\"Kafka stores messages in partitions.\" Proposition?",
+     "a": "**Yes.**",
+     "why": "It makes a checkable claim."
+    },
+    {
+     "id": "a1b",
+     "q": "\"Restart the server now!\" Proposition?",
+     "a": "**No.**",
+     "why": "It's a command. It can be obeyed or not, but not true or false."
+    },
+    {
+     "id": "a1c",
+     "q": "\"There are infinitely many prime pairs like 11 and 13.\" Proposition?",
+     "a": "**Yes.**",
+     "why": "It's either true or false, even though no one knows which yet (the twin prime conjecture)."
+    },
+    {
+     "id": "a1d",
+     "q": "\"Flibber the snorkwhack.\" Proposition?",
+     "a": "**No.**",
+     "why": "It's not meaningful, so it can't be true or false."
+    }
+   ],
+   "trap": {
+    "tempting": "If nobody knows whether it's true, it isn't a proposition.",
+    "correct": "It only has to be **either** true or false. Unknown is fine; meaningless, commands and questions are not.",
+    "test": "Ask: could a perfect judge label it T or F? If yes, it's a proposition."
+   },
+   "magic": "Proposition = a claim that is either T or F (even if we don't know which)."
+  },
+  {
+   "type": "idea",
+   "id": "a2",
+   "short": "Truth-functional",
+   "title": "Truth-functional joiners only",
+   "summary": "Propositional logic handles joiners where the truth of the whole depends only on the truth of the parts.",
+   "picture": "\"It's raining and it's cold\": if you know whether each part is true, you know the whole. \"I stayed home **because** it rained\": both parts can be true while the reason is false. Knowing the parts isn't enough.",
+   "official": "Propositional logic represents constructions where the truth value of the compound sentence is **determined by the truth values of its parts** (Week 1, slide 53: *and*, *either … or*, *it is not the case that*). **Not** truth-functional: *believes that*, *because*, *after* (slide 54). Modal logics handle those.",
+   "watch": {
+    "q": "Is \"The deploy failed after the tests passed\" truth-functional?",
+    "steps": [
+     "Suppose both parts are true: the deploy failed, and the tests passed.",
+     "The whole sentence could still be false (maybe the deploy failed *before* the tests ran).",
+     "So the parts' truth values don't fix the whole."
+    ],
+    "answer": "**Not truth-functional.** \"After\" adds timing, which `∧` can't express."
+   },
+   "tries": [
+    {
+     "id": "a2a",
+     "q": "\"The cache is warm or the database is fast.\" Truth-functional?",
+     "a": "**Yes.**",
+     "why": "It's `c ∨ d`: knowing `c` and `d` settles it."
+    },
+    {
+     "id": "a2b",
+     "q": "\"Priya knows that the release is on Friday.\" Truth-functional?",
+     "a": "**No.**",
+     "why": "The release can be on Friday while Priya doesn't know it. *Knows that* isn't determined by the part's truth."
+    },
+    {
+     "id": "a2c",
+     "q": "\"It is not the case that every test passed.\" Truth-functional?",
+     "a": "**Yes.**",
+     "why": "It's `¬t`: flip the truth value of the part."
+    }
+   ],
+   "trap": {
+    "tempting": "Any sentence with two parts can be written with `∧`.",
+    "correct": "Only if the whole is fixed by the parts' truth values. *Because*, *after*, *believes* aren't.",
+    "test": "Make both parts true. Could the whole sentence still be false? Then it isn't truth-functional."
+   },
+   "magic": "Truth-functional = the parts' T/F decide the whole."
+  },
+  {
+   "type": "idea",
+   "id": "a3",
+   "short": "¬ ∧ ∨",
+   "title": "NOT, AND, OR and their English words",
+   "summary": "`¬` flips. `∧` needs both. `∨` needs at least one. \"but\" is `∧`, and \"or\" includes both.",
+   "picture": "A burger order: \"cheese AND bacon\" means you get both. \"Cheese OR bacon\" means at least one, and both is fine. \"NOT onions\" means the opposite of onions.",
+   "official": "Week 1, slide 55: `∧` for \"and\", \"but\", \";\", \":\" · `∨` for \"or\", \"either … or …\" · `¬` for \"not\", \"it is not the case that\". Tables: `A ∧ B` is T only when both are T. `A ∨ B` is F only when both are F. `¬A` flips `A`.",
+   "grid": {
+    "title": "The three basic tables (Week 1, slide 55)",
+    "cols": [
+     "A",
+     "B",
+     "A ∧ B",
+     "A ∨ B",
+     "¬A"
+    ],
+    "rows": [
+     [
+      "F",
+      "F",
+      "F",
+      "F",
+      "T"
+     ],
+     [
+      "F",
+      "T",
+      "F",
+      "T",
+      "T"
+     ],
+     [
+      "T",
+      "F",
+      "F",
+      "T",
+      "F"
+     ],
+     [
+      "T",
+      "T",
+      "T",
+      "T",
+      "F"
+     ]
+    ]
+   },
+   "watch": {
+    "q": "Translate \"The API is slow, but it isn't down.\" (`s` = the API is slow, `d` = it is down)",
+    "steps": [
+     "\"but\" joins two claims that are both true: `∧`.",
+     "\"it isn't down\" = `¬d`.",
+     "Put together: `s ∧ ¬d`."
+    ],
+    "answer": "**`s ∧ ¬d`**. \"But\" sounds like a contrast, but logically it's just AND."
+   },
+   "tries": [
+    {
+     "id": "a3a",
+     "q": "Translate \"Either the queue is full or the consumer is down.\" (`q`, `c`)",
+     "a": "**`q ∨ c`**",
+     "why": "\"Either … or\" is still inclusive `∨` in the slides (both may be true).",
+     "letters": "`q` = the queue is full · `c` = the consumer is down"
+    },
+    {
+     "id": "a3b",
+     "q": "Translate \"It is not the case that the build passed.\" (`b`)",
+     "a": "**`¬b`**",
+     "why": "\"It is not the case that\" is `¬` in front of the whole claim."
+    },
+    {
+     "id": "a3c",
+     "q": "Translate \"The disk is full; the logs stopped.\" (`f`, `l`)",
+     "a": "**`f ∧ l`**",
+     "why": "A semicolon joining two claims is `∧` (slide 55)."
+    },
+    {
+     "id": "a3d",
+     "q": "Value of `¬a ∨ b` when `a = T, b = F`?",
+     "a": "**F**",
+     "why": "`¬a` = F and `b` = F. `∨` of two Fs is F.",
+     "check": {
+      "kind": "value",
+      "f": "¬⊤ ∨ ⊥",
+      "expect": false
+     }
+    },
+    {
+     "id": "a3e",
+     "q": "Value of `a ∧ ¬(b ∨ c)` when `a = T, b = F, c = F`?",
+     "a": "**T**",
+     "why": "`b ∨ c` = F, so `¬(b ∨ c)` = T. T ∧ T = T.",
+     "check": {
+      "kind": "value",
+      "f": "⊤ ∧ ¬(⊥ ∨ ⊥)",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "\"or\" means one or the other but not both.",
+    "correct": "In logic, `∨` is **inclusive**: both true makes `A ∨ B` true. \"Exactly one\" is a different joiner, `⊕`.",
+    "test": "Check the row where both are T: `∨` gives T."
+   },
+   "magic": "`∧`: both. `∨`: at least one (both is fine). `¬`: flip. \"but\" = `∧`."
+  },
+  {
+   "type": "idea",
+   "id": "a4",
+   "short": "Well-formed",
+   "title": "What counts as a formula (and how brackets work)",
+   "summary": "Formulas are built by one small set of rules. Anything else, like `p ¬ q`, isn't a formula.",
+   "picture": "Like a programming language's grammar: `(a && b)` compiles, `a && && b` doesn't. Logic formulas have a grammar too.",
+   "official": "Week 1, slide 63: `⊤`, `⊥` and every letter are formulas. If `φ` is a formula, so is `¬φ`. If `φ`, `ψ` are formulas, so are `(φ ∧ ψ)`, `(φ ∨ ψ)`, `(φ ⇒ ψ)`, `(φ ⇔ ψ)`. Nothing else. `⊤` is always true, `⊥` always false. **Convention:** drop brackets when there's no ambiguity. `¬` binds tightest, then `∧` and `∨`, then `⇒` and `⇔`. The slides don't rank `∧` against `∨`, so always bracket a mix.",
+   "watch": {
+    "q": "Is `¬(p ∧ ⊤) ⇒ ¬¬q` a formula? Where do the brackets go?",
+    "steps": [
+     "`p`, `⊤`, `q` are formulas. `(p ∧ ⊤)` is a formula.",
+     "`¬(p ∧ ⊤)` is a formula. `¬q`, then `¬¬q` are formulas.",
+     "Joining them with `⇒` gives a formula. `¬` binds tighter than `⇒`, so no extra brackets are needed."
+    ],
+    "answer": "**Yes:** it's `(¬(p ∧ ⊤) ⇒ ¬¬q)`."
+   },
+   "tries": [
+    {
+     "id": "a4a",
+     "q": "Is `p ∧ ∨ q` a formula?",
+     "a": "**No.**",
+     "why": "`∧` needs a formula on each side, and `∨ q` isn't one."
+    },
+    {
+     "id": "a4b",
+     "q": "Is `¬¬¬⊥` a formula?",
+     "a": "**Yes.**",
+     "why": "`⊥` is a formula, and `¬` can be applied again and again."
+    },
+    {
+     "id": "a4c",
+     "q": "Add the brackets the convention hides: `¬a ∧ b ⇒ c`.",
+     "a": "**`((¬a ∧ b) ⇒ c)`**",
+     "why": "`¬` grabs `a` first, then `∧` joins `¬a` and `b`, then `⇒` is last.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬a ∧ b ⇒ c",
+      "g": "((¬a ∧ b) ⇒ c)",
+      "expect": true
+     }
+    },
+    {
+     "id": "a4d",
+     "q": "Why must `p ∧ q ∨ r` be bracketed in this course?",
+     "a": "Because the slides don't say whether `∧` or `∨` binds tighter, so it could mean `(p ∧ q) ∨ r` or `p ∧ (q ∨ r)`, and those differ.",
+     "why": "Row `p = F, r = T`: the first is T, the second is F.",
+     "check": {
+      "kind": "equiv",
+      "f": "(p ∧ q) ∨ r",
+      "g": "p ∧ (q ∨ r)",
+      "expect": false
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "`¬p ∧ q` means `¬(p ∧ q)`.",
+    "correct": "`¬` binds tightest: `¬p ∧ q` = `(¬p) ∧ q`. For \"not both\", you must write `¬(p ∧ q)`.",
+    "test": "Row `p = F, q = F`: `(¬p) ∧ q` = F but `¬(p ∧ q)` = T. Different."
+   },
+   "magic": "`¬` first, then `∧ ∨` (bracket mixes!), then `⇒ ⇔`."
+  },
+  {
+   "type": "idea",
+   "id": "a5",
+   "short": "Read it aloud",
+   "title": "Reading a formula back into English",
+   "summary": "Find the main joiner first; it becomes the backbone of the English sentence.",
+   "picture": "Reading a formula is like reading code: find the outermost `if`, and the rest hangs off it.",
+   "official": "Put the brackets back using the binding rules, find the **main joiner** (the one applied last), and read it first: `⇒` → \"if … then …\", `⇔` → \"… if and only if …\", `∧` → \"… and …\", `∨` → \"… or …\", `¬` → \"not / it is not the case that\".",
+   "watch": {
+    "q": "With `c` = it's cold, `h` = the heater is on, `w` = a window is open: read `¬c ∨ h ⇒ ¬w`.",
+    "steps": [
+     "Brackets: `(¬c ∨ h) ⇒ ¬w` (`∨` binds tighter than `⇒`).",
+     "Main joiner: `⇒`, so the sentence is \"If …, then …\".",
+     "Left part: \"it isn't cold or the heater is on\". Right: \"no window is open\"."
+    ],
+    "answer": "\"**If it isn't cold or the heater is on, then no window is open.**\""
+   },
+   "tries": [
+    {
+     "id": "a5a",
+     "q": "With `r` = it rains, `b` = I bike, `t` = I take the train: read `r ⇒ ¬b ∧ t`.",
+     "a": "\"If it rains, then I don't bike and I take the train.\"",
+     "why": "Brackets: `r ⇒ (¬b ∧ t)`. Main joiner `⇒`.",
+     "check": {
+      "kind": "equiv",
+      "f": "r ⇒ ¬b ∧ t",
+      "g": "r ⇒ (¬b ∧ t)",
+      "expect": true
+     }
+    },
+    {
+     "id": "a5b",
+     "q": "Same letters: read `¬(r ∧ b)`.",
+     "a": "\"It's not the case that it rains and I bike\", i.e. \"I don't bike in the rain\".",
+     "why": "Main joiner `¬`, applied to the whole bracket."
+    },
+    {
+     "id": "a5c",
+     "q": "Same letters: read `t ⇔ r ∨ ¬b`.",
+     "a": "\"I take the train if and only if it rains or I don't bike.\"",
+     "why": "Brackets: `t ⇔ (r ∨ ¬b)`. `⇔` is the main joiner.",
+     "check": {
+      "kind": "equiv",
+      "f": "t ⇔ r ∨ ¬b",
+      "g": "t ⇔ (r ∨ ¬b)",
+      "expect": true
+     }
+    },
+    {
+     "id": "a5d",
+     "q": "Same letters: read `(b ⇒ ¬r) ⇒ t`.",
+     "a": "\"If (I bike only when it isn't raining), then I take the train.\" Or: \"If biking means no rain, then I take the train.\"",
+     "why": "The main joiner is the **second** `⇒`; the bracket is its condition."
+    }
+   ],
+   "trap": {
+    "tempting": "Read left to right, word for word.",
+    "correct": "Find the main joiner first. `¬c ∨ h ⇒ ¬w` starts with \"If\", not with \"Not\".",
+    "test": "Put all brackets back, then read the outermost joiner first."
+   },
+   "magic": "Brackets back → main joiner first → read the pieces."
+  },
+  {
+   "type": "idea",
+   "id": "a6",
+   "short": "Program logic",
+   "title": "Simplifying `if` conditions",
+   "summary": "Turn a code condition into letters, simplify the formula, turn it back into shorter code.",
+   "picture": "A code reviewer spots `if (x > 0 || (x <= 0 && y > 100))` and says \"that's just `x > 0 || y > 100`\". Logic proves the reviewer is right.",
+   "official": "Week 1, slide 56: with `p` = `(x > 0)` and `q` = `(y > 100)`, the condition `x > 0 or (x <= 0 and y > 100)` is `p ∨ (¬p ∧ q)`. Its truth table matches `p ∨ q`, so the code can be simplified to `if x > 0 or y > 100`. Note `x <= 0` is exactly `¬p`.",
+   "watch": {
+    "q": "Simplify `if ready and not (ready and failed):`",
+    "steps": [
+     "Letters: `r` = ready, `f` = failed. Condition: `r ∧ ¬(r ∧ f)`.",
+     "De Morgan: `¬(r ∧ f)` = `¬r ∨ ¬f`. So `r ∧ (¬r ∨ ¬f)`.",
+     "Distribute: `(r ∧ ¬r) ∨ (r ∧ ¬f)` = `⊥ ∨ (r ∧ ¬f)` = `r ∧ ¬f`."
+    ],
+    "answer": "**`if ready and not failed:`**"
+   },
+   "tries": [
+    {
+     "id": "a6a",
+     "q": "Simplify `if not (not a or not b):`",
+     "a": "**`if a and b:`**",
+     "why": "De Morgan + double negation: `¬(¬a ∨ ¬b)` = `a ∧ b`.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(¬a ∨ ¬b)",
+      "g": "a ∧ b",
+      "expect": true
+     }
+    },
+    {
+     "id": "a6b",
+     "q": "Simplify `if cached or (not cached and fresh):`",
+     "a": "**`if cached or fresh:`**",
+     "why": "Same shape as the lecture example: `c ∨ (¬c ∧ f)` = `c ∨ f`.",
+     "check": {
+      "kind": "equiv",
+      "f": "c ∨ (¬c ∧ f)",
+      "g": "c ∨ f",
+      "expect": true
+     }
+    },
+    {
+     "id": "a6c",
+     "q": "Simplify `if admin or (admin and owner):`",
+     "a": "**`if admin:`**",
+     "why": "`a ∨ (a ∧ o)` = `a`: if `a` is false, the bracket is false too.",
+     "check": {
+      "kind": "equiv",
+      "f": "a ∨ (a ∧ o)",
+      "g": "a",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Only a compiler can tell that two conditions are the same.",
+    "correct": "A truth table over the letters proves it for every input, once the comparisons are replaced by letters.",
+    "test": "Replace each comparison by a letter; check that opposite comparisons (`x > 0`, `x <= 0`) become `p` and `¬p`."
+   },
+   "magic": "Comparisons → letters → simplify → back to code."
+  },
+  {
+   "type": "section",
+   "id": "practice",
+   "title": "🏋️ Practice ladder"
+  },
+  {
+   "type": "practice",
+   "id": "p-green",
+   "level": "green",
+   "items": [
+    {
+     "id": "g1",
+     "q": "\"Tomorrow is Friday.\" Proposition?",
+     "a": "**Yes.**",
+     "why": "It's either true or false."
+    },
+    {
+     "id": "g2",
+     "q": "\"Why is the build red?\" Proposition?",
+     "a": "**No.**",
+     "why": "It's a question."
+    },
+    {
+     "id": "g3",
+     "q": "Value of `T ∧ F`?",
+     "a": "**F**",
+     "why": "`∧` needs both.",
+     "check": {
+      "kind": "value",
+      "f": "⊤ ∧ ⊥",
+      "expect": false
+     }
+    },
+    {
+     "id": "g4",
+     "q": "Value of `F ∨ T`?",
+     "a": "**T**",
+     "why": "`∨` needs at least one.",
+     "check": {
+      "kind": "value",
+      "f": "⊥ ∨ ⊤",
+      "expect": true
+     }
+    },
+    {
+     "id": "g5",
+     "q": "Value of `¬(T ∨ T)`?",
+     "a": "**F**",
+     "why": "T ∨ T = T; flip it: F.",
+     "check": {
+      "kind": "value",
+      "f": "¬(⊤ ∨ ⊤)",
+      "expect": false
+     }
+    },
+    {
+     "id": "g6",
+     "q": "Translate \"The tests pass and the linter is happy.\" (`t`, `l`)",
+     "a": "**`t ∧ l`**",
+     "why": "\"and\" is `∧`."
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-yellow",
+   "level": "yellow",
+   "items": [
+    {
+     "id": "y1",
+     "q": "Translate \"The coffee is hot but not strong.\" (`h`, `s`)",
+     "a": "**`h ∧ ¬s`**",
+     "why": "\"but\" = `∧`; \"not strong\" = `¬s`."
+    },
+    {
+     "id": "y2",
+     "q": "Translate \"It is not the case that the fan and the heater are both on.\" (`f`, `h`)",
+     "a": "**`¬(f ∧ h)`**",
+     "why": "\"It is not the case that\" covers the whole \"both\" claim, so the `¬` goes outside a bracket."
+    },
+    {
+     "id": "y3",
+     "q": "Is \"The server crashed because the disk was full\" truth-functional?",
+     "a": "**No.**",
+     "why": "Both parts can be true while the disk wasn't the cause."
+    },
+    {
+     "id": "y4",
+     "q": "Add the hidden brackets: `¬p ∨ q ⇔ r`.",
+     "a": "**`((¬p ∨ q) ⇔ r)`**",
+     "why": "`¬` first, then `∨`, then `⇔`.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬p ∨ q ⇔ r",
+      "g": "((¬p ∨ q) ⇔ r)",
+      "expect": true
+     }
+    },
+    {
+     "id": "y5",
+     "q": "Is `(p ⇒)` a formula?",
+     "a": "**No.**",
+     "why": "`⇒` needs a formula on the right."
+    },
+    {
+     "id": "y6",
+     "q": "Evaluate `(a ∨ b) ∧ ¬(a ∧ b)` for all four rows (FF, FT, TF, TT).",
+     "a": "**F, T, T, F**",
+     "why": "It's T exactly when one of them is true: it's the \"exactly one\" joiner `⊕`.",
+     "check": {
+      "kind": "equiv",
+      "f": "(a ∨ b) ∧ ¬(a ∧ b)",
+      "g": "a ⊕ b",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-red",
+   "level": "red",
+   "sub": "Problem set 2, Q1(b) style: describe formulas in English. Original letters and sentences.",
+   "items": [
+    {
+     "id": "r1",
+     "q": "`s` = the shop is open · `d` = it's a holiday · `m` = I buy milk. Describe `s ∧ ¬d ⇒ m` in English.",
+     "a": "\"If the shop is open and it isn't a holiday, then I buy milk.\"",
+     "why": "Brackets: `(s ∧ ¬d) ⇒ m`. The main joiner is `⇒`.",
+     "check": {
+      "kind": "equiv",
+      "f": "s ∧ ¬d ⇒ m",
+      "g": "(s ∧ ¬d) ⇒ m",
+      "expect": true
+     }
+    },
+    {
+     "id": "r2",
+     "q": "Same letters. Describe `¬m ⇔ d ∨ ¬s` in English.",
+     "a": "\"I don't buy milk if and only if it's a holiday or the shop is closed.\"",
+     "why": "Brackets: `¬m ⇔ (d ∨ ¬s)`. The main joiner is `⇔`.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬m ⇔ d ∨ ¬s",
+      "g": "¬m ⇔ (d ∨ ¬s)",
+      "expect": true
+     }
+    },
+    {
+     "id": "r3",
+     "q": "Same letters. Describe `(d ⇒ ¬s) ∧ m` in English.",
+     "a": "\"The shop is closed whenever it's a holiday, and I buy milk.\"",
+     "why": "The main joiner is `∧`: two separate claims."
+    },
+    {
+     "id": "r4",
+     "q": "Same letters. Describe `s ⇒ (d ⇒ ¬m)` in English.",
+     "a": "\"If the shop is open, then if it's a holiday I don't buy milk.\" Or: \"When the shop is open on a holiday, I don't buy milk.\"",
+     "why": "`A ⇒ (B ⇒ C)` reads as \"if A and B, then C\".",
+     "check": {
+      "kind": "equiv",
+      "f": "s ⇒ (d ⇒ ¬m)",
+      "g": "(s ∧ d) ⇒ ¬m",
+      "expect": true
+     }
+    },
+    {
+     "id": "r5",
+     "q": "Which options are well-formed formulas (brackets may be dropped by convention)?",
+     "a": "**(1), (3), (4)**",
+     "why": "(2) has `∧` with nothing on the right. (5) puts `¬` after a letter, which the rules never allow.",
+     "options": [
+      "`⊤ ⇒ (p ∨ ⊥)`",
+      "`(p ∧) ∨ q`",
+      "`¬(¬p)`",
+      "`p ⇔ ¬q ∧ r`",
+      "`p ¬ q`"
+     ],
+     "correct": [
+      0,
+      2,
+      3
+     ],
+     "mono": true,
+     "nocheck": "Well-formedness is a grammar question, not a truth-table one.",
+     "multi": true
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-boss",
+   "level": "boss",
+   "items": [
+    {
+     "id": "b1",
+     "q": "`x > 5` is `p` and `y = 0` is `q`. Simplify `if not (x <= 5 or y != 0) or (x > 5 and y != 0):`",
+     "a": "**`if x > 5:`**",
+     "why": "`x <= 5` = `¬p`, `y != 0` = `¬q`. Condition: `¬(¬p ∨ ¬q) ∨ (p ∧ ¬q)` = `(p ∧ q) ∨ (p ∧ ¬q)` = `p ∧ (q ∨ ¬q)` = `p`.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(¬p ∨ ¬q) ∨ (p ∧ ¬q)",
+      "g": "p",
+      "expect": true
+     }
+    },
+    {
+     "id": "b2",
+     "q": "Why does the slide say \"Trump believes that Iran is developing nukes\" is not truth-functional?",
+     "a": "Its truth depends on what the person believes, not on whether the inner claim is true. The inner claim can be false while the belief exists, and vice versa.",
+     "why": "\"believes that\" is a modal construction; modal logics extend propositional logic to handle it (slide 54)."
+    },
+    {
+     "id": "b3",
+     "q": "Using the symbols `¬ p ∧ q` in exactly that order, and adding brackets however you like, how many formulas with **different meanings** can you make?",
+     "a": "**2:** `¬p ∧ q` and `¬(p ∧ q)`.",
+     "why": "The only choice is what the `¬` covers: just `p`, or the whole `p ∧ q`. Row `p = F, q = F` tells them apart.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬p ∧ q",
+      "g": "¬(p ∧ q)",
+      "expect": false
+     }
+    },
+    {
+     "id": "b4",
+     "q": "Is `(p ∨ q) ∧ r` the same as `p ∨ (q ∧ r)`? If not, give a row.",
+     "a": "**No.** Row `p = T, r = F`: first F, second T.",
+     "why": "This is why a mix of `∧` and `∨` always needs brackets.",
+     "check": {
+      "kind": "equiv",
+      "f": "(p ∨ q) ∧ r",
+      "g": "p ∨ (q ∧ r)",
+      "expect": false
+     }
+    },
+    {
+     "id": "b5",
+     "q": "Translate \"It is not the case that the build and the deploy both failed, but the alerts fired.\" (`b`, `d`, `a`)",
+     "a": "**`¬(b ∧ d) ∧ a`**",
+     "why": "\"but\" = `∧` at the top. The `¬` covers only the \"both failed\" part."
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-retest",
+   "level": "retest",
+   "items": [
+    {
+     "id": "rt1",
+     "q": "\"Delete the branch.\" Proposition?",
+     "a": "**No.**"
+    },
+    {
+     "id": "rt2",
+     "q": "Value of `¬F ∧ (F ∨ T)`?",
+     "a": "**T**",
+     "check": {
+      "kind": "value",
+      "f": "¬⊥ ∧ (⊥ ∨ ⊤)",
+      "expect": true
+     }
+    },
+    {
+     "id": "rt3",
+     "q": "Add brackets: `¬a ⇒ b ∧ c`.",
+     "a": "**`(¬a ⇒ (b ∧ c))`**",
+     "check": {
+      "kind": "equiv",
+      "f": "¬a ⇒ b ∧ c",
+      "g": "(¬a ⇒ (b ∧ c))",
+      "expect": true
+     }
+    },
+    {
+     "id": "rt4",
+     "q": "Simplify `if x or (not x and y):`",
+     "a": "**`if x or y:`**",
+     "check": {
+      "kind": "equiv",
+      "f": "x ∨ (¬x ∧ y)",
+      "g": "x ∨ y",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "recap",
+   "lines": [
+    "Propositions: declarative, T or F. Not: questions, commands, requests, nonsense.",
+    "Truth-functional: the parts' values decide the whole. *because, after, believes* are not.",
+    "`∧` = and / but / ; / :  ·  `∨` = or, either…or (inclusive)  ·  `¬` = not, it is not the case that.",
+    "Formula rules: letters, `⊤`, `⊥`; `¬φ`; `(φ ∧ ψ)`, `(φ ∨ ψ)`, `(φ ⇒ ψ)`, `(φ ⇔ ψ)`.",
+    "Binding: `¬` > `∧, ∨` > `⇒, ⇔`. Bracket every `∧`/`∨` mix."
+   ]
+  },
+  {
+   "type": "links",
+   "id": "links",
+   "sub": "Free, from universities. Try them after the ladder above.",
+   "items": [
+    {
+     "title": "Mathematics for Computer Science — Section 3.1, Propositions from Propositions",
+     "url": "https://courses.csail.mit.edu/6.042/spring18/mcs.pdf",
+     "source": "MIT — the book the COMP9020 slides borrow examples from",
+     "checked": "24 Sep 2026",
+     "note": "NOT, AND, OR and their truth tables, with exercises."
+    }
+   ]
+  }
+ ],
+ "sources": "Lecture slides: Week 1 slides 49–56 and 63 (propositions, truth-functional constructions, ∧ ∨ ¬, program logic, the formal language of propositional logic). All practice sentences are original.",
+ "prev": {
+  "href": "../f1-words-and-alphabets/",
+  "label": "F1 · Words & Alphabets"
+ },
+ "next": {
+  "href": "../l2-if-then/",
+  "label": "L2 · If–Then & Friends"
+ }
+}

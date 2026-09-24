@@ -93,7 +93,92 @@ class _Parser:
 
 
 def parse(text):
+    """Parse a formula. Text starting with `BA:` is read as Boolean-algebra notation (see parse_ba)."""
+    t = text.replace("`", "").strip()
+    if t.startswith("BA:"):
+        return parse_ba(t[3:])
     return _Parser(text).parse()
+
+
+# ---------------------------------------------------------------------------
+# Boolean-algebra notation (COMP9020 Week 2):  x + y  (or),  x·y / xy  (and),  x′ / x'  (not), 0, 1
+# Variables are ONE letter, optionally followed by digits (x1, w2), so `xy` means x·y.
+# Binding: ′ (postfix) tightest, then · / juxtaposition, then +.
+_BA_TOKEN = re.compile(r"\s*([A-Za-z][0-9]*|[01]|[+·*.()]|′|'|’)")
+
+
+def parse_ba(text):
+    s = text.replace("`", "").strip()
+    toks, pos = [], 0
+    while pos < len(s):
+        m = _BA_TOKEN.match(s, pos)
+        if not m or m.end() == pos:
+            if s[pos:].strip() == "":
+                break
+            raise ValueError(f"Can't read BA expression {s!r} at {pos}: {s[pos:pos + 10]!r}")
+        t = m.group(1)
+        toks.append("′" if t in ("'", "’") else ("·" if t in ("*", ".") else t))
+        pos = m.end()
+    i = 0
+
+    def peek():
+        return toks[i] if i < len(toks) else None
+
+    def take(want=None):
+        nonlocal i
+        t = peek()
+        if t is None or (want and t != want):
+            raise ValueError(f"In BA {s!r}: expected {want or 'more'}, got {t!r}")
+        i += 1
+        return t
+
+    def summ():
+        node = prod()
+        while peek() == "+":
+            take("+")
+            node = ("∨", node, prod())
+        return node
+
+    def starts_atom(t):
+        return t is not None and (t == "(" or t in ("0", "1") or re.match(r"[A-Za-z]", t))
+
+    def prod():
+        node = post()
+        while True:
+            if peek() == "·":
+                take("·")
+                node = ("∧", node, post())
+            elif starts_atom(peek()):
+                node = ("∧", node, post())
+            else:
+                return node
+
+    def post():
+        node = atom()
+        while peek() == "′":
+            take("′")
+            node = ("¬", node)
+        return node
+
+    def atom():
+        t = peek()
+        if t == "(":
+            take("(")
+            node = summ()
+            take(")")
+            return node
+        if t in ("0", "1"):
+            take()
+            return ("const", t == "1")
+        if t and re.match(r"[A-Za-z]", t):
+            take()
+            return ("var", t)
+        raise ValueError(f"In BA {s!r}: unexpected {t!r}")
+
+    node = summ()
+    if peek() is not None:
+        raise ValueError(f"In BA {s!r}: unexpected {peek()!r}")
+    return node
 
 
 def variables(node, acc=None):

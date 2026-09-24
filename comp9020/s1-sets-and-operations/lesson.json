@@ -1,0 +1,713 @@
+{
+ "id": "comp9020-s1",
+ "course": {
+  "code": "COMP9020",
+  "href": "../"
+ },
+ "code": "S1",
+ "emoji": "🫧",
+ "title": "Sets & Set Operations",
+ "eyebrow": "COMP9020 · Week 1 · Sets",
+ "minutes": 40,
+ "verified": true,
+ "goal": "Count elements correctly (nested sets, repeats), read set-builder notation over ℕ, ℙ, ℤ, ℝ, and compute `∪ ∩ \\ ⊕ ᶜ` step by step, including Quiz 1 Q4-style expressions.",
+ "magic": [
+  "Order and repeats don't count. `a ≠ {a}`; `∅ ≠ {∅}`.",
+  "`{x ∈ X : P(x)}`: domain first. `0 ∈ ℕ`, `0 ∉ ℙ`.",
+  "Count distinct values, not inputs.",
+  "`∪` or, `∩` and, `\\` but not, `⊕` exactly one, `ᶜ` not (relative to the universe).",
+  "Multi-step: list every set, innermost bracket first."
+ ],
+ "blocks": [
+  {
+   "type": "section",
+   "id": "learn",
+   "title": "💡 Learn it, one idea at a time"
+  },
+  {
+   "type": "idea",
+   "id": "e1",
+   "short": "What a set is",
+   "title": "A set is a bag of distinct things; order and repeats don't count",
+   "summary": "Only membership matters. `{a, b} = {b, a, a}`. A set inside a set counts as ONE element.",
+   "picture": "A guest list: writing \"Ana, Ben, Ana\" doesn't invite Ana twice, and the order you wrote the names doesn't matter. A plus-one group written as \"(Cal and Dee)\" counts as one entry on the list.",
+   "official": "A **set** is a collection of elements (Week 1, slide 21). `{a, b, c} = {a, a, b, b, b, c} = {b, c, a}`: three elements. `{a, {a}}` has **two** elements; `{a, b, {a, b}}` has three; `{}` has zero; `{{{}}}` has one; `{{}, {{}}}` has two. `|X| = #(X) = card(X)` is the number of elements. Always `a ≠ {a}` (slide 22). The empty set is `{ }`, also written `∅`.",
+   "watch": {
+    "q": "How many elements does `{1, {1}, {1, {1}}, 1}` have?",
+    "steps": [
+     "List the **different** elements one by one.",
+     "`1` (appears twice, counts once).",
+     "`{1}`: a set, one element of the outer set.",
+     "`{1, {1}}`: another set, one element."
+    ],
+    "answer": "**3 elements:** `1`, `{1}`, `{1, {1}}`."
+   },
+   "tries": [
+    {
+     "id": "e1a",
+     "q": "`|{x, y, x, z, y}|`?",
+     "a": "**3**",
+     "why": "Repeats don't count: `{x, y, z}`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len({'x','y','x','z','y'})",
+      "expect": 3
+     }
+    },
+    {
+     "id": "e1b",
+     "q": "`|{∅, {∅}}|`?",
+     "a": "**2**",
+     "why": "`∅` and `{∅}` are different things: one is empty, the other contains something.",
+     "check": {
+      "kind": "calc",
+      "expr": "len({frozenset(), frozenset({frozenset()})})",
+      "expect": 2
+     }
+    },
+    {
+     "id": "e1c",
+     "q": "`|{{1, 2}, {2, 1}, 3}|`?",
+     "a": "**2**",
+     "why": "`{1, 2}` and `{2, 1}` are the **same** set, so it's `{{1, 2}, 3}`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len({frozenset({1,2}), frozenset({2,1}), 3})",
+      "expect": 2
+     }
+    },
+    {
+     "id": "e1d",
+     "q": "Is `{∅}` the empty set?",
+     "a": "**No.** It has one element (the empty set).",
+     "why": "An empty box inside a box: the outer box isn't empty.",
+     "check": {
+      "kind": "calc",
+      "expr": "len({frozenset()})",
+      "expect": 1
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "`{a, {a}}` has one element because both are \"a\".",
+    "correct": "`a` and `{a}` are different objects (slide 22: `a ≠ {a}`), so the set has **two** elements.",
+    "test": "Wrap each top-level element in a box. Count boxes."
+   },
+   "magic": "Count distinct top-level elements. `a ≠ {a}`, `∅ ≠ {∅}`."
+  },
+  {
+   "type": "idea",
+   "id": "e2",
+   "short": "Set-builder",
+   "title": "Set-builder notation and the number sets",
+   "summary": "`{x ∈ X : P(x)}` = everything in `X` that passes the test `P`. Watch which `X`: ℕ starts at 0, ℙ at 1.",
+   "picture": "A database query: `SELECT x FROM X WHERE P(x)`. Change the table `X` and the same condition returns different rows.",
+   "official": "Sets can be given by a property: `S = {x : x ∈ X and P(x)} = {x ∈ X : P(x)}` (Week 1, slide 22). Number sets (slide 23): `ℕ = {0, 1, 2, …}` (**includes 0**), `ℙ = {1, 2, …}` (also `ℕ>0`, `ℤ>0`), `ℤ`, `ℚ = {m/n : m, n ∈ ℤ, n ≠ 0}`, `ℝ`. They nest: `ℙ ⊂ ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ` (slide 34). Note: by these definitions `{n ∈ ℕ : 2 | n}` also contains 0.",
+   "watch": {
+    "q": "List `{x ∈ ℝ : x² = 16}` and `{n ∈ ℕ : n² = 16}`.",
+    "steps": [
+     "Over `ℝ`: `x = 4` and `x = −4` both work → `{−4, 4}`.",
+     "Over `ℕ`: negatives aren't allowed → `{4}`."
+    ],
+    "answer": "**`{−4, 4}`** and **`{4}`**: same condition, different domain."
+   },
+   "tries": [
+    {
+     "id": "e2a",
+     "q": "List `{n ∈ ℕ : 2 < n < 6}`.",
+     "a": "**`{3, 4, 5}`**",
+     "why": "Strict `<` on both sides.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(n for n in range(0, 50) if 2 < n < 6)",
+      "is": "[3, 4, 5]"
+     }
+    },
+    {
+     "id": "e2b",
+     "q": "List `{n ∈ ℤ : 2 < |n| < 6}`.",
+     "a": "**`{−5, −4, −3, 3, 4, 5}`**",
+     "why": "`|n|` lets negatives in too.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(n for n in range(-50, 50) if 2 < abs(n) < 6)",
+      "is": "[-5, -4, -3, 3, 4, 5]"
+     }
+    },
+    {
+     "id": "e2c",
+     "q": "List `{x ∈ ℝ : x² + 1 = 0}`.",
+     "a": "**`∅`**",
+     "why": "`x² + 1 ≥ 1` for every real `x`."
+    },
+    {
+     "id": "e2d",
+     "q": "List `{n ∈ ℕ : n | 12}`.",
+     "a": "**`{1, 2, 3, 4, 6, 12}`**",
+     "why": "The positive divisors of 12. (0 isn't included: `0 ∤ 12`.)",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(n for n in range(0, 50) if divides(n, 12))",
+      "is": "[1, 2, 3, 4, 6, 12]"
+     }
+    },
+    {
+     "id": "e2e",
+     "q": "Is `0 ∈ {n ∈ ℕ : 5 | n}`?",
+     "a": "**Yes.**",
+     "why": "`0 ∈ ℕ` and `5 | 0` (`0 = 0 · 5`).",
+     "check": {
+      "kind": "calc",
+      "expr": "divides(5, 0)"
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "ℕ starts at 1.",
+    "correct": "In this course `ℕ = {0, 1, 2, …}`. The positive integers are `ℙ`.",
+    "test": "When a set is built from ℕ, ask: does 0 pass the test?"
+   },
+   "magic": "`{x ∈ X : P(x)}`: domain first, then the test. `0 ∈ ℕ`, `0 ∉ ℙ`."
+  },
+  {
+   "type": "idea",
+   "id": "e3",
+   "short": "Counting built sets",
+   "title": "How many elements? Watch for repeated values",
+   "summary": "A formula can produce the same value from different inputs. Count the distinct **values**, not the inputs.",
+   "picture": "Asking 5 people their favourite colour and getting \"red, blue, red, red, blue\": 5 answers, but only 2 colours.",
+   "official": "Lecture exercise 1.3.2 (Week 1, slides 24–25): `|{1/n ∈ ℚ : n ∈ {1, 2, 3, 4}}| = 4` (no repeated values), `|{n² − n ∈ ℕ : n ∈ {0, …, 4}}| = 4` (one repetition), `|{2 + (−1)ⁿ : n ∈ ℕ}| = 2`.",
+   "watch": {
+    "q": "`|{n² : n ∈ {−2, −1, 0, 1, 2}}|`?",
+    "steps": [
+     "Values: `4, 1, 0, 1, 4`.",
+     "Distinct values: `{0, 1, 4}`."
+    ],
+    "answer": "**3**"
+   },
+   "tries": [
+    {
+     "id": "e3a",
+     "q": "`|{(−1)ⁿ : n ∈ ℕ}|`?",
+     "a": "**2**",
+     "why": "The values alternate `1, −1, 1, −1, …`: only two distinct values.",
+     "check": {
+      "kind": "calc",
+      "expr": "len({(-1)**n for n in range(100)})",
+      "expect": 2
+     }
+    },
+    {
+     "id": "e3b",
+     "q": "`|{n mod 3 : n ∈ ℕ}|`?",
+     "a": "**3**",
+     "why": "Remainders are always `0, 1` or `2`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len({n % 3 for n in range(100)})",
+      "expect": 3
+     }
+    },
+    {
+     "id": "e3c",
+     "q": "`|{|n| : n ∈ ℤ, −3 ≤ n ≤ 3}|`?",
+     "a": "**4**",
+     "why": "Values `3, 2, 1, 0, 1, 2, 3` → `{0, 1, 2, 3}`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len({abs(n) for n in range(-3, 4)})",
+      "expect": 4
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "The set has as many elements as there are inputs.",
+    "correct": "Different inputs can give the **same** value, and a set keeps only one copy.",
+    "test": "Write out the values, then cross out repeats."
+   },
+   "magic": "Count distinct values, not inputs."
+  },
+  {
+   "type": "idea",
+   "id": "e4",
+   "short": "∪ and ∩",
+   "title": "Union and intersection (OR and AND for sets)",
+   "summary": "`A ∪ B`: in A or B (or both). `A ∩ B`: in both. Disjoint: `A ∩ B = ∅`.",
+   "picture": "Two group chats. Union: everyone who's in at least one chat. Intersection: people in both chats.",
+   "official": "Union `A ∪ B` and intersection `A ∩ B` (Week 1, slide 26). If `A` is the set of `x` with property `a(x)` and `B` those with `b(x)`: `A ∪ B` = elements satisfying `a` **or** `b`; `A ∩ B` = satisfying `a` **and** `b`. `A`, `B` are **disjoint** if `A ∩ B = ∅`.",
+   "watch": {
+    "q": "`A = {1, 2, 3, 4}`, `B = {3, 4, 5, 6}`. Find `A ∪ B` and `A ∩ B`.",
+    "steps": [
+     "Union: everything in either: `{1, 2, 3, 4, 5, 6}`.",
+     "Intersection: only what's in both: `{3, 4}`."
+    ],
+    "answer": "**`{1, 2, 3, 4, 5, 6}`** and **`{3, 4}`**."
+   },
+   "tries": [
+    {
+     "id": "e4a",
+     "q": "Evens ∩ odds (in `ℙ`)?",
+     "a": "**`∅`**: they are disjoint.",
+     "why": "No number is both."
+    },
+    {
+     "id": "e4b",
+     "q": "`{n ∈ ℙ : 2 | n} ∩ {n ∈ ℙ : 3 | n}`?",
+     "a": "**`{n ∈ ℙ : 6 | n}`** = `{6, 12, 18, …}`.",
+     "why": "Divisible by 2 **and** 3 = divisible by 6.",
+     "check": {
+      "kind": "calc",
+      "expr": "{n for n in range(1, 100) if n % 2 == 0} & {n for n in range(1, 100) if n % 3 == 0} == {n for n in range(1, 100) if n % 6 == 0}"
+     }
+    },
+    {
+     "id": "e4c",
+     "q": "`A ∪ ∅` and `A ∩ ∅`?",
+     "a": "**`A`** and **`∅`**.",
+     "why": "Adding nothing changes nothing; sharing with nothing leaves nothing (slide 29).",
+     "check": {
+      "kind": "calc",
+      "expr": "all((A | set()) == A and (A & set()) == set() for A in [set(), {1}, {1,2}])"
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "`A ∩ B` is what you get when you put A and B together.",
+    "correct": "That's `A ∪ B`. `∩` keeps only what's **shared**.",
+    "test": "`∪` looks like a cup that collects everything; `∩` like a bridge over what's in both."
+   },
+   "magic": "`∪` = or, `∩` = and. Disjoint = nothing shared."
+  },
+  {
+   "type": "idea",
+   "id": "e5",
+   "short": "\\, ⊕, complement",
+   "title": "Difference, symmetric difference and complement",
+   "summary": "`A \\ B`: in A but not B. `A ⊕ B`: in exactly one. `Aᶜ`: everything in the universe that's not in A.",
+   "picture": "Your playlist minus your friend's: `A \\ B`. Songs only one of you likes: `A ⊕ B`. Every song on the platform you **don't** have: `Aᶜ`.",
+   "official": "Week 1, slide 27: `A \\ B` (difference; logically \"`a` but not `b`\"). `A ⊕ B ≝ (A \\ B) ∪ (B \\ A)` (symmetric difference; \"xor\"). `Aᶜ`: complement with respect to the **universe** (\"not `a`\"). Also `A \\ B = A ∩ Bᶜ`.",
+   "watch": {
+    "q": "Universe `U = {1, …, 10}`, `A = {1, 2, 3, 4}`, `B = {3, 4, 5, 6}`. Find `A \\ B`, `A ⊕ B`, `Aᶜ`.",
+    "steps": [
+     "`A \\ B`: in A, not in B → `{1, 2}`.",
+     "`A ⊕ B`: `{1, 2}` ∪ `{5, 6}` → `{1, 2, 5, 6}`.",
+     "`Aᶜ`: everything in U except A → `{5, 6, 7, 8, 9, 10}`."
+    ],
+    "answer": "**`{1, 2}`**, **`{1, 2, 5, 6}`**, **`{5, …, 10}`**."
+   },
+   "tries": [
+    {
+     "id": "e5a",
+     "q": "Same sets: `(A ∪ B)ᶜ`?",
+     "a": "**`{7, 8, 9, 10}`**",
+     "why": "Everything in U that's in neither.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(set(range(1, 11)) - ({1,2,3,4} | {3,4,5,6}))",
+      "is": "[7, 8, 9, 10]"
+     }
+    },
+    {
+     "id": "e5b",
+     "q": "`A ⊕ A` and `A ⊕ ∅`?",
+     "a": "**`∅`** and **`A`**.",
+     "why": "Lecture exercise 1.4.7: nothing is in exactly one copy of A; everything in A is in exactly one of A, ∅.",
+     "check": {
+      "kind": "calc",
+      "expr": "all((A ^ A) == set() and (A ^ set()) == A for A in [set(), {1}, {1, 2, 3}])"
+     }
+    },
+    {
+     "id": "e5c",
+     "q": "`{1, 2, 3}ᶜ` if the universe is `ℙ`? If it's `{1, 2, 3, 4}`?",
+     "a": "**`{4, 5, 6, …}`** and **`{4}`**.",
+     "why": "The complement depends on the universe."
+    }
+   ],
+   "trap": {
+    "tempting": "`A \\ B` and `B \\ A` are the same.",
+    "correct": "`A \\ B` keeps A's leftovers; `B \\ A` keeps B's. `⊕` joins both.",
+    "test": "Say it aloud: \"A minus B\" = start from A."
+   },
+   "magic": "`\\` = but not. `⊕` = exactly one. `ᶜ` = not, relative to the universe."
+  },
+  {
+   "type": "idea",
+   "id": "e6",
+   "short": "Multi-step",
+   "title": "Multi-step set calculations (the Quiz 1 Q4 shape)",
+   "summary": "List each set first (only the part that matters), then do the operations from the inside out.",
+   "picture": "Following a recipe: prep every ingredient first (chop, measure), then combine. Don't combine half-prepped ingredients.",
+   "official": "For expressions like `(Sᶜ ∩ R) \\ T` over the universe `ℙ`: (1) list `R`, `S`, `T` explicitly (an infinite set can stay as a pattern, e.g. `{3, 6, 9, …}`), (2) compute the innermost bracket, (3) apply the outer operation. The final answer is usually small because `∩ R` cuts everything down.",
+   "watch": {
+    "q": "Universe `ℙ`. `R = {x ∈ ℙ : x ≤ 15}`, `S = {x ∈ ℙ : 3 | x}`, `T = {x ∈ ℙ : x | 30}`. Compute `(Sᶜ ∩ R) \\ T`.",
+    "steps": [
+     "`R = {1, …, 15}`. `S = {3, 6, 9, …}`, so `Sᶜ = {1, 2, 4, 5, 7, 8, 10, 11, 13, 14, 16, …}`.",
+     "`T` = divisors of 30 = `{1, 2, 3, 5, 6, 10, 15, 30}`.",
+     "`Sᶜ ∩ R = {1, 2, 4, 5, 7, 8, 10, 11, 13, 14}`.",
+     "Remove `T`: drop 1, 2, 5, 10."
+    ],
+    "answer": "**`{4, 7, 8, 11, 13, 14}`**"
+   },
+   "tries": [
+    {
+     "id": "e6a",
+     "q": "Universe `ℙ`. `R = {x ∈ ℙ : x < 20}`, `S = {x ∈ ℙ : x is odd}`, `T = {x ∈ ℙ : x | 36}`. Compute `(S ∩ R) \\ T`.",
+     "a": "**`{5, 7, 11, 13, 15, 17, 19}`**",
+     "why": "`S ∩ R` = odd numbers below 20. `T = {1, 2, 3, 4, 6, 9, 12, 18, 36}` removes 1, 3, 9.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(({x for x in range(1, 200) if x % 2} & set(range(1, 20))) - {x for x in range(1, 200) if 36 % x == 0})",
+      "is": "[5, 7, 11, 13, 15, 17, 19]"
+     }
+    },
+    {
+     "id": "e6b",
+     "q": "Same sets: `(Sᶜ ∩ R) ∩ T`?",
+     "a": "**`{2, 4, 6, 12, 18}`**",
+     "why": "`Sᶜ ∩ R` = even numbers below 20; keep those dividing 36.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted((set(range(1, 20)) - {x for x in range(1, 200) if x % 2}) & {x for x in range(1, 200) if 36 % x == 0})",
+      "is": "[2, 4, 6, 12, 18]"
+     }
+    },
+    {
+     "id": "e6c",
+     "q": "Universe `ℕ`. `R = {x ∈ ℕ : x ≤ 10}`, `S = {x ∈ ℕ : x is even}`, `T = {x ∈ ℕ : x | 12}`. Compute `(R \\ S) ⊕ (T ∩ R)`.",
+     "a": "**`{2, 4, 5, 6, 7, 9}`**",
+     "why": "`R \\ S = {1, 3, 5, 7, 9}` (0 is even, so it's in S). `T ∩ R = {1, 2, 3, 4, 6}`. In exactly one: 5, 7, 9 and 2, 4, 6.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted((set(range(0, 11)) - {x for x in range(0, 200) if x % 2 == 0}) ^ ({x for x in range(1, 200) if 12 % x == 0} & set(range(0, 11))))",
+      "is": "[2, 4, 5, 6, 7, 9]"
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Compute the complement `Sᶜ` only inside `R`, then forget which universe you're in.",
+    "correct": "`Sᶜ` is relative to the stated universe. It only becomes small **after** you intersect with `R`.",
+    "test": "Write the universe at the top of your working."
+   },
+   "magic": "List every set, then innermost bracket first."
+  },
+  {
+   "type": "section",
+   "id": "practice",
+   "title": "🏋️ Practice ladder"
+  },
+  {
+   "type": "practice",
+   "id": "p-green",
+   "level": "green",
+   "items": [
+    {
+     "id": "g1",
+     "q": "`|{a, b, {a, b}, {a}}|`?",
+     "a": "**4**",
+     "why": "`a`, `b`, `{a, b}`, `{a}`: four different elements.",
+     "check": {
+      "kind": "calc",
+      "expr": "len({'a', 'b', frozenset({'a','b'}), frozenset({'a'})})",
+      "expect": 4
+     }
+    },
+    {
+     "id": "g2",
+     "q": "Is `0 ∈ ℙ`?",
+     "a": "**No.**",
+     "why": "`ℙ = {1, 2, 3, …}`."
+    },
+    {
+     "id": "g3",
+     "q": "`{2, 4, 6} ∩ {1, 2, 3, 4}`?",
+     "a": "**`{2, 4}`**",
+     "why": "Only the shared elements.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted({2,4,6} & {1,2,3,4})",
+      "is": "[2, 4]"
+     }
+    },
+    {
+     "id": "g4",
+     "q": "`{2, 4, 6} \\ {1, 2, 3, 4}`?",
+     "a": "**`{6}`**",
+     "why": "In the first, not the second.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted({2,4,6} - {1,2,3,4})",
+      "is": "[6]"
+     }
+    },
+    {
+     "id": "g5",
+     "q": "`{2, 4, 6} ⊕ {1, 2, 3, 4}`?",
+     "a": "**`{1, 3, 6}`**",
+     "why": "In exactly one of them.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted({2,4,6} ^ {1,2,3,4})",
+      "is": "[1, 3, 6]"
+     }
+    },
+    {
+     "id": "g6",
+     "q": "List `{n ∈ ℕ : n² < 10}`.",
+     "a": "**`{0, 1, 2, 3}`**",
+     "why": "`3² = 9 < 10`, `4² = 16`. And `0 ∈ ℕ`.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(n for n in range(0, 50) if n*n < 10)",
+      "is": "[0, 1, 2, 3]"
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-yellow",
+   "level": "yellow",
+   "items": [
+    {
+     "id": "y1",
+     "q": "`A = {2, 3, 4, 5}`, `B = {n ∈ ℙ : 3 | n}`, `C = {n ∈ ℙ : 3 ∤ n}`. Find `A ∩ B` and `A \\ C`.",
+     "a": "**`{3}`** and **`{3}`**.",
+     "why": "Only 3 in A is a multiple of 3. `A \\ C` removes the non-multiples of 3, leaving 3.",
+     "check": [
+      {
+       "kind": "calc",
+       "expr": "sorted({2,3,4,5} & {n for n in range(1, 100) if n % 3 == 0})",
+       "is": "[3]"
+      },
+      {
+       "kind": "calc",
+       "expr": "sorted({2,3,4,5} - {n for n in range(1, 100) if n % 3})",
+       "is": "[3]"
+      }
+     ]
+    },
+    {
+     "id": "y2",
+     "q": "Same sets: `B ∪ C` and `A ⊕ C`?",
+     "a": "**`ℙ`** and **`{1, 3, 7, 8, 10, 11, 13, 14, …}`**.",
+     "why": "B and C split ℙ between them. `A ⊕ C = (A \\ C) ∪ (C \\ A) = {3} ∪ (C without 2, 4, 5)`.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(({2,3,4,5} - {n for n in range(1, 30) if n % 3}) | ({n for n in range(1, 30) if n % 3} - {2,3,4,5}))[:8]",
+      "is": "[1, 3, 7, 8, 10, 11, 13, 14]"
+     }
+    },
+    {
+     "id": "y3",
+     "q": "`|{n² − 2n : n ∈ {0, 1, 2, 3}}|`?",
+     "a": "**3**",
+     "why": "Values `0, −1, 0, 3`: distinct `{−1, 0, 3}`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len({n*n - 2*n for n in range(4)})",
+      "expect": 3
+     }
+    },
+    {
+     "id": "y4",
+     "q": "Universe `{1, …, 8}`. `A = {1, 3, 5, 7}`. `Aᶜ ∩ {1, 2, 3, 4}`?",
+     "a": "**`{2, 4}`**",
+     "why": "`Aᶜ = {2, 4, 6, 8}`.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted((set(range(1, 9)) - {1,3,5,7}) & {1,2,3,4})",
+      "is": "[2, 4]"
+     }
+    },
+    {
+     "id": "y5",
+     "q": "Are `{n ∈ ℤ : n mod 4 = 1}` and `{n ∈ ℤ : n mod 4 = 3}` disjoint?",
+     "a": "**Yes.**",
+     "why": "A number has only one remainder mod 4."
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-red",
+   "level": "red",
+   "sub": "Quiz 1 style (a variation of Problem set 1, Q4): compute a set expression over ℙ. Original sets.",
+   "items": [
+    {
+     "id": "r1",
+     "q": "Universe `ℙ`. `R = {x ∈ ℙ : x ≤ 18}`, `S = {x ∈ ℙ : x is even}`, `T = {x ∈ ℙ : x | 18}`. Compute `(S ∩ R) \\ T`.",
+     "a": "**`{4, 8, 10, 12, 14, 16}`**",
+     "why": "`S ∩ R` = evens up to 18. `T = {1, 2, 3, 6, 9, 18}` removes 2, 6, 18.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(({x for x in range(1, 200) if x % 2 == 0} & set(range(1, 19))) - {x for x in range(1, 200) if 18 % x == 0})",
+      "is": "[4, 8, 10, 12, 14, 16]"
+     }
+    },
+    {
+     "id": "r2",
+     "q": "Same sets: `R \\ (S ∪ T)`?",
+     "a": "**`{5, 7, 11, 13, 15, 17}`**",
+     "why": "Remove every even number and every divisor of 18 (1, 3, 9 are the odd ones).",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(set(range(1, 19)) - ({x for x in range(1, 200) if x % 2 == 0} | {x for x in range(1, 200) if 18 % x == 0}))",
+      "is": "[5, 7, 11, 13, 15, 17]"
+     }
+    },
+    {
+     "id": "r3",
+     "q": "Same sets: `(S ⊕ T) ∩ R`?",
+     "a": "**`{1, 3, 4, 8, 9, 10, 12, 14, 16}`**",
+     "why": "`S ⊕ T`: even non-divisors of 18, plus odd divisors of 18 (1, 3, 9). Then keep those `≤ 18`.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(({x for x in range(1, 200) if x % 2 == 0} ^ {x for x in range(1, 200) if 18 % x == 0}) & set(range(1, 19)))",
+      "is": "[1, 3, 4, 8, 9, 10, 12, 14, 16]"
+     }
+    },
+    {
+     "id": "r4",
+     "q": "Universe `ℙ`. `R = {x ∈ ℙ : 5 ≤ x ≤ 25}`, `S = {x ∈ ℙ : 4 | x}`, `T = {x ∈ ℙ : x | 60}`. Compute `R \\ (S ∪ T)`.",
+     "a": "**`{7, 9, 11, 13, 14, 17, 18, 19, 21, 22, 23, 25}`**",
+     "why": "From 5 … 25 remove multiples of 4 (8, 12, 16, 20, 24) and divisors of 60 (5, 6, 10, 12, 15, 20).",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(set(range(5, 26)) - ({x for x in range(1, 200) if x % 4 == 0} | {x for x in range(1, 200) if 60 % x == 0}))",
+      "is": "[7, 9, 11, 13, 14, 17, 18, 19, 21, 22, 23, 25]"
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-boss",
+   "level": "boss",
+   "items": [
+    {
+     "id": "b1",
+     "q": "`|{{∅}, {∅, {∅}}, ∅, {∅}}|`?",
+     "a": "**3**",
+     "why": "`{∅}` appears twice. Distinct: `{∅}`, `{∅, {∅}}`, `∅`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len({frozenset({frozenset()}), frozenset({frozenset(), frozenset({frozenset()})}), frozenset(), frozenset({frozenset()})})",
+      "expect": 3
+     }
+    },
+    {
+     "id": "b2",
+     "q": "`|{⌊n/2⌋ : n ∈ {0, 1, …, 9}}|`?",
+     "a": "**5**",
+     "why": "Values `0, 0, 1, 1, 2, 2, 3, 3, 4, 4`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len({n // 2 for n in range(10)})",
+      "expect": 5
+     }
+    },
+    {
+     "id": "b3",
+     "q": "Universe `ℤ`. `A = {n ∈ ℤ : n² < 20}`, `B = {n ∈ ℤ : n ≥ 0}`. Compute `A \\ B` and `A ∩ Bᶜ`. Why are they equal?",
+     "a": "**Both are `{−4, −3, −2, −1}`.** `A \\ B = A ∩ Bᶜ` always: \"in A but not in B\".",
+     "why": "`A = {−4, …, 4}`; `Bᶜ` = the negative integers.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted({n for n in range(-50, 50) if n*n < 20} - {n for n in range(-50, 50) if n >= 0})",
+      "is": "[-4, -3, -2, -1]"
+     }
+    },
+    {
+     "id": "b4",
+     "q": "Give sets `A`, `B` with `A ∪ B = A ∩ B`. What must be true?",
+     "a": "**`A = B`** (e.g. `A = B = {7}`).",
+     "why": "`A ∩ B ⊆ A ⊆ A ∪ B`, so if the ends are equal, everything in between is equal too.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(((A | B) == (A & B)) == (A == B) for A in Pow({1,2}) for B in Pow({1,2}))"
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-retest",
+   "level": "retest",
+   "items": [
+    {
+     "id": "rt1",
+     "q": "`|{3, {3}, {3, 3}}|`?",
+     "a": "**2**",
+     "check": {
+      "kind": "calc",
+      "expr": "len({3, frozenset({3}), frozenset({3, 3})})",
+      "expect": 2
+     }
+    },
+    {
+     "id": "rt2",
+     "q": "List `{n ∈ ℤ : |n| ≤ 1}`.",
+     "a": "**`{−1, 0, 1}`**",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(n for n in range(-9, 10) if abs(n) <= 1)",
+      "is": "[-1, 0, 1]"
+     }
+    },
+    {
+     "id": "rt3",
+     "q": "`{1, 2, 3} ⊕ {3, 4}`?",
+     "a": "**`{1, 2, 4}`**",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted({1,2,3} ^ {3,4})",
+      "is": "[1, 2, 4]"
+     }
+    },
+    {
+     "id": "rt4",
+     "q": "Universe `ℙ`, `R = {x ≤ 10}`, `S` = multiples of 3, `T` = divisors of 10. `(Sᶜ ∩ R) \\ T`?",
+     "a": "**`{4, 7, 8}`**",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(((set(range(1, 200)) - {x for x in range(1, 200) if x % 3 == 0}) & set(range(1, 11))) - {1, 2, 5, 10})",
+      "is": "[4, 7, 8]"
+     }
+    }
+   ]
+  },
+  {
+   "type": "recap",
+   "lines": [
+    "Sets: distinct elements, no order. `|X|` counts top-level elements.",
+    "Set-builder `{x ∈ X : P(x)}`. `ℙ ⊂ ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ`, and ℕ includes 0.",
+    "`∪` = or, `∩` = and, `A \\ B = A ∩ Bᶜ`, `A ⊕ B = (A \\ B) ∪ (B \\ A)`.",
+    "Complement depends on the universe."
+   ]
+  },
+  {
+   "type": "links",
+   "id": "links",
+   "sub": "Free, from universities. Try them after the ladder above.",
+   "items": [
+    {
+     "title": "Mathematics for Computer Science — Section 4.1, Sets",
+     "url": "https://courses.csail.mit.edu/6.042/spring18/mcs.pdf",
+     "source": "MIT",
+     "checked": "24 Sep 2026",
+     "note": "Set notation, operations and set-builder notation, with problems."
+    }
+   ]
+  }
+ ],
+ "sources": "Lecture slides: Week 1 slides 21–28 and 34 (sets, set-builder notation, number sets, 1.3.2, set operations, 1.4.7). Tutorial 1 covered the same skills. All practice sets are original.",
+ "prev": {
+  "href": "../n2-divisibility-gcd/",
+  "label": "N2 · Divisibility, mod, gcd & lcm"
+ },
+ "next": {
+  "href": "../s2-subsets-laws-proofs/",
+  "label": "S2 · Subsets, Set Laws & Set Proofs"
+ }
+}

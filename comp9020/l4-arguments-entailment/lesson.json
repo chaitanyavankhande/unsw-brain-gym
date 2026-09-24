@@ -1,0 +1,1180 @@
+{
+ "id": "comp9020-l4",
+ "course": {
+  "code": "COMP9020",
+  "href": "../"
+ },
+ "code": "L4",
+ "emoji": "⚖️",
+ "title": "Arguments & Entailment",
+ "eyebrow": "COMP9020 · Week 2 · Validity, entailment, quantifiers",
+ "minutes": 55,
+ "verified": true,
+ "goal": "Decide whether an argument is valid, pick every formula a premise entails (Quiz 2 Q5(b) style), write a short entailment proof, reason about requirements, and read `∀`/`∃` in the right order.",
+ "magic": [
+  "Valid argument = no row has all premises T and the conclusion F.",
+  "Only premise-rows count. One bad premise-row = `⊭`.",
+  "Entailed option = T in **every** premise-row.",
+  "`φ₁, …, φₙ ⊨ ψ` ⇔ `⊨ (φ₁ ∧ … ∧ φₙ) ⇒ ψ`. And `φ ≡ ψ` ⇔ `⊨ φ ⇔ ψ`.",
+  "Specs: unsatisfiable = can't build; entailed = always holds; entailed by the rest = redundant.",
+  "Islanders: `Speaker ⇔ statement`.",
+  "`∃y ∀x` ⇒ `∀x ∃y`, but not back."
+ ],
+ "blocks": [
+  {
+   "type": "section",
+   "id": "learn",
+   "title": "💡 Learn it, one idea at a time"
+  },
+  {
+   "type": "idea",
+   "id": "e1",
+   "short": "Valid arguments",
+   "title": "An argument is valid when true premises force a true conclusion",
+   "summary": "Premises + conclusion. Valid = whenever every premise is T, the conclusion is T too.",
+   "picture": "A detective says: \"If the butler did it, there's mud on his boots. There's no mud on his boots. So the butler didn't do it.\" If you believe both clues, you **must** believe the conclusion. That's a valid argument.",
+   "official": "An **argument** is a set of declarative sentences, the **premises**, plus one sentence, the **conclusion** (Week 2, slide 15). It is **valid** if the conclusion is true **whenever all the premises are true** (slide 16). Rows where some premise is false don't matter. Also said as: the conclusion *logically follows from* / is a *logical consequence of* the premises; the premises *entail* the conclusion.",
+   "watch": {
+    "q": "\"If the alarm rings, the dog barks. If the dog barks, the neighbour wakes up. The alarm rings. So the neighbour wakes up.\" Valid?",
+    "steps": [
+     "Letters: `a` = the alarm rings, `d` = the dog barks, `n` = the neighbour wakes up.",
+     "Premises: `a ⇒ d`, `d ⇒ n`, `a`. Conclusion: `n`.",
+     "Assume every premise is T. From `a` = T and `a ⇒ d`: `d` = T.",
+     "From `d` = T and `d ⇒ n`: `n` = T. The conclusion is forced."
+    ],
+    "answer": "**Valid.** Written `a ⇒ d, d ⇒ n, a ⊨ n`."
+   },
+   "tries": [
+    {
+     "id": "e1a",
+     "q": "\"If it's a holiday, the office is closed. The office is closed. So it's a holiday.\" Valid?",
+     "a": "**Invalid.** Counter-row: `h = F, c = T`: both premises T, conclusion F.",
+     "why": "The office can be closed for another reason (a strike, a weekend). This mistake has a name: *affirming the consequent*.",
+     "letters": "`h` = it's a holiday · `c` = the office is closed",
+     "check": [
+      {
+       "kind": "entails",
+       "premises": [
+        "h ⇒ c",
+        "c"
+       ],
+       "f": "h",
+       "expect": false
+      },
+      {
+       "kind": "falsifying",
+       "f": "((h ⇒ c) ∧ c) ⇒ h",
+       "rows": [
+        {
+         "h": false,
+         "c": true
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "e1b",
+     "q": "\"The key is in my bag or my coat. It's not in my bag. So it's in my coat.\" Valid?",
+     "a": "**Valid.**",
+     "why": "With `b ∨ c` = T and `¬b` = T, `b` is F, so `c` must be T.",
+     "letters": "`b` = in my bag · `c` = in my coat",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "b ∨ c",
+       "¬b"
+      ],
+      "f": "c",
+      "expect": true
+     }
+    },
+    {
+     "id": "e1c",
+     "q": "\"If the tests pass, we deploy. We didn't deploy. So the tests didn't pass.\" Valid?",
+     "a": "**Valid.**",
+     "why": "If the tests had passed (`t` = T), `t ⇒ d` would force `d` = T. But `d` = F. So `t` = F.",
+     "letters": "`t` = the tests pass · `d` = we deploy",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "t ⇒ d",
+       "¬d"
+      ],
+      "f": "¬t",
+      "expect": true
+     }
+    },
+    {
+     "id": "e1d",
+     "q": "\"If you're a student, you get a discount. You're not a student. So you don't get a discount.\" Valid?",
+     "a": "**Invalid.** Counter-row: `s = F, d = T`.",
+     "why": "Non-students might get a discount too (seniors). The premises say nothing about non-students. This mistake is *denying the antecedent*.",
+     "letters": "`s` = you're a student · `d` = you get a discount",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "s ⇒ d",
+       "¬s"
+      ],
+      "f": "¬d",
+      "expect": false
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "The conclusion is true in real life, so the argument is valid.",
+    "correct": "Validity is about the **form**: in every row where all premises are T, is the conclusion T? A true conclusion can come from an invalid argument.",
+    "test": "Look for a row with all premises T and the conclusion F. If one exists, it's invalid, whatever happens in real life."
+   },
+   "magic": "Valid = no row has all premises T and the conclusion F."
+  },
+  {
+   "type": "idea",
+   "id": "e2",
+   "short": "Truth-table test",
+   "title": "The truth-table test, and the one counter-row",
+   "summary": "Mark only the rows where all premises are T. Check the conclusion there. One bad row = invalid.",
+   "picture": "Checking a bouncer's rule: you only look at the people who were **let in**. If even one of them has no ticket, the rule failed.",
+   "official": "`φ₁, …, φₙ ⊨ φ` means: in **every row** of the truth table where `φ₁, …, φₙ` are all T, `φ` is T too (Week 2, slide 18). The slides mark only the T entries (blank = F) to keep the table readable (slide 19). If the argument is invalid, **one** row with all premises T and the conclusion F proves it: `⊭` (slide 20).",
+   "watch": {
+    "q": "Is `p ⇒ q, r ⇒ q, q ⊨ p ∨ r`?",
+    "steps": [
+     "Rows where all three premises are T: `q` must be T, and then `p ⇒ q` and `r ⇒ q` are T whatever `p`, `r` are.",
+     "So the premise-rows are the 4 rows with `q = T`.",
+     "Check the conclusion `p ∨ r` in each: row `p = F, q = T, r = F` gives F."
+    ],
+    "answer": "**Not entailed:** `p ⇒ q, r ⇒ q, q ⊭ p ∨ r`. Counter-row: `p = F, q = T, r = F`."
+   },
+   "tries": [
+    {
+     "id": "e2a",
+     "q": "Is `¬p ⇒ q, ¬q ⊨ p`?",
+     "a": "**Yes.**",
+     "why": "Premise-rows: `¬q` forces `q = F`. Then `¬p ⇒ F` needs `¬p` = F, so `p = T`. The only premise-row has `p = T`.",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "¬p ⇒ q",
+       "¬q"
+      ],
+      "f": "p",
+      "expect": true
+     }
+    },
+    {
+     "id": "e2b",
+     "q": "Is `p ⇒ (q ∨ r), p, ¬q ⊨ r`?",
+     "a": "**Yes.**",
+     "why": "Premise-rows: `p = T`, `q = F`, and then `q ∨ r` must be T, so `r = T`. Conclusion `r` = T.",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "p ⇒ (q ∨ r)",
+       "p",
+       "¬q"
+      ],
+      "f": "r",
+      "expect": true
+     }
+    },
+    {
+     "id": "e2c",
+     "q": "Is `p ∨ q, q ∨ r ⊨ p ∨ r`? If not, give a counter-row.",
+     "a": "**No.** Counter-row: `p = F, q = T, r = F`.",
+     "why": "`q` = T makes both premises T on its own, and then `p`, `r` can both be F.",
+     "check": [
+      {
+       "kind": "entails",
+       "premises": [
+        "p ∨ q",
+        "q ∨ r"
+       ],
+       "f": "p ∨ r",
+       "expect": false
+      },
+      {
+       "kind": "falsifying",
+       "f": "((p ∨ q) ∧ (q ∨ r)) ⇒ (p ∨ r)",
+       "rows": [
+        {
+         "p": false,
+         "q": true,
+         "r": false
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "e2d",
+     "q": "Is `p ⇔ q, q ⇔ r ⊨ p ⇔ r`?",
+     "a": "**Yes.**",
+     "why": "Premise-rows: `p` matches `q` and `q` matches `r`, so all three match (FFF or TTT). Then `p ⇔ r` is T.",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "p ⇔ q",
+       "q ⇔ r"
+      ],
+      "f": "p ⇔ r",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Look at every row, including rows where a premise is false.",
+    "correct": "Rows with **any** false premise are ignored. Only the all-premises-T rows count.",
+    "test": "Step 1: find the premise-rows. Step 2: check the conclusion only there."
+   },
+   "magic": "Only premise-rows count. One premise-row with a false conclusion = `⊭`."
+  },
+  {
+   "type": "idea",
+   "id": "e3",
+   "short": "Pick the entailed",
+   "title": "Which formulas are entailed? (the Quiz 2 Q5(b) method)",
+   "summary": "Find the premise's rows once, then test each option only on those rows.",
+   "picture": "A filter: the premise throws away every \"world\" where it's false. An option is entailed if it is true in **every** world that survived.",
+   "official": "Given premise(s) and a list of candidate formulas: (1) list **all** rows that make the premise(s) true; (2) a candidate is entailed exactly when it is T in **every one** of those rows. One premise-row where the candidate is F rules it out. Candidates equivalent to the premise are always entailed.",
+   "watch": {
+    "q": "Which of these are entailed by `(p ⇔ q) ∧ ¬r`? (1) `¬r` (2) `p ⇒ q` (3) `p` (4) `q ∨ r` (5) `p ⊕ q`",
+    "steps": [
+     "Premise-rows: `¬r` → `r = F`. `p ⇔ q` → `p`, `q` match. So: `p = F, q = F, r = F` and `p = T, q = T, r = F`.",
+     "(1) `¬r`: T in both ✅.",
+     "(2) `p ⇒ q`: F ⇒ F = T, T ⇒ T = T ✅.",
+     "(3) `p`: F in the first row ❌.",
+     "(4) `q ∨ r`: F in the first row ❌.",
+     "(5) `p ⊕ q`: F in both rows ❌."
+    ],
+    "answer": "**(1) and (2)** are entailed."
+   },
+   "tries": [
+    {
+     "id": "e3a",
+     "q": "Which are entailed by `p ∧ (q ∨ r)`?",
+     "a": "**(1), (3), (4)**",
+     "why": "Premise-rows: TFT, TTF, TTT. (1) `p` is T in all. (3) `q ∨ r` is T in all. (4) `¬q ⇒ r` is the same as `q ∨ r`. (2) `q` fails at TFT; (5) `q ∧ r` fails at TFT and TTF.",
+     "options": [
+      "`p`",
+      "`q`",
+      "`q ∨ r`",
+      "`¬q ⇒ r`",
+      "`q ∧ r`"
+     ],
+     "correct": [
+      0,
+      2,
+      3
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_entailed",
+      "premises": [
+       "p ∧ (q ∨ r)"
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "e3b",
+     "q": "Which are entailed by `¬(p ∨ q) ∨ r`?",
+     "a": "**(1), (3), (5)**",
+     "why": "Premise-rows: FFF, FFT, FTT, TFT, TTT. (1) is the same formula as the premise (`¬X ∨ r` = `X ⇒ r`). (3) every premise-row with `p = T` has `r = T`. (5) every premise-row with `q = T` has `r = T`. (2) `r` fails at FFF; (4) `¬q` fails at FTT.",
+     "options": [
+      "`(p ∨ q) ⇒ r`",
+      "`r`",
+      "`p ⇒ r`",
+      "`¬q`",
+      "`q ⇒ (p ∨ r)`"
+     ],
+     "correct": [
+      0,
+      2,
+      4
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_entailed",
+      "premises": [
+       "¬(p ∨ q) ∨ r"
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "e3c",
+     "q": "Which are entailed by `a ∧ ¬b`?",
+     "a": "**(1), (2), (4)**",
+     "why": "Only one premise-row: `a = T, b = F`. Evaluate each option there: (1) `a ∨ b` = T. (2) `b ⇒ a` = F ⇒ T = T. (3) `a ⇔ b` = F. (4) `¬(a ⇒ b)` = ¬(T ⇒ F) = T.",
+     "options": [
+      "`a ∨ b`",
+      "`b ⇒ a`",
+      "`a ⇔ b`",
+      "`¬(a ⇒ b)`"
+     ],
+     "correct": [
+      0,
+      1,
+      3
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_entailed",
+      "premises": [
+       "a ∧ ¬b"
+      ]
+     },
+     "multi": true
+    }
+   ],
+   "trap": {
+    "tempting": "An option is entailed if it's true in **some** premise-row.",
+    "correct": "It must be true in **every** premise-row. One premise-row where it's F rules it out.",
+    "test": "Write the premise-rows in a mini-table. For each option, hunt for a single F."
+   },
+   "magic": "List the premise-rows once. Entailed = T in all of them."
+  },
+  {
+   "type": "idea",
+   "id": "e4",
+   "short": "⊨ and ⇒",
+   "title": "Entailment is a valid implication (and how to prove one)",
+   "summary": "`φ₁, …, φₙ ⊨ ψ` exactly when `(φ₁ ∧ … ∧ φₙ) ⇒ ψ` is valid. Also `φ ≡ ψ` exactly when `φ ⇔ ψ` is valid.",
+   "picture": "\"Given these clues, the answer must be X\" is the same claim as \"the rule *if all these clues then X* never fails\".",
+   "official": "**Theorem (Week 2, slide 27).** These are all the same: `φ₁, …, φₙ ⊨ ψ` · `⊨ (φ₁ ∧ … ∧ φₙ) ⇒ ψ` · `⊨ φ₁ ⇒ (φ₂ ⇒ … (φₙ ⇒ ψ)…)`. **Theorem.** `φ ≡ ψ` if and only if `⊨ φ ⇔ ψ`. To **prove** an entailment in words: assume every premise is true, then show step by step that the conclusion must be true (or check every premise-row).",
+   "watch": {
+    "q": "Prove that `r` follows logically from `p ∨ q`, `p ⇒ r` and `q ⇒ r`.",
+    "steps": [
+     "Assume all three premises are true.",
+     "From `p ∨ q`, at least one of `p`, `q` is true. Split into cases.",
+     "Case `p` true: `p ⇒ r` is true, so `r` is true.",
+     "Case `q` true: `q ⇒ r` is true, so `r` is true.",
+     "In every case `r` is true."
+    ],
+    "answer": "So `p ∨ q, p ⇒ r, q ⇒ r ⊨ r`. (This is proof by cases in miniature.)"
+   },
+   "tries": [
+    {
+     "id": "e4a",
+     "q": "Rewrite `a, a ⇒ b ⊨ b` as a single valid formula.",
+     "a": "`⊨ (a ∧ (a ⇒ b)) ⇒ b`",
+     "why": "Premises joined with `∧` on the left of `⇒`, conclusion on the right.",
+     "check": {
+      "kind": "valid",
+      "f": "(a ∧ (a ⇒ b)) ⇒ b",
+      "expect": true
+     }
+    },
+    {
+     "id": "e4b",
+     "q": "Rewrite `a, a ⇒ b ⊨ b` using only `⇒` (the nested form).",
+     "a": "`⊨ a ⇒ ((a ⇒ b) ⇒ b)`",
+     "why": "Each premise becomes one more `⇒` layer, in order.",
+     "check": [
+      {
+       "kind": "valid",
+       "f": "a ⇒ ((a ⇒ b) ⇒ b)",
+       "expect": true
+      },
+      {
+       "kind": "equiv",
+       "f": "a ⇒ ((a ⇒ b) ⇒ b)",
+       "g": "(a ∧ (a ⇒ b)) ⇒ b",
+       "expect": true
+      }
+     ]
+    },
+    {
+     "id": "e4c",
+     "q": "You want to show `x ⇒ y ≡ ¬y ⇒ ¬x`. Which single formula should be valid?",
+     "a": "`(x ⇒ y) ⇔ (¬y ⇒ ¬x)`",
+     "why": "`φ ≡ ψ` exactly when `⊨ φ ⇔ ψ`.",
+     "check": {
+      "kind": "valid",
+      "f": "(x ⇒ y) ⇔ (¬y ⇒ ¬x)",
+      "expect": true
+     }
+    },
+    {
+     "id": "e4d",
+     "q": "Prove in words that `¬s` follows from `s ⇒ t`, `¬t ∨ u` and `¬u`.",
+     "a": "Assume all premises true. `¬u` means `u` is false. Then `¬t ∨ u` needs `¬t` true, so `t` is false. If `s` were true, `s ⇒ t` would make `t` true, which is impossible. So `s` is false, i.e. `¬s` is true.",
+     "why": "Chase what each premise forces, starting from the one that fixes a letter outright.",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "s ⇒ t",
+       "¬t ∨ u",
+       "¬u"
+      ],
+      "f": "¬s",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "`φ ⊨ ψ` and `φ ⇒ ψ` are the same kind of thing.",
+    "correct": "`φ ⇒ ψ` is a **formula** (true or false in each row). `φ ⊨ ψ` is a **claim about all rows**: it's true exactly when `φ ⇒ ψ` is valid.",
+    "test": "Ask: am I talking about one row (use `⇒`) or about every row (use `⊨`)?"
+   },
+   "magic": "`⊨` = \"`⇒` holds in every row\". `≡` = \"`⇔` holds in every row\"."
+  },
+  {
+   "type": "idea",
+   "id": "e5",
+   "short": "Specs",
+   "title": "Reasoning about requirements: implementable, guaranteed, redundant",
+   "summary": "Unsatisfiable spec = can't be built. Entailed property = always holds. Requirement entailed by the others = redundant.",
+   "picture": "An app's feature list. If two features contradict, no one can build it. If a property follows from the list, every correct build has it. If one feature follows from the others, you can delete it from the list.",
+   "official": "Write requirements as formulas `φ₁, …, φₙ` (Week 2, slide 21). (1) If `φ₁ ∧ … ∧ φₙ` is **unsatisfiable**, the requirements **cannot be implemented**. (2) If `φ₁, …, φₙ ⊨ ψ`, then **every** correct implementation makes `ψ` true. (3) If `φ₁, …, φₙ₋₁ ⊨ φₙ`, then `φₙ` is **redundant**. (The lecture's burglar-alarm example is Problem set 2, Q6.)",
+   "watch": {
+    "q": "A door system: (R1) the door opens only if a valid card **and** a correct code are given; (R2) if a valid card and correct code are given, the door opens; (R3) when the alarm is armed, the door never opens. Does every correct system satisfy: *\"when armed, a valid card plus a correct code is never given\"*?",
+    "steps": [
+     "Letters: `o` = door opens, `c` = valid card, `k` = correct code, `a` = alarm armed.",
+     "R1: `o ⇒ (c ∧ k)`. R2: `(c ∧ k) ⇒ o`. R3: `a ⇒ ¬o`. Claim: `a ⇒ ¬(c ∧ k)`.",
+     "Assume R1–R3 true and `a` = T. R3 → `o` = F.",
+     "R2's contrapositive: `¬o ⇒ ¬(c ∧ k)`. So `c ∧ k` = F. The claim holds."
+    ],
+    "answer": "**Yes:** `R1, R2, R3 ⊨ a ⇒ ¬(c ∧ k)`. (A real spec bug: while armed, the system can never accept a valid card and code.)"
+   },
+   "tries": [
+    {
+     "id": "e5a",
+     "q": "Same door spec. Is R1 redundant, i.e. do R2 and R3 alone entail `o ⇒ (c ∧ k)`?",
+     "a": "**No, not redundant.** Counter-row: `o = T, c = F, k = F, a = F`.",
+     "why": "R2 is true (its left side is F) and R3 is true (`a` = F), but R1 is false: the door opened with no card.",
+     "letters": "`o` = opens · `c` = valid card · `k` = correct code · `a` = armed",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "(c ∧ k) ⇒ o",
+       "a ⇒ ¬o"
+      ],
+      "f": "o ⇒ (c ∧ k)",
+      "expect": false
+     }
+    },
+    {
+     "id": "e5b",
+     "q": "Someone adds R4: \"the door opens only if a valid card is given\" (`o ⇒ c`). Is R4 redundant given R1?",
+     "a": "**Yes, redundant.** `o ⇒ (c ∧ k) ⊨ o ⇒ c`.",
+     "why": "If the door opens, R1 gives `c ∧ k`, and so `c`. R4 adds nothing.",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "o ⇒ (c ∧ k)"
+      ],
+      "f": "o ⇒ c",
+      "expect": true
+     }
+    },
+    {
+     "id": "e5c",
+     "q": "A lamp spec: \"the lamp is on exactly when the door is open\", \"the door is open\", \"the lamp is off\". Can it be implemented?",
+     "a": "**No.** `(l ⇔ d) ∧ d ∧ ¬l` is unsatisfiable.",
+     "why": "`d` = T and `l ⇔ d` force `l` = T, but the third requirement says `l` = F.",
+     "letters": "`l` = the lamp is on · `d` = the door is open",
+     "check": {
+      "kind": "valid",
+      "f": "¬((l ⇔ d) ∧ d ∧ ¬l)",
+      "expect": true
+     }
+    },
+    {
+     "id": "e5d",
+     "q": "Does the door spec (R1–R3) guarantee `¬a`, i.e. the alarm is never armed?",
+     "a": "**No.** Counter-row: `a = T, o = F, c = F, k = F`. All of R1–R3 hold.",
+     "why": "An armed system with no card presented breaks nothing. Being armed is allowed.",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "o ⇒ (c ∧ k)",
+       "(c ∧ k) ⇒ o",
+       "a ⇒ ¬o"
+      ],
+      "f": "¬a",
+      "expect": false
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "\"Redundant\" means the requirement is false.",
+    "correct": "Redundant means it is **entailed by the other requirements**: it's true in every system that meets them, so stating it adds nothing.",
+    "test": "Delete it from the list, then check: do the rest still entail it?"
+   },
+   "magic": "Can't build = unsatisfiable. Always holds = entailed. Redundant = entailed by the others."
+  },
+  {
+   "type": "idea",
+   "id": "e6",
+   "short": "Liars & truth-tellers",
+   "title": "Liars and truth-tellers: `person ⇔ what they said`",
+   "summary": "A truth-teller's statement is true; a liar's is false. So each speaker gives `X ⇔ statement`.",
+   "picture": "On an island, some people always tell the truth and some always lie. You can't see who is who, but every sentence they say is a clue.",
+   "official": "Let the letter `X` mean \"X is a truth-teller\". If `X` says `S`, then `X` is a truth-teller exactly when `S` is true: add the formula **`X ⇔ S`**. \"`Y` is a liar\" is `¬Y`. Solve the `∧` of all these formulas; each model is a possible world. (Problem set 2, Q6(b) is a puzzle of this kind.)",
+   "watch": {
+    "q": "Ava says: \"At least one of us two is a liar.\" What are Ava and Ben?",
+    "steps": [
+     "Formula: `A ⇔ (¬A ∨ ¬B)`.",
+     "Try `A` = F: then `¬A ∨ ¬B` = T, so the right side is T but the left is F. ❌",
+     "So `A` = T. The right side must be T: `¬A ∨ ¬B` = F ∨ ¬B, so `B` = F.",
+     "Check: Ava (truth-teller) says one of them lies: Ben does ✅."
+    ],
+    "answer": "**Ava is a truth-teller, Ben is a liar.**"
+   },
+   "tries": [
+    {
+     "id": "e6a",
+     "q": "Cal says: \"Dee and I are both truth-tellers.\" Dee says: \"Cal is a liar.\" What are they?",
+     "a": "**Cal is a liar, Dee is a truth-teller.**",
+     "why": "Formulas: `C ⇔ (C ∧ D)` and `D ⇔ ¬C`. If `C` = T, the first needs `D` = T but the second needs `D` = F. So `C` = F; then `D ⇔ T` gives `D` = T.",
+     "check": {
+      "kind": "falsifying",
+      "f": "¬((C ⇔ (C ∧ D)) ∧ (D ⇔ ¬C))",
+      "rows": [
+       {
+        "C": false,
+        "D": true
+       }
+      ]
+     }
+    },
+    {
+     "id": "e6b",
+     "q": "Eli: \"Fay is a liar.\" Fay: \"Eli and Gus are the same type.\" Gus: \"Eli is a liar.\" Who is what?",
+     "a": "**Eli is a truth-teller; Fay and Gus are liars.**",
+     "why": "Formulas: `E ⇔ ¬F`, `F ⇔ (E ⇔ G)`, `G ⇔ ¬E`. Only `E = T, F = F, G = F` satisfies all three. Check Fay: `E ⇔ G` = T ⇔ F = F, and Fay is a liar ✅.",
+     "check": {
+      "kind": "falsifying",
+      "f": "¬((E ⇔ ¬F) ∧ (F ⇔ (E ⇔ G)) ∧ (G ⇔ ¬E))",
+      "rows": [
+       {
+        "E": true,
+        "F": false,
+        "G": false
+       }
+      ]
+     }
+    },
+    {
+     "id": "e6c",
+     "q": "Nia says: \"I am a liar.\" What is Nia?",
+     "a": "**Impossible:** no one on the island can say that.",
+     "why": "The formula is `N ⇔ ¬N`, which is unsatisfiable. A truth-teller would be lying, and a liar would be telling the truth.",
+     "check": {
+      "kind": "valid",
+      "f": "¬(N ⇔ ¬N)",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Translate \"Y is a liar\" as `Y ⇒ ¬Y` or leave the speaker out.",
+    "correct": "Every statement gets wrapped as **`Speaker ⇔ (what they said)`**. \"Y is a liar\" is just `¬Y`.",
+    "test": "Count: one `⇔` formula per sentence spoken."
+   },
+   "magic": "Speaker `⇔` statement. Then find the models."
+  },
+  {
+   "type": "idea",
+   "id": "e7",
+   "short": "∀ and ∃",
+   "title": "For all, there exists, and why the order matters",
+   "summary": "`∀` = for all, `∃` = there exists. Swapping `∀x ∃y` to `∃y ∀x` can change the meaning.",
+   "picture": "\"Every student has a favourite song\" (each can pick a different one) is not the same as \"There's one song that is every student's favourite\".",
+   "official": "`∀` means **for all**; `∃` means **there exist(s)** (Week 2, slide 28, e.g. Goldbach: `∀n ∈ 2ℕ (n > 2 ⇒ ∃p, q ∈ ℕ (p, q ∈ Primes ∧ n = p + q))`). **Order matters** (slides 29–30): `∃y ∀x P(x, y) ⇒ ∀x ∃y P(x, y)` is always true, but `∀x ∃y P(x, y) ⇒ ∃y ∀x P(x, y)` is not. Example: `∀x ∈ ℤ (∃y ∈ ℤ (y ≤ x))` is true, but `∃y ∈ ℤ (∀x ∈ ℤ (y ≤ x))` is false. Over ℕ the second one is true (`y = 0`). Also useful: `¬∀x P ≡ ∃x ¬P` and `¬∃x P ≡ ∀x ¬P`.",
+   "watch": {
+    "q": "Domain `{1, 2, 3}`. True or false: (i) `∀x ∃y (x + y = 4)`, (ii) `∃y ∀x (x + y = 4)`.",
+    "steps": [
+     "(i) For each `x`, can we find a `y`? `x = 1 → y = 3`, `x = 2 → y = 2`, `x = 3 → y = 1`. ✅",
+     "(ii) Is there ONE `y` that works for every `x`? `y = 3` fails for `x = 2`; `y = 2` fails for `x = 1`; `y = 1` fails for `x = 1`. ❌"
+    ],
+    "answer": "**(i) true, (ii) false.** With `∀x ∃y`, `y` may depend on `x`; with `∃y ∀x`, one `y` must fit all."
+   },
+   "tries": [
+    {
+     "id": "e7a",
+     "q": "True or false over ℕ: `∀x ∃y (y > x)`.",
+     "a": "**True.**",
+     "why": "Given any `x`, take `y = x + 1`.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(any(y > x for y in range(0, 102)) for x in range(0, 100))"
+     }
+    },
+    {
+     "id": "e7b",
+     "q": "True or false over ℕ: `∃y ∀x (y > x)`.",
+     "a": "**False.**",
+     "why": "Any candidate `y` fails for `x = y`. No natural number is bigger than all of them."
+    },
+    {
+     "id": "e7c",
+     "q": "True or false over `{0, 1, 2}`: `∃y ∀x (x · y = 0)`.",
+     "a": "**True** (`y = 0`).",
+     "why": "One `y` must work for every `x`: `y = 0` makes every product 0.",
+     "check": {
+      "kind": "calc",
+      "expr": "any(all(x*y == 0 for x in [0,1,2]) for y in [0,1,2])"
+     }
+    },
+    {
+     "id": "e7d",
+     "q": "Write \"every user has a password\" and \"some password is used by every user\" with `Has(u, p)`. Which implies which?",
+     "a": "\"Every user has a password\": `∀u ∃p Has(u, p)`. \"Some password is used by every user\": `∃p ∀u Has(u, p)`. The second implies the first, not the other way round.",
+     "why": "`∃p ∀u` ⇒ `∀u ∃p` is always true (slide 29). The reverse fails when users have different passwords."
+    },
+    {
+     "id": "e7e",
+     "q": "Negate `∀x ∈ ℤ (x² ≥ 0)` so that `¬` sits right next to the inner statement. Is the result true?",
+     "a": "`∃x ∈ ℤ (x² < 0)`. **False**, because the original is true.",
+     "why": "`¬∀x P ≡ ∃x ¬P`, and `¬(x² ≥ 0)` is `x² < 0`.",
+     "check": {
+      "kind": "calc",
+      "expr": "not any(x*x < 0 for x in range(-50, 51))"
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "`∀x ∃y` and `∃y ∀x` say the same thing.",
+    "correct": "In `∀x ∃y`, `y` can be different for each `x`. In `∃y ∀x`, one single `y` must work for **all** `x`.",
+    "test": "Try to name ONE `y` up front. If you can't, `∃y ∀x` is false."
+   },
+   "magic": "`∃y ∀x` ⇒ `∀x ∃y`, never the other way round in general."
+  },
+  {
+   "type": "section",
+   "id": "practice",
+   "title": "🏋️ Practice ladder"
+  },
+  {
+   "type": "practice",
+   "id": "p-green",
+   "level": "green",
+   "items": [
+    {
+     "id": "g1",
+     "q": "What does `a, b ⊨ c` say in words?",
+     "a": "**Whenever `a` and `b` are both true, `c` is true.**",
+     "why": "The premises are left of `⊨`; the conclusion is on the right."
+    },
+    {
+     "id": "g2",
+     "q": "Is `p ∧ q ⊨ p`?",
+     "a": "**Yes.**",
+     "why": "Premise-row: `p = T, q = T`. `p` is T there.",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "p ∧ q"
+      ],
+      "f": "p",
+      "expect": true
+     }
+    },
+    {
+     "id": "g3",
+     "q": "Is `p ⊨ p ∧ q`?",
+     "a": "**No.** Counter-row: `p = T, q = F`.",
+     "why": "The premise says nothing about `q`.",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "p"
+      ],
+      "f": "p ∧ q",
+      "expect": false
+     }
+    },
+    {
+     "id": "g4",
+     "q": "Is `q ⊨ p ∨ q`?",
+     "a": "**Yes.**",
+     "why": "If `q` is T, then `p ∨ q` is T.",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "q"
+      ],
+      "f": "p ∨ q",
+      "expect": true
+     }
+    },
+    {
+     "id": "g5",
+     "q": "\"Either the bus is late or I overslept. I didn't oversleep. So the bus is late.\" Valid?",
+     "a": "**Valid.**",
+     "why": "`b ∨ o, ¬o ⊨ b`: with `o` = F, `b` must be T.",
+     "letters": "`b` = the bus is late · `o` = I overslept",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "b ∨ o",
+       "¬o"
+      ],
+      "f": "b",
+      "expect": true
+     }
+    },
+    {
+     "id": "g6",
+     "q": "True or false over `{1, 2}`: `∀x ∃y (x ≠ y)`.",
+     "a": "**True.**",
+     "why": "`x = 1 → y = 2`, `x = 2 → y = 1`.",
+     "check": {
+      "kind": "calc",
+      "expr": "all(any(x != y for y in [1,2]) for x in [1,2])"
+     }
+    },
+    {
+     "id": "g7",
+     "q": "Is `p ⇒ q, q ⇒ p ⊨ p ⇔ q`?",
+     "a": "**Yes.**",
+     "why": "`p ⇔ q` is exactly `(p ⇒ q) ∧ (q ⇒ p)`.",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "p ⇒ q",
+       "q ⇒ p"
+      ],
+      "f": "p ⇔ q",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-yellow",
+   "level": "yellow",
+   "items": [
+    {
+     "id": "y1",
+     "q": "Is `p ⇒ q, ¬p ⊨ ¬q`? If not, a counter-row.",
+     "a": "**No.** Counter-row: `p = F, q = T`.",
+     "why": "Both premises T, conclusion `¬q` = F. (Denying the antecedent.)",
+     "check": [
+      {
+       "kind": "entails",
+       "premises": [
+        "p ⇒ q",
+        "¬p"
+       ],
+       "f": "¬q",
+       "expect": false
+      },
+      {
+       "kind": "falsifying",
+       "f": "((p ⇒ q) ∧ ¬p) ⇒ ¬q",
+       "rows": [
+        {
+         "p": false,
+         "q": true
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "y2",
+     "q": "Is `(a ∧ b) ⇒ c, a, ¬c ⊨ ¬b`?",
+     "a": "**Yes.**",
+     "why": "With `a` = T and `c` = F, `(a ∧ b) ⇒ c` needs `a ∧ b` = F, so `b` = F.",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "(a ∧ b) ⇒ c",
+       "a",
+       "¬c"
+      ],
+      "f": "¬b",
+      "expect": true
+     }
+    },
+    {
+     "id": "y3",
+     "q": "`φ ⊨ ψ` and `ψ ⊨ φ` are both true. What can you say?",
+     "a": "**`φ ≡ ψ`.**",
+     "why": "They have the same premise-rows in both directions, so they agree in every row."
+    },
+    {
+     "id": "y4",
+     "q": "Is `p ∨ q, ¬p ∨ r ⊨ q ∨ r`?",
+     "a": "**Yes.**",
+     "why": "If `p` = T, `¬p ∨ r` forces `r` = T. If `p` = F, `p ∨ q` forces `q` = T. Either way `q ∨ r` = T.",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "p ∨ q",
+       "¬p ∨ r"
+      ],
+      "f": "q ∨ r",
+      "expect": true
+     }
+    },
+    {
+     "id": "y5",
+     "q": "Specs `s ⇒ l` and `l ⇒ ¬s`. Can they be implemented? What must be true in every implementation?",
+     "a": "**Yes, implementable** (e.g. all false). Every implementation has **`¬s`**.",
+     "why": "If `s` = T: `l` = T, then `¬s` = T. Contradiction. So `s` = F in every model.",
+     "check": [
+      {
+       "kind": "valid",
+       "f": "¬((s ⇒ l) ∧ (l ⇒ ¬s))",
+       "expect": false
+      },
+      {
+       "kind": "entails",
+       "premises": [
+        "s ⇒ l",
+        "l ⇒ ¬s"
+       ],
+       "f": "¬s",
+       "expect": true
+      }
+     ]
+    },
+    {
+     "id": "y6",
+     "q": "True or false: `∀x ∈ ℤ ∃y ∈ ℤ (x + y = 0)`, and `∃y ∈ ℤ ∀x ∈ ℤ (x + y = 0)`.",
+     "a": "**First true, second false.**",
+     "why": "First: `y = −x`. Second: one `y` can't cancel every `x` (try `x = 0` and `x = 1`)."
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-red",
+   "level": "red",
+   "sub": "Quiz 2 is a variation of Problem set 2, Q5(b): *which formulas are entailed by …?* Plus one Q5(a)-style written proof. All premises here are original.",
+   "items": [
+    {
+     "id": "r1",
+     "q": "Which are logically entailed by `(p ⇒ q) ∧ ¬q`?",
+     "a": "**(1), (2), (4)**",
+     "why": "Premise-rows: `¬q` → `q = F`; `p ⇒ F` → `p = F`. One row: `p = F, q = F` (with `r` free). (1) `¬p` ✅. (2) `p ⇒ r` ✅ (F ⇒ …). (3) `r` ❌ (can be F). (4) `¬p ∧ ¬q` ✅. (5) `q ∨ r` ❌ when `r = F`.",
+     "options": [
+      "`¬p`",
+      "`p ⇒ r`",
+      "`r`",
+      "`¬p ∧ ¬q`",
+      "`q ∨ r`"
+     ],
+     "correct": [
+      0,
+      1,
+      3
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_entailed",
+      "premises": [
+       "(p ⇒ q) ∧ ¬q"
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "r2",
+     "q": "Which are logically entailed by `(A ⊕ B) ∧ ¬C`?",
+     "a": "**(1), (2), (4)**",
+     "why": "Premise-rows (`A B C`): FTF and TFF. (1) `¬C` ✅. (2) `A ∨ B` ✅. (3) `A` ❌ at FTF. (4) `A ⇔ ¬B` ✅ (that's another way to write `A ⊕ B`). (5) `B ⇒ C` ❌ at FTF (T ⇒ F).",
+     "options": [
+      "`¬C`",
+      "`A ∨ B`",
+      "`A`",
+      "`A ⇔ ¬B`",
+      "`B ⇒ C`"
+     ],
+     "correct": [
+      0,
+      1,
+      3
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_entailed",
+      "premises": [
+       "(A ⊕ B) ∧ ¬C"
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "r3",
+     "q": "Which are logically entailed by `(P ⇔ Q) ∨ R`?",
+     "a": "**(3)**",
+     "why": "Premise-rows: the 4 rows with `P = Q`, plus the rows with `R = T`: FFF, FFT, FTT, TFT, TTF, TTT. (1) `R` ❌ at FFF. (2) `P ⇒ Q` ❌ at TFT. (3) `(P ⊕ Q) ⇒ R` ✅ (the same formula written differently). (4) `P ∨ Q ∨ R` ❌ at FFF.",
+     "options": [
+      "`R`",
+      "`P ⇒ Q`",
+      "`(P ⊕ Q) ⇒ R`",
+      "`P ∨ Q ∨ R`"
+     ],
+     "correct": [
+      2
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_entailed",
+      "premises": [
+       "(P ⇔ Q) ∨ R"
+      ]
+     }
+    },
+    {
+     "id": "r4",
+     "q": "Which are logically entailed by `P ⇒ (Q ∧ R)`?",
+     "a": "**(1), (3), (5)**",
+     "why": "Premise-rows (`P Q R`): the four `P = F` rows plus TTT. (1) `¬P ∨ R` ✅ (the only `P = T` row has `R = T`). (2) `Q ⇒ P` ❌ at FTF. (3) `P ⇒ Q` ✅. (4) `R` ❌ at FFF. (5) `¬(P ∧ ¬R)` ✅ (same as (1)).",
+     "options": [
+      "`¬P ∨ R`",
+      "`Q ⇒ P`",
+      "`P ⇒ Q`",
+      "`R`",
+      "`¬(P ∧ ¬R)`"
+     ],
+     "correct": [
+      0,
+      2,
+      4
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_entailed",
+      "premises": [
+       "P ⇒ (Q ∧ R)"
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "r5",
+     "q": "Which are logically entailed by `(x ∧ ¬y) ⊕ z`?",
+     "a": "**(3)**",
+     "why": "Premise-rows (`x y z`): TFF (left T, `z` F) plus the `z = T` rows where `x ∧ ¬y` is F: FFT, FTT, TTT. (1) `z` ❌ at TFF. (2) `x` ❌ at FFT. (3) `x ∨ z` ✅. (4) `¬y` ❌ at FTT.",
+     "options": [
+      "`z`",
+      "`x`",
+      "`x ∨ z`",
+      "`¬y`"
+     ],
+     "correct": [
+      2
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_entailed",
+      "premises": [
+       "(x ∧ ¬y) ⊕ z"
+      ]
+     }
+    },
+    {
+     "id": "r6",
+     "q": "Prove that `¬m` follows logically from `m ⇒ (n ∧ k)` and `¬k ∨ ¬n`.",
+     "a": "Assume both premises. Suppose `m` were true. Then `m ⇒ (n ∧ k)` gives `n` and `k` both true. But then `¬k ∨ ¬n` is F ∨ F = false, contradicting the second premise. So `m` is false: `¬m` holds.",
+     "why": "A written proof: assume the premises, then show the conclusion is forced (here by ruling out `m` = T).",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "m ⇒ (n ∧ k)",
+       "¬k ∨ ¬n"
+      ],
+      "f": "¬m",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-boss",
+   "level": "boss",
+   "items": [
+    {
+     "id": "b1",
+     "q": "The premises `p` and `¬p` entail every formula, even `q`. Why?",
+     "a": "**There is no row where both premises are T**, so there's no row that could break the entailment.",
+     "why": "`⊨` only looks at premise-rows. With none, every conclusion passes. (Unsatisfiable requirements \"prove\" anything, which is why they're useless.)",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "p",
+       "¬p"
+      ],
+      "f": "q",
+      "expect": true
+     }
+    },
+    {
+     "id": "b2",
+     "q": "Is `∀x ∃y P(x, y) ⇒ ∃y ∀x P(x, y)` a tautology? Give a counterexample if not.",
+     "a": "**No.** Domain `{1, 2}`, `P(x, y)` = \"`x = y`\": every `x` equals some `y`, but no single `y` equals both `x`s.",
+     "why": "`∀x ∃y` lets `y` depend on `x`; `∃y ∀x` doesn't (Week 2, slide 29).",
+     "check": {
+      "kind": "calc",
+      "expr": "all(any(x == y for y in [1,2]) for x in [1,2]) and not any(all(x == y for x in [1,2]) for y in [1,2])"
+     }
+    },
+    {
+     "id": "b3",
+     "q": "Door spec R1–R3 from Idea 5. The team adds R5: \"when armed, a valid card plus correct code still opens the door\": `(a ∧ c ∧ k) ⇒ o`. Is the new spec implementable? What does it now force?",
+     "a": "**Still implementable**, but now every implementation has **`¬(a ∧ c ∧ k)`**: armed + valid card + correct code must never happen at all.",
+     "why": "R3 gives `a ⇒ ¬o`; R5 then forces `a ∧ c ∧ k` to be false. The spec is satisfiable (e.g. everything F) but it quietly bans a real situation.",
+     "check": [
+      {
+       "kind": "valid",
+       "f": "¬((o ⇒ (c ∧ k)) ∧ ((c ∧ k) ⇒ o) ∧ (a ⇒ ¬o) ∧ ((a ∧ c ∧ k) ⇒ o))",
+       "expect": false
+      },
+      {
+       "kind": "entails",
+       "premises": [
+        "o ⇒ (c ∧ k)",
+        "(c ∧ k) ⇒ o",
+        "a ⇒ ¬o",
+        "(a ∧ c ∧ k) ⇒ o"
+       ],
+       "f": "¬(a ∧ c ∧ k)",
+       "expect": true
+      }
+     ]
+    },
+    {
+     "id": "b4",
+     "q": "Three islanders. Ivy: \"Jo and Kit are different types.\" Jo: \"At least one of Ivy and Kit is a liar.\" Kit: \"Exactly one of us three is a truth-teller.\" Who is what?",
+     "a": "**Ivy and Jo are truth-tellers; Kit is a liar.**",
+     "why": "Split on Kit. If Kit tells the truth, Ivy and Jo are liars; but then Ivy's claim \"Jo (liar) and Kit (truth-teller) differ\" is true, and a liar can't say something true ❌. So Kit is a liar. Then Jo's claim is true (Kit lies), so Jo is a truth-teller. Ivy's claim (Jo T, Kit F: different) is true, so Ivy is a truth-teller. Check Kit: there are 2 truth-tellers, so \"exactly one\" is false ✅.",
+     "steps": [
+      "Formulas: `I ⇔ (J ⊕ K)`, `J ⇔ (¬I ∨ ¬K)`, `K ⇔ ((I ∧ ¬J ∧ ¬K) ∨ (¬I ∧ J ∧ ¬K) ∨ (¬I ∧ ¬J ∧ K))`."
+     ],
+     "check": {
+      "kind": "falsifying",
+      "f": "¬((I ⇔ (J ⊕ K)) ∧ (J ⇔ (¬I ∨ ¬K)) ∧ (K ⇔ ((I ∧ ¬J ∧ ¬K) ∨ (¬I ∧ J ∧ ¬K) ∨ (¬I ∧ ¬J ∧ K))))",
+      "rows": [
+       {
+        "I": true,
+        "J": true,
+        "K": false
+       }
+      ]
+     }
+    },
+    {
+     "id": "b5",
+     "q": "`φ ⊨ ψ` holds. Must `¬ψ ⊨ ¬φ` hold too?",
+     "a": "**Yes.**",
+     "why": "`φ ⊨ ψ` means `φ ⇒ ψ` is valid. Its contrapositive `¬ψ ⇒ ¬φ` is equivalent, so it's valid too.",
+     "check": {
+      "kind": "equiv",
+      "f": "p ⇒ q",
+      "g": "¬q ⇒ ¬p",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-retest",
+   "level": "retest",
+   "items": [
+    {
+     "id": "rt1",
+     "q": "Is `a ⇒ b, b ⊨ a`?",
+     "a": "**No.** Counter-row: `a = F, b = T`.",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "a ⇒ b",
+       "b"
+      ],
+      "f": "a",
+      "expect": false
+     }
+    },
+    {
+     "id": "rt2",
+     "q": "Which are entailed by `x ∧ (y ⇒ z)`? (1) `x` (2) `z` (3) `¬z ⇒ ¬y` (4) `y`",
+     "a": "**(1), (3)**",
+     "options": [
+      "`x`",
+      "`z`",
+      "`¬z ⇒ ¬y`",
+      "`y`"
+     ],
+     "correct": [
+      0,
+      2
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_entailed",
+      "premises": [
+       "x ∧ (y ⇒ z)"
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "rt3",
+     "q": "Write `p, q ⊨ r` as one valid formula.",
+     "a": "`⊨ (p ∧ q) ⇒ r`"
+    },
+    {
+     "id": "rt4",
+     "q": "Over `{1, 2, 3}`: is `∃y ∀x (x ≤ y)` true?",
+     "a": "**True** (`y = 3`).",
+     "check": {
+      "kind": "calc",
+      "expr": "any(all(x <= y for x in [1,2,3]) for y in [1,2,3])"
+     }
+    }
+   ]
+  },
+  {
+   "type": "recap",
+   "lines": [
+    "Argument = premises + conclusion. Valid (`⊨`) = conclusion T in every row where all premises are T.",
+    "Invalid? Show ONE counter-row: premises all T, conclusion F.",
+    "Picking entailed options: list the premise-rows once, test each option on all of them.",
+    "`⊨` ↔ a valid `⇒`; `≡` ↔ a valid `⇔`. A written proof: assume the premises, force the conclusion.",
+    "Requirements: unsatisfiable → can't implement; entailed → guaranteed; entailed by the others → redundant.",
+    "Liars/truth-tellers: add `X ⇔ (what X said)` for each speaker.",
+    "`∀x ∃y`: `y` may depend on `x`. `∃y ∀x`: one `y` for all `x`. Negation: `¬∀ = ∃¬`, `¬∃ = ∀¬`."
+   ]
+  },
+  {
+   "type": "links",
+   "id": "links",
+   "sub": "Free, from universities. Try them after the ladder above.",
+   "items": [
+    {
+     "title": "Mathematics for Computer Science — Chapter 3 (Logical Formulas) and 3.6 (Predicate Formulas)",
+     "url": "https://courses.csail.mit.edu/6.042/spring18/mcs.pdf",
+     "source": "MIT — the book the COMP9020 slides borrow examples from",
+     "checked": "24 Sep 2026",
+     "note": "Validity, satisfiability, quantifier order, with Problems 3.x at the end of the chapter."
+    },
+    {
+     "title": "UW CSE 311 — Section 1 worksheet, with solutions",
+     "url": "https://courses.cs.washington.edu/courses/cse311/24au/section/section01-solutions.pdf",
+     "source": "University of Washington",
+     "checked": "24 Sep 2026",
+     "note": "Extra translation and truth-table practice with worked answers."
+    }
+   ]
+  }
+ ],
+ "sources": "Lecture slides: Week 2 slides 15–30 (arguments, validity, ⊨, requirements, the entailment–validity theorem, quantifiers). Notation follows Prof. Thielscher's slides. All practice premises, specs and puzzles are original.",
+ "prev": {
+  "href": "../l3b-equivalence-laws/",
+  "label": "L3B · Equivalence & the Laws"
+ },
+ "next": {
+  "href": "../drill-quiz2-gym/",
+  "label": "D2 · Quiz 2 Gym"
+ }
+}

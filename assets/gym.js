@@ -35,7 +35,10 @@
     h = h.replace(/(^|[^*\w])\*([^*\s][^*]*?)\*(?=[^*\w]|$)/g, '$1<em>$2</em>');
     h = h.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
     h = h.replace(/\n/g, '<br>');
-    h = h.replace(/\u0000(\d+)\u0000/g, function (_, i) { return '<code>' + codes[+i] + '</code>'; });
+    h = h.replace(/\u0000(\d+)\u0000/g, function (_, i) {
+      var c = codes[+i];  // long formulas may wrap at spaces so they never push the page wider than a phone
+      return (c.length > 22 ? '<code class="long">' : '<code>') + c + '</code>';
+    });
     return h;
   }
   function plain(s) { return String(s || '').replace(/[`*]/g, ''); }
@@ -358,6 +361,7 @@
     var h = '<div class="item-top"><span class="num">' + num + '</span>' + (it.letters ? lettersHTML(it.letters) : '') +
       '<span class="badge" aria-hidden="true"></span></div>';
     h += '<p class="q">' + md(it.q) + '</p>';
+    if (it.grid) h += '<div class="q-grid">' + (it.grid.title ? '<span class="lab">📊 ' + md(it.grid.title) + '</span>' : '') + gridTable(it.grid) + '</div>';
     if (it.hint) h += '<div class="hint">' + md(it.hint) + '</div>';
     if (it.options) {
       h += '<div class="opts" role="group" aria-label="Options' + (it.multi ? ' (pick all that apply)' : ' (pick one)') + '">' +
@@ -754,7 +758,12 @@
     var path = c.units.filter(function (u) { return u.status === 'ready' || u.status === 'next'; });
     var later = c.units.filter(function (u) { return u.status !== 'ready' && u.status !== 'next'; });
     h += '<section><h2 class="sec-title">🧭 Your path</h2><ol class="timeline">';
+    var lastGroup = null;
     path.forEach(function (u, i) {
+      if (u.group && u.group !== lastGroup) {
+        h += '<li class="tl-group" aria-hidden="false"><span>' + md(u.group) + '</span></li>';
+        lastGroup = u.group;
+      }
       var ready = u.status === 'ready';
       var p = progressBits(unitProgress(u));
       var kind = u.kind === 'drill' ? '<span class="kind">drill</span>' : '';

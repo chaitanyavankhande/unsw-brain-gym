@@ -1,0 +1,864 @@
+{
+ "id": "comp9020-l6",
+ "course": {
+  "code": "COMP9020",
+  "href": "../"
+ },
+ "code": "L6",
+ "emoji": "💡",
+ "title": "Boolean Algebra",
+ "eyebrow": "COMP9020 · Week 2 · Boolean algebra",
+ "minutes": 45,
+ "verified": true,
+ "goal": "Switch between logic and `+ · ′` notation, know what makes a Boolean algebra (bits, bit vectors, power sets), and simplify expressions with the laws.",
+ "magic": [
+  "`·` = AND, `+` = OR (`1 + 1 = 1`), `′` = NOT, binding tightest.",
+  "`n` variables: `2ⁿ` rows, `2^(2ⁿ)` Boolean functions.",
+  "A Boolean algebra: `0`, `1`, `+`, `·`, `′` with commutative, associative, distributive (both ways!), identity and complement laws.",
+  "Finite BA ⇒ `2ᵏ` elements ⇒ a copy of `Bᵏ` (subsets = bit vectors).",
+  "Shortcuts: `x + xy = x`, `xy + xy′ = x`, `x + x′y = x + y`."
+ ],
+ "blocks": [
+  {
+   "type": "section",
+   "id": "learn",
+   "title": "💡 Learn it, one idea at a time"
+  },
+  {
+   "type": "idea",
+   "id": "k1",
+   "short": "Boolean functions",
+   "title": "A formula is a function from bits to a bit",
+   "summary": "Plug 0/1 into the letters, get 0/1 out. With `n` letters there are `2^(2ⁿ)` possible functions.",
+   "picture": "A light controlled by two switches is a machine: switch settings go in (0/1, 0/1), light on/off comes out. Every such wiring is a Boolean function.",
+   "official": "Formulas can be seen as **Boolean functions** mapping each valuation of their letters to `0` (false) or `1` (true): `{0, 1}ⁿ → {0, 1}` (Week 2, slide 44). One input: **unary**; two: **binary**; `n`: **`n`-ary**. The table of the function is the truth table. There are `2^(2ⁿ)` Boolean functions of `n` variables (slide 73: their collection is `bool(n)`).",
+   "watch": {
+    "q": "Write `A ∧ ¬B` as a function `{0, 1}² → {0, 1}`.",
+    "steps": [
+     "List the inputs in order: `(0, 0), (0, 1), (1, 0), (1, 1)`.",
+     "`A ∧ ¬B` is 1 only when `A = 1` and `B = 0`."
+    ],
+    "answer": "`(0,0) ↦ 0`, `(0,1) ↦ 0`, `(1,0) ↦ 1`, `(1,1) ↦ 0`."
+   },
+   "tries": [
+    {
+     "id": "k1a",
+     "q": "How many different **unary** Boolean functions are there? Name them.",
+     "a": "**4:** always 0, always 1, identity (`x`), negation (`x′`).",
+     "why": "`2^(2¹) = 4`: two inputs, each sent to 0 or 1.",
+     "check": {
+      "kind": "calc",
+      "expr": "2**(2**1)",
+      "expect": 4
+     }
+    },
+    {
+     "id": "k1b",
+     "q": "How many **binary** Boolean functions are there?",
+     "a": "**16**",
+     "why": "4 input pairs, each sent to 0 or 1: `2⁴ = 16`. `∧`, `∨`, `⇒`, `⇔`, `⊕`, nand, … are 6 of them.",
+     "check": {
+      "kind": "calc",
+      "expr": "2**(2**2)",
+      "expect": 16
+     }
+    },
+    {
+     "id": "k1c",
+     "q": "How many Boolean functions of 3 variables?",
+     "a": "**256**",
+     "why": "`2^(2³) = 2⁸ = 256`.",
+     "check": {
+      "kind": "calc",
+      "expr": "2**(2**3)",
+      "expect": 256
+     }
+    },
+    {
+     "id": "k1d",
+     "q": "As a function, what does `A ∨ ¬A` do?",
+     "a": "**It sends every input to 1:** `0 ↦ 1`, `1 ↦ 1`.",
+     "why": "It's a tautology, so the function is the constant 1 (a lecture example, slide 44).",
+     "check": {
+      "kind": "valid",
+      "f": "A ∨ ¬A",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "There are `2ⁿ` Boolean functions of `n` variables.",
+    "correct": "`2ⁿ` is the number of **rows** (inputs). Each row can output 0 or 1 independently, so there are `2^(2ⁿ)` functions.",
+    "test": "`n = 1`: 2 rows, but 4 functions. Check your formula on that."
+   },
+   "magic": "Rows = `2ⁿ`. Functions = `2^(rows)` = `2^(2ⁿ)`."
+  },
+  {
+   "type": "idea",
+   "id": "k2",
+   "short": "+ · ′ notation",
+   "title": "Boolean-algebra notation: `+` is OR, `·` is AND, `′` is NOT",
+   "summary": "Same logic, new symbols: `p ∧ q` → `pq`, `p ∨ q` → `p + q`, `¬p` → `p′`. And `1 + 1 = 1`.",
+   "picture": "Like switching from Java's `&&`, `||`, `!` to Python's `and`, `or`, `not`: nothing changes except the spelling.",
+   "official": "Boolean algebra (BA) notation (Week 2, slides 45 and 53): atoms stay `p, q, …`; `p ∧ q` → `p · q` or `pq`; `p ∨ q` → `p + q`; `¬p` → `p′` (engineers write `p̄`). Values are `0` and `1`, and `+` saturates: `1 + 1 = 1`. Lecture example: `(¬A ∨ ¬B) ∧ B` ↦ `(a′ + b′) · b`. Using `·` saves brackets: `′` binds tightest, then `·`, then `+`.",
+   "watch": {
+    "q": "Translate `¬(p ∨ q) ∧ (r ∨ ¬p)` into BA notation.",
+    "steps": [
+     "`p ∨ q` → `p + q`; its negation → `(p + q)′`.",
+     "`r ∨ ¬p` → `r + p′`.",
+     "The `∧` between them → juxtaposition."
+    ],
+    "answer": "**`(p + q)′(r + p′)`**"
+   },
+   "tries": [
+    {
+     "id": "k2a",
+     "q": "Translate `a ∧ (b ∨ ¬c)` into BA notation.",
+     "a": "**`a(b + c′)`**",
+     "why": "`∧` → juxtaposition, `∨` → `+`, `¬c` → `c′`.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:a(b + c′)",
+      "g": "a ∧ (b ∨ ¬c)",
+      "expect": true
+     }
+    },
+    {
+     "id": "k2b",
+     "q": "Translate `x′ + yz` back into logic notation.",
+     "a": "**`¬x ∨ (y ∧ z)`**",
+     "why": "`·` binds tighter than `+`, so `yz` is one block.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:x′ + yz",
+      "g": "¬x ∨ (y ∧ z)",
+      "expect": true
+     }
+    },
+    {
+     "id": "k2c",
+     "q": "In BA, what is `1 + 1`? And `1 · 0 + 1`?",
+     "a": "**`1`** and **`1`**.",
+     "why": "`+` is OR, not arithmetic: T ∨ T = T. `1 · 0 = 0`, then `0 + 1 = 1`.",
+     "check": [
+      {
+       "kind": "equiv",
+       "f": "BA:1 + 1",
+       "g": "BA:1",
+       "expect": true
+      },
+      {
+       "kind": "equiv",
+       "f": "BA:1·0 + 1",
+       "g": "BA:1",
+       "expect": true
+      }
+     ]
+    },
+    {
+     "id": "k2d",
+     "q": "Does `pq′` mean `p · (q′)` or `(pq)′`?",
+     "a": "**`p · (q′)`**",
+     "why": "`′` binds tightest. For \"not (p and q)\" write `(pq)′`.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:pq′",
+      "g": "p ∧ ¬q",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "`pq′` means `(pq)′`.",
+    "correct": "`′` sticks to the single thing right before it: `pq′ = p · q′`. Use brackets for `(pq)′`.",
+    "test": "Test with `p = 1, q = 1`: `p · q′ = 0`, but `(pq)′ = 0` too. Try `p = 0, q = 0`: `p · q′ = 0`, `(pq)′ = 1`. Different."
+   },
+   "magic": "`·` = AND, `+` = OR (with `1 + 1 = 1`), `′` = NOT, tightest."
+  },
+  {
+   "type": "idea",
+   "id": "k3",
+   "short": "What's a BA?",
+   "title": "A Boolean algebra: `0`, `1`, `+`, `·`, `′` and five pairs of laws",
+   "summary": "Any set with a `0`, a `1`, join `+`, meet `·` and complement `′` that obeys the laws. Bits, bit vectors and power sets all qualify.",
+   "picture": "Sets with union/intersection, bitmasks with OR/AND, and true/false with `∨`/`∧` all follow the same rules. A Boolean algebra is the name for \"anything that follows those rules\".",
+   "official": "A structure with a set `T` containing `0` and `1`, **join** `x + y`, **meet** `x · y`, **complement** `x′`, is a **Boolean algebra** if for all `x, y, z` (Week 2, slide 47): commutative `x + y = y + x`, `x · y = y · x`; associative; distributive `x + (y · z) = (x + y) · (x + z)` and `x · (y + z) = (x · y) + (x · z)`; identity `x + 0 = x`, `x · 1 = x`; complementation `x + x′ = 1`, `x · x′ = 0`. Examples: 2-bit vectors `B × B` with bitwise operations, `0 = (0, 0)`, `1 = (1, 1)` (slide 48); `Pow(S)` with `∪`, `∩`, `S \\ X`, `0 = ∅`, `1 = S` (slide 50).",
+   "watch": {
+    "q": "In `Pow({a, b, c})`, compute `{a, b} + {b, c}`, `{a, b} · {b, c}` and `{a}′`.",
+    "steps": [
+     "Join is `∪`: `{a, b} ∪ {b, c} = {a, b, c}` (that's `1`).",
+     "Meet is `∩`: `{a, b} ∩ {b, c} = {b}`.",
+     "Complement is \"everything else in `S`\": `{a}′ = {b, c}`."
+    ],
+    "answer": "**`{a, b, c}`, `{b}`, `{b, c}`.**"
+   },
+   "tries": [
+    {
+     "id": "k3a",
+     "q": "In `B × B` (2-bit vectors), compute `(1, 0) + (0, 1)` and `(1, 0) · (1, 1)`.",
+     "a": "**`(1, 1)`** and **`(1, 0)`**.",
+     "why": "Work bit by bit: OR for `+`, AND for `·`.",
+     "check": [
+      {
+       "kind": "calc",
+       "expr": "tuple(a | b for a, b in zip((1,0),(0,1)))",
+       "is": "(1,1)"
+      },
+      {
+       "kind": "calc",
+       "expr": "tuple(a & b for a, b in zip((1,0),(1,1)))",
+       "is": "(1,0)"
+      }
+     ]
+    },
+    {
+     "id": "k3b",
+     "q": "Bit vectors of length 4: compute `(1, 0, 1, 1) · (0, 1, 1, 0)` and `(1, 0, 1, 1)′`.",
+     "a": "**`(0, 0, 1, 0)`** and **`(0, 1, 0, 0)`**.",
+     "why": "Bitwise AND, then bitwise NOT. (Like `0b1011 & 0b0110` and `~` on 4 bits.)",
+     "check": [
+      {
+       "kind": "calc",
+       "expr": "tuple(a & b for a, b in zip((1,0,1,1),(0,1,1,0)))",
+       "is": "(0,0,1,0)"
+      },
+      {
+       "kind": "calc",
+       "expr": "tuple(1 - a for a in (1,0,1,1))",
+       "is": "(0,1,0,0)"
+      }
+     ]
+    },
+    {
+     "id": "k3c",
+     "q": "In `Pow({1, 2, 3, 4})`, what are `0` and `1`?",
+     "a": "**`0 = ∅`**, **`1 = {1, 2, 3, 4}`**.",
+     "why": "`0` is the \"nothing\" element (`X ∪ ∅ = X`), `1` the \"everything\" element (`X ∩ S = X`)."
+    },
+    {
+     "id": "k3d",
+     "q": "Check the odd-looking distributive law `x + yz = (x + y)(x + z)` for `x = 0, y = 1, z = 1` in `{0, 1}`. Does it hold in ordinary arithmetic?",
+     "a": "**In BA: both sides are 1.** In ordinary arithmetic it fails, e.g. `x = y = z = 1`: `1 + 1 = 2` but `(2)(2) = 4`.",
+     "why": "This second distributive law is special to Boolean algebra.",
+     "check": [
+      {
+       "kind": "equiv",
+       "f": "BA:x + yz",
+       "g": "BA:(x + y)(x + z)",
+       "expect": true
+      },
+      {
+       "kind": "calc",
+       "expr": "1 + 1*1 != (1 + 1)*(1 + 1)"
+      }
+     ]
+    }
+   ],
+   "trap": {
+    "tempting": "`+` and `·` behave exactly like school arithmetic.",
+    "correct": "They share many laws, but BA also has `x + x = x`, `1 + 1 = 1` and `x + yz = (x + y)(x + z)`, which are false for numbers.",
+    "test": "If a step would give a 2, you've slipped back into arithmetic."
+   },
+   "magic": "Five law pairs; examples: `{0, 1}`, bit vectors, power sets."
+  },
+  {
+   "type": "idea",
+   "id": "k4",
+   "short": "Size & isomorphism",
+   "title": "Every finite BA has `2ᵏ` elements, and same size means same structure",
+   "summary": "A finite Boolean algebra has 1, 2, 4, 8, 16, … elements, and all BAs of one size are copies of `Bᵏ`.",
+   "picture": "Subsets of `{a, b, c}` and 3-bit masks are the same thing in disguise: `{a, c}` is just `101`. That's why Redis bitmaps and bitsets can do set operations with OR and AND.",
+   "official": "**Fact** (Week 2, slide 74): every finite Boolean algebra has `|T| = 2ᵏ` for some `k`. Two BAs are **isomorphic** (`≃`) if a one-to-one correspondence `ι` maps `0 ↦ 0`, `1 ↦ 1` and respects `+`, `·`, `′`. **All** BAs with the same number of elements are isomorphic (slide 75): `n-tuples ≃ Bⁿ`, `Pow(S) ≃ B^|S|`, `Map(S, B) ≃ B^|S|`, `bool(n) ≃ B^(2ⁿ)`. Example: encoding subsets as bit vectors.",
+   "watch": {
+    "q": "Encode subsets of `S = {a, b, c}` as bit vectors `(a?, b?, c?)`. Encode `{a, c}` and `{b, c}`, then check that `∪` becomes `+`.",
+    "steps": [
+     "`{a, c}` ↦ `(1, 0, 1)`. `{b, c}` ↦ `(0, 1, 1)`.",
+     "`{a, c} ∪ {b, c} = {a, b, c}` ↦ `(1, 1, 1)`.",
+     "`(1, 0, 1) + (0, 1, 1) = (1, 1, 1)` bitwise. ✅"
+    ],
+    "answer": "The encoding turns `∪` into bitwise OR (and `∩` into AND, complement into NOT): `Pow(S) ≃ B³`."
+   },
+   "tries": [
+    {
+     "id": "k4a",
+     "q": "Can a Boolean algebra have exactly 6 elements?",
+     "a": "**No.**",
+     "why": "Finite BAs have `2ᵏ` elements: 1, 2, 4, 8, … and 6 isn't a power of 2.",
+     "check": {
+      "kind": "calc",
+      "expr": "6 not in [2**k for k in range(10)]"
+     }
+    },
+    {
+     "id": "k4b",
+     "q": "How many elements does `Map(S, B)` have if `|S| = 5`?",
+     "a": "**32**",
+     "why": "Each of the 5 elements of `S` is sent to 0 or 1: `2⁵`.",
+     "check": {
+      "kind": "calc",
+      "expr": "2**5",
+      "expect": 32
+     }
+    },
+    {
+     "id": "k4c",
+     "q": "With the encoding `(a?, b?, c?)`, which subset is `(0, 1, 0)′`?",
+     "a": "**`{a, c}`** (the vector `(1, 0, 1)`).",
+     "why": "Complement flips every bit; in sets, it takes everything **not** in `{b}`."
+    },
+    {
+     "id": "k4d",
+     "q": "`bool(2)` (all binary Boolean functions) is isomorphic to `Bᵏ` for which `k`?",
+     "a": "**`k = 4`**, so it has `2⁴ = 16` elements.",
+     "why": "`bool(n) ≃ B^(2ⁿ)`, and `2² = 4`.",
+     "check": {
+      "kind": "calc",
+      "expr": "2**(2**2) == 2**4"
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Any finite set with OR/AND-like operations can be a Boolean algebra.",
+    "correct": "Its size must be a power of 2, and all five law pairs must hold.",
+    "test": "Count the elements first. Not a power of 2 → not a BA."
+   },
+   "magic": "Finite BA ⇒ `2ᵏ` elements ⇒ it's a copy of `Bᵏ`."
+  },
+  {
+   "type": "idea",
+   "id": "k5",
+   "short": "Calculating",
+   "title": "Calculating with the BA laws",
+   "summary": "Use the laws like algebra rules. The shortcuts that save the most time: absorption and combining opposites.",
+   "picture": "Tidying a messy SQL `WHERE` clause: `(a AND b) OR a` is just `a`. BA laws are the rules that make that tidy-up safe.",
+   "official": "Useful laws (Week 2, slide 54): `x + x = x`, `xx = x`; `xx′ = 0`, `x + x′ = 1`; `x · 0 = 0`, `x · 1 = x`, `x + 0 = x`, `x + 1 = 1`; De Morgan `(x + y)′ = x′y′`, `(xy)′ = x′ + y′`; double negation `(x′)′ = x`; distribution both ways; **absorption** `x + xy = x`, `x(x + y) = x`; **combining the opposites** `xy + xy′ = x`, `(x + y)(x + y′) = x`. Handy consequence: `x + x′y = x + y`.",
+   "watch": {
+    "q": "Simplify `xy + xy′z + x′z`.",
+    "steps": [
+     "Group the `z` terms: `xy + z(xy′ + x′)`.",
+     "`x′ + xy′ = x′ + y′` (the consequence `a + a′b = a + b` with `a = x′`).",
+     "So `xy + z(x′ + y′)`, and `x′ + y′ = (xy)′` by De Morgan.",
+     "`xy + (xy)′z = xy + z` (same consequence again, with `a = xy`)."
+    ],
+    "answer": "**`xy + z`**"
+   },
+   "tries": [
+    {
+     "id": "k5a",
+     "q": "Simplify `a + ab′c`.",
+     "a": "**`a`**",
+     "why": "Absorption: `x + x·(anything) = x`.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:a + ab′c",
+      "g": "BA:a",
+      "expect": true
+     }
+    },
+    {
+     "id": "k5b",
+     "q": "Simplify `pq′ + pq`.",
+     "a": "**`p`**",
+     "why": "Combining the opposites: `xy′ + xy = x`.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:pq′ + pq",
+      "g": "BA:p",
+      "expect": true
+     }
+    },
+    {
+     "id": "k5c",
+     "q": "Simplify `(m + n)′ + m`.",
+     "a": "**`m + n′`**",
+     "why": "De Morgan: `m′n′ + m`, then `m + m′n′ = m + n′`.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:(m + n)′ + m",
+      "g": "BA:m + n′",
+      "expect": true
+     }
+    },
+    {
+     "id": "k5d",
+     "q": "Simplify `(u + v)(u + v′)(u′ + v)`.",
+     "a": "**`uv`**",
+     "why": "The first two combine to `u` (opposites). Then `u(u′ + v) = uu′ + uv = uv`.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:(u + v)(u + v′)(u′ + v)",
+      "g": "BA:uv",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "`x + x′y = y`.",
+    "correct": "`x + x′y = x + y`. The `x` stays.",
+    "test": "Try `x = 1, y = 0`: left side is 1, but `y` is 0."
+   },
+   "magic": "Absorb (`x + xy = x`), combine opposites (`xy + xy′ = x`), and `x + x′y = x + y`."
+  },
+  {
+   "type": "idea",
+   "id": "k6",
+   "short": "One gate is enough",
+   "title": "Building everything from one gate (NOR)",
+   "summary": "With NOR alone you can make NOT, OR and AND, so any formula can be built from NOR gates only.",
+   "picture": "A LEGO set with a single brick shape that can still build anything. Chip makers love this: one gate type is cheaper to manufacture.",
+   "official": "`x NOR y` = `(x + y)′` (not-or). It can express every other operation: `x′ = x NOR x`; `x + y = (x NOR y) NOR (x NOR y)`; `x · y = (x NOR x) NOR (y NOR y)`. Since every formula uses only `′`, `+`, `·` (after removing `⇒`, `⇔`), every formula can be written with NOR alone. Problem set 2's challenge asks the same question for **nand**, `(x · y)′`: try it yourself with the same method.",
+   "watch": {
+    "q": "Show that `x′ = x NOR x`.",
+    "steps": [
+     "`x NOR x = (x + x)′`.",
+     "Idempotence: `x + x = x`.",
+     "So `(x + x)′ = x′`."
+    ],
+    "answer": "**NOT from NOR:** feed the same input to both legs."
+   },
+   "tries": [
+    {
+     "id": "k6a",
+     "q": "Show `x + y = (x NOR y) NOR (x NOR y)`.",
+     "a": "`(x NOR y) NOR (x NOR y) = (x NOR y)′` (by the NOT trick) `= ((x + y)′)′ = x + y`.",
+     "why": "NOR then NOT gives OR.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(¬(x ∨ y) ∨ ¬(x ∨ y))",
+      "g": "x ∨ y",
+      "expect": true
+     }
+    },
+    {
+     "id": "k6b",
+     "q": "Show `x · y = (x NOR x) NOR (y NOR y)`.",
+     "a": "`= x′ NOR y′ = (x′ + y′)′ = x″y″ = xy` (De Morgan, double negation).",
+     "why": "Negate both inputs, then NOR: that's AND.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(¬(x ∨ x) ∨ ¬(y ∨ y))",
+      "g": "x ∧ y",
+      "expect": true
+     }
+    },
+    {
+     "id": "k6c",
+     "q": "Can every formula be written using only `+` and `′` (no `·`)?",
+     "a": "**Yes:** `xy = (x′ + y′)′` by De Morgan.",
+     "why": "Replace every `·` this way.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:xy",
+      "g": "BA:(x′ + y′)′",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "NOR can't make AND because it contains an OR.",
+    "correct": "Negating the inputs first turns the OR inside into an AND (De Morgan): `(x′ + y′)′ = xy`.",
+    "test": "Write the target with De Morgan until only `+` and `′` appear."
+   },
+   "magic": "`x′ = x NOR x`; OR = NOR then NOT; AND = NOR of the NOTs."
+  },
+  {
+   "type": "section",
+   "id": "practice",
+   "title": "🏋️ Practice ladder"
+  },
+  {
+   "type": "practice",
+   "id": "p-green",
+   "level": "green",
+   "items": [
+    {
+     "id": "g1",
+     "q": "BA notation for `p ∨ ¬q`?",
+     "a": "**`p + q′`**",
+     "why": "`∨` → `+`, `¬` → `′`.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:p + q′",
+      "g": "p ∨ ¬q",
+      "expect": true
+     }
+    },
+    {
+     "id": "g2",
+     "q": "BA notation for `¬(a ∧ b)`?",
+     "a": "**`(ab)′`**",
+     "why": "Bracket the product before negating it.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:(ab)′",
+      "g": "¬(a ∧ b)",
+      "expect": true
+     }
+    },
+    {
+     "id": "g3",
+     "q": "Value of `1 · 0′ + 0` in `{0, 1}`?",
+     "a": "**1**",
+     "why": "`0′ = 1`, `1 · 1 = 1`, `1 + 0 = 1`.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:1·0′ + 0",
+      "g": "BA:1",
+      "expect": true
+     }
+    },
+    {
+     "id": "g4",
+     "q": "Simplify `x · x′`.",
+     "a": "**`0`**",
+     "why": "Complementation.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:xx′",
+      "g": "BA:0",
+      "expect": true
+     }
+    },
+    {
+     "id": "g5",
+     "q": "Simplify `y + 1`.",
+     "a": "**`1`**",
+     "why": "`+ 1` always gives 1.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:y + 1",
+      "g": "BA:1",
+      "expect": true
+     }
+    },
+    {
+     "id": "g6",
+     "q": "In `Pow({p, q})`, what is `{p}′`?",
+     "a": "**`{q}`**",
+     "why": "Everything in `S` that isn't in `{p}`."
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-yellow",
+   "level": "yellow",
+   "items": [
+    {
+     "id": "y1",
+     "q": "Simplify `ab + a′b`.",
+     "a": "**`b`**",
+     "why": "Combining the opposites (with `b` as the common part).",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:ab + a′b",
+      "g": "BA:b",
+      "expect": true
+     }
+    },
+    {
+     "id": "y2",
+     "q": "Apply De Morgan to `(x′ + yz)′`.",
+     "a": "**`x(y′ + z′)`**",
+     "why": "`(A + B)′ = A′B′`: `x″ = x`, `(yz)′ = y′ + z′`.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:(x′ + yz)′",
+      "g": "BA:x(y′ + z′)",
+      "expect": true
+     }
+    },
+    {
+     "id": "y3",
+     "q": "Simplify `p(p + q)`.",
+     "a": "**`p`**",
+     "why": "Absorption, the product version.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:p(p + q)",
+      "g": "BA:p",
+      "expect": true
+     }
+    },
+    {
+     "id": "y4",
+     "q": "Simplify `a′ + ab`.",
+     "a": "**`a′ + b`**",
+     "why": "`x + x′y = x + y` with `x = a′`.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:a′ + ab",
+      "g": "BA:a′ + b",
+      "expect": true
+     }
+    },
+    {
+     "id": "y5",
+     "q": "In 3-bit vectors, compute `((1, 1, 0) + (0, 1, 1))′`.",
+     "a": "**`(0, 0, 0)`**",
+     "why": "OR gives `(1, 1, 1)`; NOT gives `(0, 0, 0)`.",
+     "check": {
+      "kind": "calc",
+      "expr": "tuple(1 - (a | b) for a, b in zip((1,1,0),(0,1,1)))",
+      "is": "(0,0,0)"
+     }
+    },
+    {
+     "id": "y6",
+     "q": "Translate `(p ⇒ q) ∧ r` into BA notation (remove `⇒` first).",
+     "a": "**`(p′ + q)r`**",
+     "why": "`p ⇒ q = ¬p ∨ q` → `p′ + q`.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:(p′ + q)r",
+      "g": "(p ⇒ q) ∧ r",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-red",
+   "level": "red",
+   "sub": "Exam style: find an optimal (shortest) equivalent expression, like the lecture's exercise 10.2.9. All expressions here are original.",
+   "items": [
+    {
+     "id": "r1",
+     "q": "Find the shortest expression equivalent to `x′yz + xyz + xy′z`.",
+     "a": "**`z(x + y)`**, i.e. `xz + yz`.",
+     "why": "`x′yz + xyz = yz` (opposites). Then `yz + xy′z = z(y + xy′) = z(y + x)`.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:x′yz + xyz + xy′z",
+      "g": "BA:z(x + y)",
+      "expect": true
+     }
+    },
+    {
+     "id": "r2",
+     "q": "Find the shortest expression equivalent to `(a + b)′ + a′b + ab′`.",
+     "a": "**`a′ + b′`**, i.e. `(ab)′`.",
+     "why": "`(a + b)′ = a′b′`. Then `a′b′ + a′b = a′`. Then `a′ + ab′ = a′ + b′`.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:(a + b)′ + a′b + ab′",
+      "g": "BA:a′ + b′",
+      "expect": true
+     }
+    },
+    {
+     "id": "r3",
+     "q": "Find the shortest expression equivalent to `pq + p′r + qr`.",
+     "a": "**`pq + p′r`** (the `qr` term is redundant).",
+     "why": "`qr = qr(p + p′) = pqr + p′qr`, and each piece is absorbed by `pq` or `p′r`. (This is the *consensus* rule.)",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:pq + p′r + qr",
+      "g": "BA:pq + p′r",
+      "expect": true
+     }
+    },
+    {
+     "id": "r4",
+     "q": "Simplify `(x + y′)′ + (x′ + y)′`.",
+     "a": "**`x′y + xy′`** (that's `x ⊕ y`).",
+     "why": "De Morgan on each: `x′y″ + x″y′ = x′y + xy′`.",
+     "check": [
+      {
+       "kind": "equiv",
+       "f": "BA:(x + y′)′ + (x′ + y)′",
+       "g": "BA:x′y + xy′",
+       "expect": true
+      },
+      {
+       "kind": "equiv",
+       "f": "BA:x′y + xy′",
+       "g": "x ⊕ y",
+       "expect": true
+      }
+     ]
+    },
+    {
+     "id": "r5",
+     "q": "Which options are equivalent to `a + a′b`?",
+     "a": "**(2), (3)**",
+     "why": "`a + a′b = a + b`. (3) is `(a′b′)′`, which is `a + b` by De Morgan. (1) drops `a`; (4) is AND.",
+     "options": [
+      "`b`",
+      "`a + b`",
+      "`(a′b′)′`",
+      "`ab`"
+     ],
+     "correct": [
+      1,
+      2
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "BA:a + a′b",
+      "ba": true
+     },
+     "multi": true
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-boss",
+   "level": "boss",
+   "items": [
+    {
+     "id": "b1",
+     "q": "Find the shortest expression equivalent to `(p + q)′ + r + p(qr + q′r′)′`.",
+     "a": "**`p′q′ + pq + r`**",
+     "why": "`(p + q)′ = p′q′`. `(qr + q′r′)′` is \"`q` and `r` differ\" `= qr′ + q′r`, so the last term is `pqr′ + pq′r`. Now `pq′r` is absorbed by `r`, and `r + pqr′ = r + pq`.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:(p + q)′ + r + p(qr + q′r′)′",
+      "g": "BA:p′q′ + pq + r",
+      "expect": true
+     }
+    },
+    {
+     "id": "b2",
+     "q": "Simplify `(a′ + b)(a + c)(b + c)′`.",
+     "a": "**`0`**",
+     "why": "`(b + c)′ = b′c′`. With `b = 0`, the first factor needs `a′`, i.e. `a = 0`. With `a = 0` and `c = 0`, the middle factor `a + c` is 0.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:(a′ + b)(a + c)(b + c)′",
+      "g": "BA:0",
+      "expect": true
+     }
+    },
+    {
+     "id": "b3",
+     "q": "Is `T = {0, 1, 2}` with `x + y = max(x, y)`, `x · y = min(x, y)`, `x′ = 2 − x`, `0`, `1` := `0`, `2` a Boolean algebra?",
+     "a": "**No.** It has 3 elements (not a power of 2), and complementation fails: `1 + 1′ = max(1, 1) = 1`, not the top element `2`.",
+     "why": "Finite BAs have `2ᵏ` elements. The middle element has no proper complement.",
+     "check": {
+      "kind": "calc",
+      "expr": "max(1, 2-1) != 2 and 3 not in [2**k for k in range(5)]"
+     }
+    },
+    {
+     "id": "b4",
+     "q": "How many binary Boolean functions `f(x, y)` satisfy `f(0, 0) = 0`?",
+     "a": "**8**",
+     "why": "One of the 4 rows is fixed; the other 3 rows are free: `2³ = 8`.",
+     "check": {
+      "kind": "calc",
+      "expr": "sum(1 for f in product([0,1], repeat=4) if f[0] == 0)",
+      "expect": 8
+     }
+    },
+    {
+     "id": "b5",
+     "q": "Show that every formula can be written with only `⇒` and `⊥`. (Hint: build `¬` and `∨` first.)",
+     "a": "`¬p ≡ p ⇒ ⊥`. `p ∨ q ≡ ¬p ⇒ q ≡ (p ⇒ ⊥) ⇒ q`. With `¬` and `∨`, De Morgan gives `∧`: `p ∧ q ≡ ¬(¬p ∨ ¬q)`. So every formula can be rewritten.",
+     "why": "Same method as the NOR idea: build NOT, then OR, then use De Morgan.",
+     "check": [
+      {
+       "kind": "equiv",
+       "f": "¬p",
+       "g": "p ⇒ ⊥",
+       "expect": true
+      },
+      {
+       "kind": "equiv",
+       "f": "p ∨ q",
+       "g": "(p ⇒ ⊥) ⇒ q",
+       "expect": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-retest",
+   "level": "retest",
+   "items": [
+    {
+     "id": "rt1",
+     "q": "BA notation for `(a ∨ b) ∧ ¬c`?",
+     "a": "**`(a + b)c′`**",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:(a + b)c′",
+      "g": "(a ∨ b) ∧ ¬c",
+      "expect": true
+     }
+    },
+    {
+     "id": "rt2",
+     "q": "Simplify `x + xy`.",
+     "a": "**`x`**",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:x + xy",
+      "g": "BA:x",
+      "expect": true
+     }
+    },
+    {
+     "id": "rt3",
+     "q": "How many Boolean functions of 2 variables?",
+     "a": "**16**",
+     "check": {
+      "kind": "calc",
+      "expr": "2**4",
+      "expect": 16
+     }
+    },
+    {
+     "id": "rt4",
+     "q": "Build `x′` from NOR.",
+     "a": "**`x NOR x`**",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(x ∨ x)",
+      "g": "¬x",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "recap",
+   "lines": [
+    "PL ↔ BA: `∧` ↔ `·`/juxtaposition, `∨` ↔ `+`, `¬` ↔ `′`.",
+    "Boolean functions: `{0, 1}ⁿ → {0, 1}`; unary, binary, `n`-ary; `|bool(n)| = 2^(2ⁿ)`.",
+    "BA examples: `{0, 1}`; bit vectors with bitwise ops; `Pow(S)` with `∪`, `∩`, complement; `Map(S, B)`.",
+    "Finite BAs have `2ᵏ` elements; same size ⇒ isomorphic (`Pow(S) ≃ B^|S|`).",
+    "Laws that shrink expressions: idempotence, complements, identity/annihilator, De Morgan, absorption, combining opposites.",
+    "NOR (or nand) alone can build every Boolean function."
+   ]
+  },
+  {
+   "type": "links",
+   "id": "links",
+   "sub": "Free, from universities. Try them after the ladder above.",
+   "items": [
+    {
+     "title": "MIT 6.004 Computation Structures — Notes, Chapter 7: Combinational Logic",
+     "url": "https://computationstructures.org/notes/combinational_logic/notes.html",
+     "source": "MIT",
+     "checked": "24 Sep 2026",
+     "note": "Boolean identities, sum-of-products, simplification, and universal gates (§7.5). Try the Problem set 2 nand challenge yourself before reading §7.5."
+    }
+   ]
+  }
+ ],
+ "sources": "Lecture slides: Week 2 slides 44–56 (Boolean functions, Boolean arithmetic, circuits, the Boolean algebra laws, 10.1.1, 10.1.2, calculating with BA expressions) and 72–75 (Boolean algebras in CS, 2ᵏ, isomorphism). All practice expressions are original.",
+ "prev": {
+  "href": "../l5-proofs/",
+  "label": "L5 · Proofs"
+ },
+ "next": {
+  "href": "../l7-cnf-dnf-kmaps/",
+  "label": "L7 · CNF, DNF & K-maps"
+ }
+}

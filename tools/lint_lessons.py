@@ -23,7 +23,7 @@ def warn(where, msg):
 
 def norm(s):
     s = re.sub(r"[`*]", "", s or "").lower()
-    return re.sub(r"[^a-z0-9⇒⇔¬∧∨⊕]+", " ", s).strip()
+    return re.sub(r"[^a-z0-9⇒⇔¬∧∨⊕−⌊⌋⌈⌉√∪∩⊆∈′+·ℕℤℙℚℝ<>≤≥|∅{}()⊤⊥-]+", " ", s).strip()  # keep signs and math symbols: −7 ≠ 7
 
 
 def markup_ok(where, s):
@@ -63,6 +63,8 @@ def lint_item(it, where, ids, seen_q, in_retest=False):
     if not in_retest and not (it.get("why") or it.get("steps")):
         warn(w, "no 'why' — answers should explain themselves")
     key = norm(it.get("q"))
+    if it.get("grid"):  # a question's own grid (e.g. a K-map) is part of the question
+        key += " grid:" + json.dumps(it["grid"].get("rows"), ensure_ascii=False)
     if key and key in seen_q:
         err(w, f"same question as {seen_q[key]} — every example must be different")
     seen_q[key] = iid

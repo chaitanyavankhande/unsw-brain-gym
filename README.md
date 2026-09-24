@@ -18,11 +18,13 @@ Each lesson goes one step at a time: **Start** (the plan) → one **idea** per s
 
 ## What's inside
 
-| Course | Ready | Next |
-|---|---|---|
-| COMP9020 Foundations of CS | L2 If–Then & Friends · L2B English → Logic · D1 If–Then Decoder | L3 Truth tables · L4 Entailment · D2 Quiz 2 Gym |
+| Course | Ready |
+|---|---|
+| COMP9020 Foundations of CS | **Weeks 1–2 complete:** N1 N2 (numbers) · S1 S2 S3 (sets) · F1 (words) · R1 L2 L2B D1 (logic basics) · L3 L3B L4 D2 (truth tables, equivalence, entailment, Quiz 2 gym) · L5 (proofs) · L6 L7 (Boolean algebra, CNF/DNF, K-maps) |
 
-Every logic answer is machine-checked by `tools/verify_answers.py` before it's published.
+What each unit covers, down to the slide and problem-set question: [`docs/COVERAGE_COMP9020.md`](docs/COVERAGE_COMP9020.md).
+
+Every answer that code can check (logic, Boolean algebra, numbers, sets, words) is machine-checked by `tools/verify_answers.py` before it's published.
 
 ## For Claude (and future me)
 

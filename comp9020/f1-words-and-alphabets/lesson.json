@@ -1,0 +1,609 @@
+{
+ "id": "comp9020-f1",
+ "course": {
+  "code": "COMP9020",
+  "href": "../"
+ },
+ "code": "F1",
+ "emoji": "🔡",
+ "title": "Words & Alphabets",
+ "eyebrow": "COMP9020 · Week 1 · Formal languages",
+ "minutes": 35,
+ "verified": true,
+ "goal": "Work with alphabets, words and λ, count `Σᵏ`, `Σ≤ⁿ`, combine languages with set operations, and check strings against a grammar.",
+ "magic": [
+  "Σ: finite, non-empty. Words: finite strings. `λ`: length 0, vanishes in concatenation.",
+  "`|Σᵏ| = |Σ|ᵏ`; `Σ*` all words (infinite); `Σ⁺ = Σ* \\ {λ}`.",
+  "`|Σ≤ⁿ| = 1 + |Σ| + … + |Σ|ⁿ`.",
+  "A language is any subset of `Σ*`.",
+  "Grammars: compulsory parts first; `( … )*` may be empty."
+ ],
+ "blocks": [
+  {
+   "type": "section",
+   "id": "learn",
+   "title": "💡 Learn it, one idea at a time"
+  },
+  {
+   "type": "idea",
+   "id": "v1",
+   "short": "Alphabets & words",
+   "title": "Alphabets, words and the empty word λ",
+   "summary": "An alphabet Σ is a finite, non-empty set of symbols. A word is a finite string of them. λ is the word with no symbols.",
+   "picture": "Σ is the keys on a keyboard. A word is anything you can type with them: a password, a variable name, even \"nothing yet\" (the empty text box, λ).",
+   "official": "`Σ`: an **alphabet**, a finite, nonempty set (Week 1, slide 42), e.g. `{a, …, z}`, `{0, 1}`, `{0, …, 9}`, or all Chinese characters (no ordering needed). A **word** is any finite string of symbols from Σ; the **empty word** is `λ` (slide 43). `length(ω)` = number of symbols: `length(aaa) = 3`, `length(λ) = 0`. The only operation is **concatenation**, written by juxtaposition: `νω`. `λω = ω = ωλ`; `length(νω) = length(ν) + length(ω)`.",
+   "watch": {
+    "q": "`Σ = {0, 1}`, `ν = 10`, `ω = 011`. Find `νω`, `ων`, `length(νων)`.",
+    "steps": [
+     "`νω` = `10` followed by `011` = `10011`.",
+     "`ων` = `01110`: a different word (order matters).",
+     "`length(νων) = 2 + 3 + 2 = 7`."
+    ],
+    "answer": "**`10011`, `01110`, 7.**"
+   },
+   "tries": [
+    {
+     "id": "v1a",
+     "q": "Is `{ }` (the empty set) an alphabet?",
+     "a": "**No.**",
+     "why": "An alphabet must be **non-empty**."
+    },
+    {
+     "id": "v1b",
+     "q": "`length(λλλ)`?",
+     "a": "**0**",
+     "why": "`λ` adds no symbols: `λλλ = λ`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len('' + '' + '')",
+      "expect": 0
+     }
+    },
+    {
+     "id": "v1c",
+     "q": "With `ν = ab`, what is `λνλν`?",
+     "a": "**`abab`**",
+     "why": "`λ` disappears in concatenation.",
+     "check": {
+      "kind": "calc",
+      "expr": "'' + 'ab' + '' + 'ab'",
+      "is": "'abab'"
+     }
+    },
+    {
+     "id": "v1d",
+     "q": "Is `λ` a symbol of the alphabet?",
+     "a": "**No.** It's a word (of length 0), not a symbol.",
+     "why": "Σ contains symbols; words are strings built from them."
+    }
+   ],
+   "trap": {
+    "tempting": "`λ` is a space character.",
+    "correct": "`λ` is the **empty** word: no characters at all. A space would be a symbol of length 1 (and only if it's in Σ).",
+    "test": "`length(λ) = 0`. Anything with length 1 isn't λ."
+   },
+   "magic": "Σ finite and non-empty; words finite; `λ` has length 0 and vanishes in concatenation."
+  },
+  {
+   "type": "idea",
+   "id": "v2",
+   "short": "Σᵏ, Σ*, Σ⁺",
+   "title": "`Σᵏ`, `Σ*`, `Σ⁺` and `Σ≤ⁿ`",
+   "summary": "`Σᵏ` = words of length k (`|Σ|ᵏ` of them). `Σ*` = all words (infinite). `Σ⁺` = all except λ. `Σ≤ⁿ` = lengths 0 to n.",
+   "picture": "A 4-digit PIN comes from `{0, …, 9}⁴`: `10⁴ = 10 000` PINs. \"Any PIN of any length\" is `{0, …, 9}*`, which never ends.",
+   "official": "Notation (Week 1, slide 44): `Σᵏ` = set of all words of length `k`; `Σ⁰ = {λ}`, `Σ¹ = Σ`. `Σ* = Σ⁰ ∪ Σ¹ ∪ Σ² ∪ …` (all words). `Σ⁺ = Σ¹ ∪ Σ² ∪ … = Σ* \\ {λ}` (nonempty words). `Σ≤ⁿ = ⋃ᵢ₌₀ⁿ Σⁱ`. Counting: `|Σᵏ| = |Σ|ᵏ`; lecture example (slide 45): for `Σ = {a, b, c}`, `|Σ*| = ∞` and `|Σ≤⁴| = 3⁰ + 3¹ + … + 3⁴ = (3⁵ − 1)/2 = 121`.",
+   "watch": {
+    "q": "`Σ = {x, y, z}`. List `Σ²` and count `Σ≤²`.",
+    "steps": [
+     "`Σ²`: every 2-letter word: `xx, xy, xz, yx, yy, yz, zx, zy, zz` (`3² = 9`).",
+     "`Σ≤²` = `Σ⁰ ∪ Σ¹ ∪ Σ²`: `1 + 3 + 9`."
+    ],
+    "answer": "**9 words** in `Σ²`; **13** in `Σ≤²` (don't forget `λ`)."
+   },
+   "tries": [
+    {
+     "id": "v2a",
+     "q": "`Σ = {a, b}`. `|Σ≤³|`?",
+     "a": "**15**",
+     "why": "`1 + 2 + 4 + 8`, or `(2⁴ − 1)/(2 − 1)`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len(upto({'a','b'}, 3))",
+      "expect": 15
+     }
+    },
+    {
+     "id": "v2b",
+     "q": "`Σ = {p, q, r, s}`. `|Σ≤³|`?",
+     "a": "**85**",
+     "why": "`1 + 4 + 16 + 64 = (4⁴ − 1)/3`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len(upto({'p','q','r','s'}, 3))",
+      "expect": 85
+     }
+    },
+    {
+     "id": "v2c",
+     "q": "`Σ = {x, y, z}`. List `{ω ∈ Σ⁺ : length(ω) ≤ 1}`.",
+     "a": "**`{x, y, z}`**",
+     "why": "`Σ⁺` excludes λ, so only the one-letter words remain (that's `Σ¹ = Σ`).",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(w for w in upto({'x','y','z'}, 1) if w != '')",
+      "is": "['x', 'y', 'z']"
+     }
+    },
+    {
+     "id": "v2d",
+     "q": "Is `Σ*` finite for some alphabet Σ?",
+     "a": "**No.**",
+     "why": "Σ is non-empty, so words of every length exist: `a, aa, aaa, …`"
+    }
+   ],
+   "trap": {
+    "tempting": "`Σ*` and `Σ⁺` are the same.",
+    "correct": "`Σ*` includes `λ`; `Σ⁺` doesn't: `Σ⁺ = Σ* \\ {λ}`.",
+    "test": "Ask: is the empty word allowed? `*` yes, `+` no."
+   },
+   "magic": "`|Σᵏ| = |Σ|ᵏ`. `*` includes λ, `+` doesn't. `|Σ≤ⁿ|` = a geometric sum."
+  },
+  {
+   "type": "idea",
+   "id": "v3",
+   "short": "Languages",
+   "title": "A language is any set of words",
+   "summary": "Any subset of `Σ*` is a language, so languages can be combined with `∪ ∩ \\`.",
+   "picture": "\"Valid email addresses\" is a language over the keyboard alphabet: some strings are in, most aren't. \"Valid AND under 20 characters\" is an intersection of two languages.",
+   "official": "A **language** is a subset of `Σ*` (Week 1, slide 44). Typically we care about subsets described by rules; such a collection of rules is a **grammar** (programming languages, database query languages). Since languages are sets, all set operations apply, e.g. `Σ² ∩ Ψ²`, `Σ* ∪ Ψ*`.",
+   "watch": {
+    "q": "`Σ = {a, b}`, `Ψ = {b, c}`. Find `Σ² ∩ Ψ²`.",
+    "steps": [
+     "`Σ² = {aa, ab, ba, bb}`.",
+     "`Ψ² = {bb, bc, cb, cc}`.",
+     "Common word: `bb`."
+    ],
+    "answer": "**`{bb}`**"
+   },
+   "tries": [
+    {
+     "id": "v3a",
+     "q": "Same Σ, Ψ. Is `Σ* ∩ Ψ* = (Σ ∩ Ψ)*`?",
+     "a": "**Yes:** both are `{b}* = {λ, b, bb, …}`.",
+     "why": "A word uses only symbols from Σ **and** only symbols from Ψ exactly when it uses only symbols from `Σ ∩ Ψ`.",
+     "check": {
+      "kind": "calc",
+      "expr": "(upto({'a','b'}, 4) & upto({'b','c'}, 4)) == upto({'b'}, 4)"
+     }
+    },
+    {
+     "id": "v3b",
+     "q": "Same Σ, Ψ. Is `Σ* ∪ Ψ* = (Σ ∪ Ψ)*`?",
+     "a": "**No.** `ac ∈ (Σ ∪ Ψ)*`, but `ac` is in neither `Σ*` nor `Ψ*`.",
+     "why": "Mixing symbols from both alphabets is allowed on the right only.",
+     "check": {
+      "kind": "calc",
+      "expr": "'ac' in upto({'a','b','c'}, 2) and 'ac' not in upto({'a','b'}, 2) and 'ac' not in upto({'b','c'}, 2)"
+     }
+    },
+    {
+     "id": "v3c",
+     "q": "`Σ = {0, 1}`. List `{ω ∈ Σ³ : ω contains at most one 1}`.",
+     "a": "**`{000, 001, 010, 100}`**",
+     "why": "Zero 1s: one word. One 1: three positions.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(w for w in words({'0','1'}, 3) if w.count('1') <= 1)",
+      "is": "['000', '001', '010', '100']"
+     }
+    },
+    {
+     "id": "v3d",
+     "q": "Is `∅` a language over Σ? Is `{λ}`?",
+     "a": "**Both are**, and they're different: `∅` has no words, `{λ}` has one (the empty word).",
+     "why": "Any subset of `Σ*` counts, including these two."
+    }
+   ],
+   "trap": {
+    "tempting": "`∅` and `{λ}` are the same language.",
+    "correct": "`∅` contains **no** words; `{λ}` contains **one** word, the empty one.",
+    "test": "Count elements: 0 vs 1."
+   },
+   "magic": "Language = any subset of `Σ*`; use set operations on it."
+  },
+  {
+   "type": "idea",
+   "id": "v4",
+   "short": "Grammars",
+   "title": "Grammars: rules that describe a language",
+   "summary": "A grammar lists which symbols may come first, next and how often, like a regex. `(…)*` means \"zero or more times\".",
+   "picture": "The rules for a UNSW zID: the letter `z`, then exactly 7 digits. `z1234567` fits; `Z1234567` and `z123456` don't.",
+   "official": "A grammar is a collection of descriptive/formative rules for a language (Week 1, slide 44). In the notation of Problem set 2, Q2(b): `|` means \"or\", `( … )*` means \"repeat zero or more times\", and quoted symbols are literal. The same language can be written as a set: e.g. `{νω : ν ∈ 𝓛, ω ∈ (𝓛 ∪ 𝓓)*}`.",
+   "watch": {
+    "q": "A topic-name grammar: `topic ::= letter (letter | digit | \".\" | \"_\" | \"-\")*`, where `letter ::= \"a\" | … | \"z\"` and `digit ::= \"0\" | … | \"9\"`. Which are valid: `orders.v2`, `2orders`, `user_events-dlq`, `Orders`?",
+    "steps": [
+     "`orders.v2`: starts with a letter; the rest are letters, a dot and a digit ✅.",
+     "`2orders`: the first symbol must be a letter ❌.",
+     "`user_events-dlq`: letter first, then letters, `_`, `-` ✅.",
+     "`Orders`: `O` is uppercase, and `letter` only allows `a`–`z` ❌."
+    ],
+    "answer": "**Valid:** `orders.v2`, `user_events-dlq`."
+   },
+   "tries": [
+    {
+     "id": "v4a",
+     "q": "Same grammar. Is the one-letter word `a` valid? Is the empty word λ?",
+     "a": "**`a` yes; λ no.**",
+     "why": "`( … )*` allows zero repeats, but the first `letter` is compulsory.",
+     "check": [
+      {
+       "kind": "calc",
+       "expr": "match(r'[a-z][a-z0-9._-]*', 'a')"
+      },
+      {
+       "kind": "calc",
+       "expr": "not match(r'[a-z][a-z0-9._-]*', '')"
+      }
+     ]
+    },
+    {
+     "id": "v4b",
+     "q": "Write the topic language as a set, with `𝓛 = {a, …, z}` and `𝓓 = {0, …, 9}`.",
+     "a": "**`{νω : ν ∈ 𝓛, ω ∈ (𝓛 ∪ 𝓓 ∪ {., _, -})*}`**",
+     "why": "One compulsory first letter `ν`, then any word `ω` over the allowed symbols."
+    },
+    {
+     "id": "v4c",
+     "q": "A zID is `\"z\" digit digit digit digit digit digit digit`. How many different zIDs are possible?",
+     "a": "**10 000 000**",
+     "why": "The `z` is fixed; 7 digit positions with 10 choices each: `10⁷`.",
+     "check": {
+      "kind": "calc",
+      "expr": "10**7",
+      "expect": 10000000
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "`( … )*` means \"one or more\".",
+    "correct": "`*` means **zero** or more. (\"One or more\" would be written with `⁺`.)",
+    "test": "Check whether the shortest possible word stops right before the starred part."
+   },
+   "magic": "Follow the rule symbol by symbol: compulsory parts first, `*` parts can be empty."
+  },
+  {
+   "type": "section",
+   "id": "practice",
+   "title": "🏋️ Practice ladder"
+  },
+  {
+   "type": "practice",
+   "id": "p-green",
+   "level": "green",
+   "items": [
+    {
+     "id": "g1",
+     "q": "`length(banana)` over `{a, b, n}`?",
+     "a": "**6**",
+     "why": "Count the symbols.",
+     "check": {
+      "kind": "calc",
+      "expr": "len('banana')",
+      "expect": 6
+     }
+    },
+    {
+     "id": "g2",
+     "q": "`|{0, 1}⁵|`?",
+     "a": "**32**",
+     "why": "`2⁵`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len(words({'0','1'}, 5))",
+      "expect": 32
+     }
+    },
+    {
+     "id": "g3",
+     "q": "Is `λ ∈ Σ*`? Is `λ ∈ Σ⁺`?",
+     "a": "**Yes; no.**",
+     "why": "`Σ⁺ = Σ* \\ {λ}`.",
+     "check": {
+      "kind": "calc",
+      "expr": "'' in upto({'a'}, 2)"
+     }
+    },
+    {
+     "id": "g4",
+     "q": "`Σ⁰` for any Σ?",
+     "a": "**`{λ}`**",
+     "why": "Exactly one word of length 0.",
+     "check": {
+      "kind": "calc",
+      "expr": "words({'a','b'}, 0)",
+      "is": "{''}"
+     }
+    },
+    {
+     "id": "g5",
+     "q": "`Σ = {m, n}`. List `Σ²`.",
+     "a": "**`{mm, mn, nm, nn}`**",
+     "why": "`2² = 4` words.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(words({'m','n'}, 2))",
+      "is": "['mm', 'mn', 'nm', 'nn']"
+     }
+    },
+    {
+     "id": "g6",
+     "q": "`ν = ab`, `ω = ba`. Is `νω = ων`?",
+     "a": "**No:** `abba ≠ baab`.",
+     "why": "Concatenation is not commutative.",
+     "check": {
+      "kind": "calc",
+      "expr": "'ab' + 'ba' != 'ba' + 'ab'"
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-yellow",
+   "level": "yellow",
+   "items": [
+    {
+     "id": "y1",
+     "q": "`Σ = {a, b, c, d, e}`. `|Σ≤²|`?",
+     "a": "**31**",
+     "why": "`1 + 5 + 25`.",
+     "check": {
+      "kind": "calc",
+      "expr": "len(upto({'a','b','c','d','e'}, 2))",
+      "expect": 31
+     }
+    },
+    {
+     "id": "y2",
+     "q": "`Σ = {0, 1}`. How many words in `Σ≤⁷`?",
+     "a": "**255**",
+     "why": "`2⁸ − 1` (geometric sum `1 + 2 + … + 2⁷`).",
+     "check": {
+      "kind": "calc",
+      "expr": "len(upto({'0','1'}, 7))",
+      "expect": 255
+     }
+    },
+    {
+     "id": "y3",
+     "q": "`Σ = {a, b}`, `Ψ = {b, c}`. `Σ¹ ∪ Ψ¹`?",
+     "a": "**`{a, b, c}`**",
+     "why": "One-letter words from either alphabet.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(words({'a','b'},1) | words({'b','c'},1))",
+      "is": "['a', 'b', 'c']"
+     }
+    },
+    {
+     "id": "y4",
+     "q": "Same Σ, Ψ. `Σ² \\ Ψ*`?",
+     "a": "**`{aa, ab, ba}`**",
+     "why": "Remove the words made only of `b` and `c`: only `bb` goes.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(words({'a','b'}, 2) - upto({'b','c'}, 2))",
+      "is": "['aa', 'ab', 'ba']"
+     }
+    },
+    {
+     "id": "y5",
+     "q": "Topic grammar from Idea 4: valid or not? `a-`, `a..b`, `_x`.",
+     "a": "**`a-` valid, `a..b` valid, `_x` invalid.**",
+     "why": "After the first letter, any mix of letters, digits, `.`, `_`, `-` is allowed, even repeated dots. But `_` can't come first.",
+     "check": [
+      {
+       "kind": "calc",
+       "expr": "match(r'[a-z][a-z0-9._-]*', 'a-')"
+      },
+      {
+       "kind": "calc",
+       "expr": "match(r'[a-z][a-z0-9._-]*', 'a..b')"
+      },
+      {
+       "kind": "calc",
+       "expr": "not match(r'[a-z][a-z0-9._-]*', '_x')"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-red",
+   "level": "red",
+   "sub": "Problem set 2, Q1(a) and Q2 style: words of bounded length, language operations, and a grammar. Original alphabets and grammar.",
+   "items": [
+    {
+     "id": "r1",
+     "q": "A config-key grammar: `key ::= letter (letter | \"_\")* (\".\" letter (letter | \"_\")*)*` with `letter ::= \"a\" | … | \"z\"`. Which are valid?",
+     "a": "**(1), (3), (5)**",
+     "why": "(1) one segment. (2) can't start with `.`. (3) two segments. (4) `.` must be followed by a letter, so it can't end a key. (5) underscores are fine after the first letter. (6) `_` can't start a segment.",
+     "options": [
+      "`db_host`",
+      "`.cache`",
+      "`db.pool_size`",
+      "`db.`",
+      "`max__retries`",
+      "`db._pool`"
+     ],
+     "correct": [
+      0,
+      2,
+      4
+     ],
+     "check": {
+      "kind": "options_calc",
+      "exprs": [
+       "match(r'[a-z][a-z_]*(\\.[a-z][a-z_]*)*', 'db_host')",
+       "match(r'[a-z][a-z_]*(\\.[a-z][a-z_]*)*', '.cache')",
+       "match(r'[a-z][a-z_]*(\\.[a-z][a-z_]*)*', 'db.pool_size')",
+       "match(r'[a-z][a-z_]*(\\.[a-z][a-z_]*)*', 'db.')",
+       "match(r'[a-z][a-z_]*(\\.[a-z][a-z_]*)*', 'max__retries')",
+       "match(r'[a-z][a-z_]*(\\.[a-z][a-z_]*)*', 'db._pool')"
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "r2",
+     "q": "`Σ = {a, b, c}`, `Ψ = {a, b}`. List `Σ² \\ Ψ*`.",
+     "a": "**`{ac, bc, ca, cb, cc}`**",
+     "why": "Keep the 2-letter words over Σ that use at least one `c`.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(words({'a','b','c'}, 2) - upto({'a','b'}, 2))",
+      "is": "['ac', 'bc', 'ca', 'cb', 'cc']"
+     }
+    },
+    {
+     "id": "r3",
+     "q": "`Σ = {x, y}`. List every element of `{ω ∈ Σ* : length(ω) ≤ 2 and ω doesn't start with y}`.",
+     "a": "**`{λ, x, xx, xy}`**",
+     "why": "λ has no first letter, so it doesn't start with `y`: it's in.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted(w for w in upto({'x','y'}, 2) if not w.startswith('y'))",
+      "is": "['', 'x', 'xx', 'xy']"
+     }
+    },
+    {
+     "id": "r4",
+     "q": "True or false: for all alphabets Σ, Ψ, `(Σ ∩ Ψ)* ⊆ Σ*`.",
+     "a": "**True.**",
+     "why": "A word using only common symbols uses only symbols of Σ."
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-boss",
+   "level": "boss",
+   "items": [
+    {
+     "id": "b1",
+     "q": "`Σ = {a, b}`. How many words of length 6 contain **no** two `b`s next to each other?",
+     "a": "**21**",
+     "why": "Count by the last letter: it's the Fibonacci pattern `f(n) = f(n − 1) + f(n − 2)`, with `f(1) = 2`, `f(2) = 3`: 2, 3, 5, 8, 13, **21**.",
+     "check": {
+      "kind": "calc",
+      "expr": "sum(1 for w in words({'a','b'}, 6) if 'bb' not in w)",
+      "expect": 21
+     }
+    },
+    {
+     "id": "b2",
+     "q": "Is `Σ* = (Σ⁺)*`?",
+     "a": "**Yes.**",
+     "why": "Concatenating any number (including zero, giving λ) of non-empty words gives every word, and nothing else."
+    },
+    {
+     "id": "b3",
+     "q": "`|Σ| = 26`. Which is bigger: `|Σ⁵|` or `|Σ≤⁴|`?",
+     "a": "**`|Σ⁵|`** (`26⁵ = 11 881 376` vs `(26⁵ − 1)/25 = 475 255`).",
+     "why": "Each extra length multiplies by 26; all shorter lengths together are only about 1/25 of the next level.",
+     "check": {
+      "kind": "calc",
+      "expr": "26**5 > sum(26**k for k in range(5))"
+     }
+    },
+    {
+     "id": "b4",
+     "q": "For which alphabets is `Σ* \\ Σ⁺` not equal to `{λ}`?",
+     "a": "**None:** it's always `{λ}`.",
+     "why": "`Σ⁺` is exactly `Σ*` without λ."
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-retest",
+   "level": "retest",
+   "items": [
+    {
+     "id": "rt1",
+     "q": "`|{a, b, c}³|`?",
+     "a": "**27**",
+     "check": {
+      "kind": "calc",
+      "expr": "len(words({'a','b','c'}, 3))",
+      "expect": 27
+     }
+    },
+    {
+     "id": "rt2",
+     "q": "Difference between `Σ*` and `Σ⁺`?",
+     "a": "**Only `λ`:** `Σ⁺ = Σ* \\ {λ}`."
+    },
+    {
+     "id": "rt3",
+     "q": "`length(νω)` if `length(ν) = 4`, `ω = λ`?",
+     "a": "**4**"
+    },
+    {
+     "id": "rt4",
+     "q": "`|{0, 1}≤²|`?",
+     "a": "**7**",
+     "check": {
+      "kind": "calc",
+      "expr": "len(upto({'0','1'}, 2))",
+      "expect": 7
+     }
+    }
+   ]
+  },
+  {
+   "type": "recap",
+   "lines": [
+    "Alphabet Σ, words, λ, length, concatenation (not commutative).",
+    "`Σ⁰ = {λ}`, `Σ¹ = Σ`, `Σ* = ⋃ Σᵏ`, `Σ⁺ = Σ* \\ {λ}`, `Σ≤ⁿ = Σ⁰ ∪ … ∪ Σⁿ`.",
+    "`|Σ≤ⁿ| = (|Σ|ⁿ⁺¹ − 1)/(|Σ| − 1)` for `|Σ| ≥ 2`.",
+    "Languages are sets: `Σ* ∩ Ψ* = (Σ ∩ Ψ)*`, but `Σ* ∪ Ψ* ≠ (Σ ∪ Ψ)*` in general.",
+    "Grammar rules → a set description `{νω : …}`."
+   ]
+  },
+  {
+   "type": "links",
+   "id": "links",
+   "sub": "Free, from universities. Try them after the ladder above.",
+   "items": [
+    {
+     "title": "Mathematics for Computer Science — Section 4.2, Sequences (strings over an alphabet)",
+     "url": "https://courses.csail.mit.edu/6.042/spring18/mcs.pdf",
+     "source": "MIT",
+     "checked": "24 Sep 2026",
+     "note": "Strings, `A*` and concatenation, with problems."
+    }
+   ]
+  }
+ ],
+ "checks": [
+  {
+   "kind": "calc",
+   "expr": "match(r'[a-z][a-z0-9._-]*', 'orders.v2') and match(r'[a-z][a-z0-9._-]*', 'user_events-dlq')"
+  },
+  {
+   "kind": "calc",
+   "expr": "not match(r'[a-z][a-z0-9._-]*', '2orders') and not match(r'[a-z][a-z0-9._-]*', 'Orders')"
+  }
+ ],
+ "sources": "Lecture slides: Week 1 slides 42–45 (alphabets, words, λ, Σᵏ, Σ*, Σ⁺, Σ≤ⁿ, languages, grammars, 1.3.10(e)(f)). The grammar notation follows Problem set 2, Q2(b). All alphabets, grammars and words in the practice are original.",
+ "prev": {
+  "href": "../s3-power-sets-intervals-products/",
+  "label": "S3 · Power Sets, Intervals & Products"
+ },
+ "next": {
+  "href": "../r1-and-or-not/",
+  "label": "R1 · AND, OR, NOT from Zero"
+ }
+}

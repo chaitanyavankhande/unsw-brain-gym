@@ -1,0 +1,1213 @@
+{
+ "id": "comp9020-l7",
+ "course": {
+  "code": "COMP9020",
+  "href": "../"
+ },
+ "code": "L7",
+ "emoji": "🗺️",
+ "title": "CNF, DNF & K-maps",
+ "eyebrow": "COMP9020 · Week 2 · Normal forms and Karnaugh maps",
+ "minutes": 55,
+ "verified": true,
+ "goal": "Recognise and produce CNF and DNF, write the canonical DNF from a truth table, and read an optimal expression off a 3- or 4-variable Karnaugh map.",
+ "magic": [
+  "DNF: OR of AND-blocks. CNF: AND of OR-blocks. `′` only on letters.",
+  "Convert: arrows out → negations down → distribute.",
+  "Canonical DNF: one full product per 1-row.",
+  "K-map order `yz, yz′, y′z′, y′z`; edges wrap; the four corners touch.",
+  "Fewest, largest rectangles of 1/2/4/8; never cover a blank; keep the unchanging letters."
+ ],
+ "blocks": [
+  {
+   "type": "section",
+   "id": "learn",
+   "title": "💡 Learn it, one idea at a time"
+  },
+  {
+   "type": "idea",
+   "id": "c1",
+   "short": "CNF vs DNF",
+   "title": "Literals, clauses, CNF and DNF",
+   "summary": "DNF = a sum of products (OR of ANDs). CNF = a product of sums (AND of ORs). Only one level of nesting.",
+   "picture": "A restaurant rule in DNF: \"(burger AND fries) OR (salad AND soup)\": a list of complete combos, any one works. In CNF: \"(burger OR salad) AND (fries OR soup)\": a list of requirements, all must hold.",
+   "official": "A **literal** is `p` or `p′` (Week 2, slide 58). **CNF**: a product `∏ Cᵢ` where each clause `Cᵢ` is a **sum** of literals, e.g. `p + q + r′`. **DNF**: a sum `∑ Cᵢ` where each clause is a **product** of literals, e.g. `pqr′`. A clause can be a single literal. No deeper nesting allowed (slide 59). So `p + q′` is CNF (1 clause) and DNF (2 clauses); `rs′t′` is CNF (3 clauses) and DNF (1 clause).",
+   "watch": {
+    "q": "Classify `(a + b′)(a′ + c)`, `ab′ + c` and `(ab)′`.",
+    "steps": [
+     "`(a + b′)(a′ + c)`: a product of two sums of literals → **CNF** (2 clauses).",
+     "`ab′ + c`: a sum of two products of literals (`c` is a one-literal product) → **DNF**.",
+     "`(ab)′`: the `′` sits on a product, not on a single letter → **neither** (push it in first: `a′ + b′`, which is both)."
+    ],
+    "answer": "**CNF · DNF · neither.**"
+   },
+   "tries": [
+    {
+     "id": "c1a",
+     "q": "Is `x′ + y + z` in CNF, DNF, both or neither?",
+     "a": "**Both.**",
+     "why": "CNF with one clause `(x′ + y + z)`; DNF with three one-literal clauses."
+    },
+    {
+     "id": "c1b",
+     "q": "Is `(a + b)c + d` in CNF, DNF, both or neither?",
+     "a": "**Neither.**",
+     "why": "`(a + b)c` has a sum nested inside a product, inside a sum: too deep. Expand: `ac + bc + d` (DNF)."
+    },
+    {
+     "id": "c1c",
+     "q": "Is `pq′r` in CNF, DNF, both or neither?",
+     "a": "**Both.**",
+     "why": "DNF with one clause; CNF with three one-literal clauses."
+    },
+    {
+     "id": "c1d",
+     "q": "Is `(p + q)(r + s′)(t)` in CNF?",
+     "a": "**Yes** (3 clauses; `t` is a one-literal clause).",
+     "why": "Every factor is a sum of literals."
+    }
+   ],
+   "trap": {
+    "tempting": "`(ab)′` is fine in a DNF because it only has literals in it.",
+    "correct": "In CNF/DNF, `′` may only sit on a **single letter**. `(ab)′` must first become `a′ + b′`.",
+    "test": "Look for a `′` after a bracket. If there is one, it's not in normal form yet."
+   },
+   "magic": "DNF: OR of AND-blocks. CNF: AND of OR-blocks. `′` only on letters."
+  },
+  {
+   "type": "idea",
+   "id": "c2",
+   "short": "Converting",
+   "title": "Converting any expression to CNF or DNF",
+   "summary": "Remove `⇒`/`⇔`, push `′` down to the letters, then distribute.",
+   "picture": "Like refactoring nested `if`s into a flat list of cases (DNF) or a flat list of guard checks (CNF).",
+   "official": "**Theorem** (Week 2, slide 60): every Boolean expression has an equivalent CNF and an equivalent DNF. Method (slides 60–61): (0) eliminate `⇒` with `A ⇒ B ≡ ¬A ∨ B` (and `⇔` with its definition); (1) push negations down to the atoms with De Morgan and double negation; (2) distribute: `x + (y₁ · … · yₙ) = (x + y₁) · … · (x + yₙ)` for CNF, `x(y₁ + … + yₙ) = xy₁ + … + xyₙ` for DNF. The lecture's example turns `¬(¬p ∧ ((r ∧ s) ⇒ q))` into the CNF `(p + r)(p + s)(p + q′)`.",
+   "watch": {
+    "q": "Convert `(p ⇒ q) ⇒ r` to DNF, then to CNF.",
+    "steps": [
+     "Remove arrows: `¬(¬p ∨ q) ∨ r`.",
+     "Push `¬` in (De Morgan): `(p ∧ ¬q) ∨ r`, i.e. `pq′ + r`. That's **DNF**.",
+     "For CNF, distribute `r +` over the product: `(p + r)(q′ + r)`."
+    ],
+    "answer": "**DNF `pq′ + r`**, **CNF `(p + r)(q′ + r)`**."
+   },
+   "tries": [
+    {
+     "id": "c2a",
+     "q": "Convert `¬(p ∨ (q ∧ ¬r))` to CNF.",
+     "a": "**`p′(q′ + r)`**",
+     "why": "De Morgan: `p′ · (qr′)′` = `p′(q′ + r)`. Two clauses: `p′` and `q′ + r`.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:p′(q′ + r)",
+      "g": "¬(p ∨ (q ∧ ¬r))",
+      "expect": true
+     }
+    },
+    {
+     "id": "c2b",
+     "q": "Convert the same `¬(p ∨ (q ∧ ¬r))` to DNF.",
+     "a": "**`p′q′ + p′r`**",
+     "why": "Distribute `p′` over `(q′ + r)`.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:p′q′ + p′r",
+      "g": "¬(p ∨ (q ∧ ¬r))",
+      "expect": true
+     }
+    },
+    {
+     "id": "c2c",
+     "q": "Write `p ⇔ q` in DNF and in CNF.",
+     "a": "**DNF `pq + p′q′`**, **CNF `(p′ + q)(p + q′)`**.",
+     "why": "DNF: both true or both false. CNF: `(p ⇒ q) ∧ (q ⇒ p)` with each arrow as a sum.",
+     "check": [
+      {
+       "kind": "equiv",
+       "f": "BA:pq + p′q′",
+       "g": "p ⇔ q",
+       "expect": true
+      },
+      {
+       "kind": "equiv",
+       "f": "BA:(p′ + q)(p + q′)",
+       "g": "p ⇔ q",
+       "expect": true
+      }
+     ]
+    },
+    {
+     "id": "c2d",
+     "q": "Convert `(a + b)(c + d)` to DNF.",
+     "a": "**`ac + ad + bc + bd`**",
+     "why": "Multiply out every pair, like `(a + b)(c + d)` in school algebra.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:ac + ad + bc + bd",
+      "g": "BA:(a + b)(c + d)",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Distribute first, deal with the `′`s later.",
+    "correct": "Push every `′` down to the letters **first**. Distributing over a negated bracket gives wrong results.",
+    "test": "Before distributing, scan for `′` after a bracket. None left? Now distribute."
+   },
+   "magic": "Arrows out → negations down → distribute."
+  },
+  {
+   "type": "idea",
+   "id": "c3",
+   "short": "Canonical DNF",
+   "title": "Canonical DNF: one product per true row",
+   "summary": "Read the truth table: every row with output 1 becomes one full product of literals. OR them together.",
+   "picture": "A guest list written in full: instead of \"everyone from marketing\", you list every single allowed person. Long, but uniquely determined by the rule.",
+   "official": "For an assignment `π`, let `ℓᵢ = xᵢ` if `π(xᵢ) = 1` and `ℓᵢ = xᵢ′` if `π(xᵢ) = 0`, and `t_π = ℓ₁ · … · ℓₙ` (Week 2, slide 62). The **canonical DNF** is `E^dnf = ∑_{E(π) = 1} t_π` (every true row, every variable in every term). To expand a shorter term, multiply by `(z + z′)` for each missing variable (slide 65: `xy = xy(z + z′) = xyz + xyz′`). Example (slide 63): the table with outputs 1, 0, 1, 1 for `xy` = 00, 01, 10, 11 gives `x′y′ + xy′ + xy`, which simplifies to `x + y′`.",
+   "watch": {
+    "q": "Find the canonical DNF of `E` where `E = 1` exactly for `(x, y)` = `(0, 1)`, `(1, 0)`, `(1, 1)`.",
+    "steps": [
+     "Row `(0, 1)` → `x′y`.",
+     "Row `(1, 0)` → `xy′`.",
+     "Row `(1, 1)` → `xy`.",
+     "OR them."
+    ],
+    "answer": "**`x′y + xy′ + xy`** (which simplifies to `x + y`)."
+   },
+   "tries": [
+    {
+     "id": "c3a",
+     "q": "Canonical DNF of `x′z` in the variables `x, y, z`?",
+     "a": "**`x′yz + x′y′z`**",
+     "why": "Multiply by `(y + y′)`: `x′z(y + y′)`.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:x′yz + x′y′z",
+      "g": "BA:x′z",
+      "expect": true
+     }
+    },
+    {
+     "id": "c3b",
+     "q": "Canonical DNF of `y` in the variables `x, y, z`? How many terms?",
+     "a": "**4 terms:** `xyz + xyz′ + x′yz + x′yz′`.",
+     "why": "Two missing variables → `2² = 4` full products.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:xyz + xyz′ + x′yz + x′yz′",
+      "g": "BA:y",
+      "expect": true
+     }
+    },
+    {
+     "id": "c3c",
+     "q": "Canonical DNF of `x′z + y` in `x, y, z`? How many terms?",
+     "a": "**5 terms:** `xyz + xyz′ + x′yz + x′yz′ + x′y′z`.",
+     "why": "`y` gives the 4 rows with `y = 1`. `x′z` gives `x′yz` (already there) and `x′y′z` (new). One term per true row.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:xyz + xyz′ + x′yz + x′yz′ + x′y′z",
+      "g": "BA:x′z + y",
+      "expect": true
+     }
+    },
+    {
+     "id": "c3d",
+     "q": "How many terms does the canonical DNF of `0` have? And of `1` (in 3 variables)?",
+     "a": "**0 terms** (the empty sum is 0) and **8 terms** (every row is true).",
+     "why": "One term per true row.",
+     "check": {
+      "kind": "calc",
+      "expr": "2**3",
+      "expect": 8
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "The canonical DNF is the shortest DNF.",
+    "correct": "Canonical = **every** true row written out in full. It's usually long; the shortest form comes from simplifying (or a K-map).",
+    "test": "Count: canonical DNF terms = number of 1-rows in the table."
+   },
+   "magic": "One full product per 1-row."
+  },
+  {
+   "type": "idea",
+   "id": "c4",
+   "short": "K-map layout",
+   "title": "Karnaugh maps: the truth table folded so neighbours differ by one letter",
+   "summary": "Columns go `yz, yz′, y′z′, y′z`: each step changes exactly one letter, and the ends wrap around.",
+   "picture": "Seats around a round table: everyone has two neighbours, including the first and last seats, which are next to each other.",
+   "official": "For `k = 2, 3, 4` variables, a K-map is a rectangle of `2ᵏ` cells, one per row of the truth table (Week 2, slide 66). The slides order the columns `yz, yz′, y′z′, y′z` and, for 4 variables, the rows `wx, wx′, w′x′, w′x`. Neighbouring cells differ in **one** letter, and the map is a **torus**: the left edge touches the right edge, and the top touches the bottom (slide 67). Mark the cells where the function is 1 with `+`.",
+   "watch": {
+    "q": "Where do the `+`s go for `x′y′z + xyz′`?",
+    "steps": [
+     "`x′y′z`: row `x′`, column `y′z` (the last column).",
+     "`xyz′`: row `x`, column `yz′` (the second column).",
+     "Every other cell stays blank (0)."
+    ],
+    "answer": "Two `+`s: row `x′` / column `y′z`, and row `x` / column `yz′`."
+   },
+   "tries": [
+    {
+     "id": "c4a",
+     "q": "In the 3-variable map, which cells are neighbours of `x′yz′` (row `x′`, column `yz′`)?",
+     "a": "**3 neighbours:** `xyz′` (same column, other row), `x′yz` (left), `x′y′z′` (right).",
+     "why": "Each neighbour changes exactly one letter: `x`, `z`, or `y`."
+    },
+    {
+     "id": "c4b",
+     "q": "Are the columns `yz` and `y′z` neighbours?",
+     "a": "**Yes**, around the edge.",
+     "why": "They differ only in `y`. The map wraps: the first and last columns are adjacent."
+    },
+    {
+     "id": "c4c",
+     "q": "Why is the column order `yz, yz′, y′z′, y′z` and not the binary order `yz, yz′, y′z, y′z′`?",
+     "a": "So that every step changes **one** letter. In binary order, `yz′ → y′z` changes both `y` and `z`, and neighbours could no longer be merged.",
+     "why": "This one-letter-at-a-time order is a Gray code."
+    }
+   ],
+   "trap": {
+    "tempting": "Write the columns in binary order `11, 10, 01, 00`.",
+    "correct": "Use the one-change order (slide 66): `yz, yz′, y′z′, y′z` = `11, 10, 00, 01`.",
+    "test": "Read neighbouring labels: exactly one letter should flip."
+   },
+   "magic": "Neighbour = one letter different. Edges wrap."
+  },
+  {
+   "type": "idea",
+   "id": "c5",
+   "short": "Reading a K-map",
+   "title": "Cover the `+`s with the fewest, largest rectangles",
+   "summary": "Rectangles of 1, 2, 4 or 8 cells, never covering a blank, as large as possible, as few as possible. Each rectangle gives one product.",
+   "picture": "Covering spilled paint with rectangular stickers: use the biggest stickers you can, as few as possible, and never cover the clean floor.",
+   "official": "Rules (Week 2, slide 67): cover every `+` cell; **never** cover an empty cell (those are 0s); rectangles have sides of 1, 2 or 4 cells (3 adjacent cells are useless); they may wrap around the edges; each must be as large as possible; use as few as possible. A rectangle's product keeps only the letters that are **constant** across it. Lecture exercise (slide 67): the map with `+` at `xyz, xyz′, xy′z, x′yz, x′y′z′, x′y′z` gives `f = xy + x′y′ + z`.",
+   "watch": {
+    "q": "Read this map: `+` at row `x`: `y′z′`, `y′z`; row `x′`: `yz`, `y′z`.",
+    "steps": [
+     "Row `x`, columns `y′z′`, `y′z`: a 1×2 rectangle. Constant: `x`, `y′`. Product `xy′`.",
+     "Row `x′`, columns `yz` and `y′z`: they touch around the edge. Constant: `x′`, `z`. Product `x′z`.",
+     "Could one rectangle be bigger? A 2×2 would need blank cells. No."
+    ],
+    "answer": "**`xy′ + x′z`**"
+   },
+   "tries": [
+    {
+     "id": "c5a",
+     "q": "Find the optimal expression for this map (fewest, largest rectangles).",
+     "a": "**`z + xy`**",
+     "why": "The four `z` cells (columns `yz` and `y′z`, which wrap) form a 2×2 block: `z`. The last `+` (`xyz′`) pairs with `xyz` to its left: `xy`.",
+     "grid": {
+      "title": "K-map (+ = 1, blank = 0)",
+      "cols": [
+       "",
+       "yz",
+       "yz′",
+       "y′z′",
+       "y′z"
+      ],
+      "rows": [
+       [
+        "x",
+        "+",
+        "+",
+        "",
+        "+"
+       ],
+       [
+        "x′",
+        "+",
+        "",
+        "",
+        "+"
+       ]
+      ]
+     },
+     "check": {
+      "kind": "equiv",
+      "f": "BA:z + xy",
+      "g": "BA:xyz + xyz′ + xy′z + x′yz + x′y′z",
+      "expect": true
+     }
+    },
+    {
+     "id": "c5b",
+     "q": "Find the optimal expression for this map (fewest, largest rectangles).",
+     "a": "**`xz′ + x′z`**",
+     "why": "Row `x`: `yz′`, `y′z′` side by side → `xz′`. Row `x′`: `yz` and `y′z` wrap around → `x′z`. (It's `x ⊕ z`.)",
+     "wrong": "If you wrote four separate products: the `x′` cells are neighbours across the edge.",
+     "grid": {
+      "title": "K-map (+ = 1, blank = 0)",
+      "cols": [
+       "",
+       "yz",
+       "yz′",
+       "y′z′",
+       "y′z"
+      ],
+      "rows": [
+       [
+        "x",
+        "",
+        "+",
+        "+",
+        ""
+       ],
+       [
+        "x′",
+        "+",
+        "",
+        "",
+        "+"
+       ]
+      ]
+     },
+     "check": {
+      "kind": "equiv",
+      "f": "BA:xz′ + x′z",
+      "g": "BA:xyz′ + xy′z′ + x′yz + x′y′z",
+      "expect": true
+     }
+    },
+    {
+     "id": "c5c",
+     "q": "Find the optimal expression for this map (fewest, largest rectangles).",
+     "a": "**`z′ + xy`**",
+     "why": "The four `z′` cells (the two middle columns) form a 2×2 block: `z′`. The `+` at `xyz` pairs with `xyz′`: `xy`.",
+     "grid": {
+      "title": "K-map (+ = 1, blank = 0)",
+      "cols": [
+       "",
+       "yz",
+       "yz′",
+       "y′z′",
+       "y′z"
+      ],
+      "rows": [
+       [
+        "x",
+        "+",
+        "+",
+        "+",
+        ""
+       ],
+       [
+        "x′",
+        "",
+        "+",
+        "+",
+        ""
+       ]
+      ]
+     },
+     "check": {
+      "kind": "equiv",
+      "f": "BA:z′ + xy",
+      "g": "BA:xyz + xyz′ + xy′z′ + x′yz′ + x′y′z′",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "A rectangle of 3 cells in a row is fine.",
+    "correct": "Sides must be 1, 2 or 4. Three `+`s in a row need two overlapping rectangles of 2.",
+    "test": "Count each side of every rectangle: 1, 2 or 4 only."
+   },
+   "magic": "Biggest legal rectangles, fewest of them; keep the letters that don't change."
+  },
+  {
+   "type": "idea",
+   "id": "c6",
+   "short": "4-variable maps",
+   "title": "Four variables: a 4×4 map that wraps both ways",
+   "summary": "Rows `wx, wx′, w′x′, w′x`, columns `yz, yz′, y′z′, y′z`. Rectangles of 1, 2, 4, 8 or 16; the four corners are one block.",
+   "picture": "A world map on a doughnut: walk off the right edge and you appear on the left; walk off the top and you appear at the bottom. The four corners all touch.",
+   "official": "Same rules with 16 cells (Week 2, slides 69–70: 10.6.6(c)). A block of 4 kills 2 letters, a block of 8 kills 3. The **four corners** are adjacent (they differ in one letter pairwise around the torus), so they form one block of 4.",
+   "watch": {
+    "q": "Read this 4-variable map: `+` in columns `y′z` (all four rows) and in rows `wx`, `wx′` at columns `yz`, `yz′`.",
+    "steps": [
+     "Column `y′z`, all rows: a 4×1 block. Constant: `y′`, `z` → `y′z`.",
+     "Rows `wx`, `wx′` × columns `yz`, `yz′`: a 2×2 block. Constant: `w`, `y` → `wy`.",
+     "Every `+` is covered; no blank is."
+    ],
+    "answer": "**`y′z + wy`**"
+   },
+   "tries": [
+    {
+     "id": "c6a",
+     "q": "Find the optimal expression for this map (fewest, largest rectangles).",
+     "a": "**`xz + x′z′`**",
+     "why": "Rows `wx`, `w′x` (they wrap top–bottom) × columns `yz`, `y′z` (they wrap left–right): the **four corners**, a block of 4 → `xz`. The middle 2×2 (rows `wx′`, `w′x′` × columns `yz′`, `y′z′`) → `x′z′`.",
+     "grid": {
+      "title": "K-map (+ = 1, blank = 0)",
+      "cols": [
+       "",
+       "yz",
+       "yz′",
+       "y′z′",
+       "y′z"
+      ],
+      "rows": [
+       [
+        "wx",
+        "+",
+        "",
+        "",
+        "+"
+       ],
+       [
+        "wx′",
+        "",
+        "+",
+        "+",
+        ""
+       ],
+       [
+        "w′x′",
+        "",
+        "+",
+        "+",
+        ""
+       ],
+       [
+        "w′x",
+        "+",
+        "",
+        "",
+        "+"
+       ]
+      ]
+     },
+     "check": {
+      "kind": "equiv",
+      "f": "BA:xz + x′z′",
+      "g": "BA:wxyz + wxy′z + wx′yz′ + wx′y′z′ + w′xyz + w′xy′z + w′x′yz′ + w′x′y′z′",
+      "expect": true
+     }
+    },
+    {
+     "id": "c6b",
+     "q": "Find the optimal expression for this map (fewest, largest rectangles).",
+     "a": "**`xz′ + x′yz`**",
+     "why": "Rows `wx`, `w′x` (wrap) × columns `yz′`, `y′z′` → block of 4, constant `x`, `z′` → `xz′`. The two `+`s in column `yz`, rows `wx′`, `w′x′` → `x′yz`.",
+     "grid": {
+      "title": "K-map (+ = 1, blank = 0)",
+      "cols": [
+       "",
+       "yz",
+       "yz′",
+       "y′z′",
+       "y′z"
+      ],
+      "rows": [
+       [
+        "wx",
+        "",
+        "+",
+        "+",
+        ""
+       ],
+       [
+        "wx′",
+        "+",
+        "",
+        "",
+        ""
+       ],
+       [
+        "w′x′",
+        "+",
+        "",
+        "",
+        ""
+       ],
+       [
+        "w′x",
+        "",
+        "+",
+        "+",
+        ""
+       ]
+      ]
+     },
+     "check": {
+      "kind": "equiv",
+      "f": "BA:xz′ + x′yz",
+      "g": "BA:wxyz′ + wxy′z′ + wx′yz + w′xyz′ + w′xy′z′ + w′x′yz",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Corners are far apart, so they can't be grouped.",
+    "correct": "The map wraps both ways, so the four corners are mutual neighbours and form one block of 4.",
+    "test": "Check the labels: corner cells differ by one letter from their wrap-around neighbours."
+   },
+   "magic": "A block of 2ᵐ cells removes `m` letters. Corners touch."
+  },
+  {
+   "type": "section",
+   "id": "practice",
+   "title": "🏋️ Practice ladder"
+  },
+  {
+   "type": "practice",
+   "id": "p-green",
+   "level": "green",
+   "items": [
+    {
+     "id": "g1",
+     "q": "A rectangle covers the cells `xyz′` and `xy′z′`. Its product?",
+     "a": "**`xz′`**",
+     "why": "`y` changes, so it drops out; `x` and `z′` stay.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:xz′",
+      "g": "BA:xyz′ + xy′z′",
+      "expect": true
+     }
+    },
+    {
+     "id": "g2",
+     "q": "A 2×2 block covers `xyz, xy′z, x′yz, x′y′z`. Its product?",
+     "a": "**`z`**",
+     "why": "`x` and `y` both change; only `z` is constant.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:z",
+      "g": "BA:xyz + xy′z + x′yz + x′y′z",
+      "expect": true
+     }
+    },
+    {
+     "id": "g3",
+     "q": "Is `a′b + c′` in DNF?",
+     "a": "**Yes.**",
+     "why": "A sum of products of literals (`c′` is a one-literal product)."
+    },
+    {
+     "id": "g4",
+     "q": "Is `(a + b)′c` in CNF?",
+     "a": "**No.**",
+     "why": "`(a + b)′` puts `′` on a bracket. Pushed in: `a′b′c`, which is both CNF and DNF.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:(a + b)′c",
+      "g": "BA:a′b′c",
+      "expect": true
+     }
+    },
+    {
+     "id": "g5",
+     "q": "How many cells in a 4-variable K-map?",
+     "a": "**16**",
+     "why": "`2⁴`.",
+     "check": {
+      "kind": "calc",
+      "expr": "2**4",
+      "expect": 16
+     }
+    },
+    {
+     "id": "g6",
+     "q": "How many terms in the canonical DNF of `xy′` (variables `x, y, z`)?",
+     "a": "**2:** `xy′z + xy′z′`.",
+     "why": "One missing variable → 2 terms.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:xy′z + xy′z′",
+      "g": "BA:xy′",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-yellow",
+   "level": "yellow",
+   "items": [
+    {
+     "id": "y1",
+     "q": "Convert `(a ⇒ b) ∧ (b ⇒ c)` to CNF.",
+     "a": "**`(a′ + b)(b′ + c)`**",
+     "why": "Each arrow becomes a sum; the `∧` is already the top level.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:(a′ + b)(b′ + c)",
+      "g": "(a ⇒ b) ∧ (b ⇒ c)",
+      "expect": true
+     }
+    },
+    {
+     "id": "y2",
+     "q": "Convert `(a ⇒ b) ∧ (b ⇒ c)` to DNF (then drop any `0` terms).",
+     "a": "**`a′b′ + a′c + bc`**",
+     "why": "Multiply out: `a′b′ + a′c + bb′ + bc`, and `bb′ = 0`. (`a′c` is even redundant by consensus: `a′b′ + bc` is enough.)",
+     "check": [
+      {
+       "kind": "equiv",
+       "f": "BA:a′b′ + a′c + bc",
+       "g": "(a ⇒ b) ∧ (b ⇒ c)",
+       "expect": true
+      },
+      {
+       "kind": "equiv",
+       "f": "BA:a′b′ + bc",
+       "g": "(a ⇒ b) ∧ (b ⇒ c)",
+       "expect": true
+      }
+     ]
+    },
+    {
+     "id": "y3",
+     "q": "Canonical DNF of the function that is 1 exactly on the rows `(x, y, z)` = `(1, 1, 0)`, `(0, 0, 1)`, `(0, 1, 1)`.",
+     "a": "**`xyz′ + x′y′z + x′yz`**",
+     "why": "One full product per 1-row: `1 → x`, `0 → x′`, and so on."
+    },
+    {
+     "id": "y4",
+     "q": "Simplify that canonical DNF `xyz′ + x′y′z + x′yz`.",
+     "a": "**`xyz′ + x′z`**",
+     "why": "`x′y′z + x′yz = x′z` (opposites). `xyz′` has no partner.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:xyz′ + x′z",
+      "g": "BA:xyz′ + x′y′z + x′yz",
+      "expect": true
+     }
+    },
+    {
+     "id": "y5",
+     "q": "Convert `¬(a ⇔ b)` to DNF.",
+     "a": "**`ab′ + a′b`**",
+     "why": "Exactly one of them is true.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:ab′ + a′b",
+      "g": "¬(a ⇔ b)",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-red",
+   "level": "red",
+   "sub": "Exam style: read an optimal expression off a K-map (like the lecture's 10.4.2 and 10.6.6(c)). All maps are original.",
+   "items": [
+    {
+     "id": "r1",
+     "q": "Find the optimal expression for this map (fewest, largest rectangles).",
+     "a": "**`x′ + y′z`**",
+     "why": "The whole `x′` row (4 cells) → `x′`. The remaining `+` at `xy′z` pairs with `x′y′z` below it → `y′z`.",
+     "grid": {
+      "title": "K-map (+ = 1, blank = 0)",
+      "cols": [
+       "",
+       "yz",
+       "yz′",
+       "y′z′",
+       "y′z"
+      ],
+      "rows": [
+       [
+        "x",
+        "",
+        "",
+        "",
+        "+"
+       ],
+       [
+        "x′",
+        "+",
+        "+",
+        "+",
+        "+"
+       ]
+      ]
+     },
+     "check": {
+      "kind": "equiv",
+      "f": "BA:x′ + y′z",
+      "g": "BA:xy′z + x′yz + x′yz′ + x′y′z + x′y′z′",
+      "expect": true
+     }
+    },
+    {
+     "id": "r2",
+     "q": "Find the optimal expression for this map (fewest, largest rectangles).",
+     "a": "**`y + xz′`**",
+     "why": "Columns `yz`, `yz′` in both rows → `y`. The `+` at `xy′z′` pairs with `xyz′` → `xz′`.",
+     "grid": {
+      "title": "K-map (+ = 1, blank = 0)",
+      "cols": [
+       "",
+       "yz",
+       "yz′",
+       "y′z′",
+       "y′z"
+      ],
+      "rows": [
+       [
+        "x",
+        "+",
+        "+",
+        "+",
+        ""
+       ],
+       [
+        "x′",
+        "+",
+        "+",
+        "",
+        ""
+       ]
+      ]
+     },
+     "check": {
+      "kind": "equiv",
+      "f": "BA:y + xz′",
+      "g": "BA:xyz + xyz′ + xy′z′ + x′yz + x′yz′",
+      "expect": true
+     }
+    },
+    {
+     "id": "r3",
+     "q": "Find the optimal expression for this map (fewest, largest rectangles).",
+     "a": "**`xy + x′y′`**",
+     "why": "Row `x`, columns `yz`, `yz′` → `xy`. Row `x′`, columns `y′z′`, `y′z` → `x′y′`. No 2×2 is possible.",
+     "grid": {
+      "title": "K-map (+ = 1, blank = 0)",
+      "cols": [
+       "",
+       "yz",
+       "yz′",
+       "y′z′",
+       "y′z"
+      ],
+      "rows": [
+       [
+        "x",
+        "+",
+        "+",
+        "",
+        ""
+       ],
+       [
+        "x′",
+        "",
+        "",
+        "+",
+        "+"
+       ]
+      ]
+     },
+     "check": {
+      "kind": "equiv",
+      "f": "BA:xy + x′y′",
+      "g": "BA:xyz + xyz′ + x′y′z + x′y′z′",
+      "expect": true
+     }
+    },
+    {
+     "id": "r4",
+     "q": "Find the optimal expression for this map (fewest, largest rectangles).",
+     "a": "**`wx + yz`**",
+     "why": "The whole `wx` row → `wx`. The whole `yz` column → `yz`. They overlap at `wxyz`, which is allowed.",
+     "grid": {
+      "title": "K-map (+ = 1, blank = 0)",
+      "cols": [
+       "",
+       "yz",
+       "yz′",
+       "y′z′",
+       "y′z"
+      ],
+      "rows": [
+       [
+        "wx",
+        "+",
+        "+",
+        "+",
+        "+"
+       ],
+       [
+        "wx′",
+        "+",
+        "",
+        "",
+        ""
+       ],
+       [
+        "w′x′",
+        "+",
+        "",
+        "",
+        ""
+       ],
+       [
+        "w′x",
+        "+",
+        "",
+        "",
+        ""
+       ]
+      ]
+     },
+     "check": {
+      "kind": "equiv",
+      "f": "BA:wx + yz",
+      "g": "BA:wxyz + wxyz′ + wxy′z + wxy′z′ + wx′yz + w′xyz + w′x′yz",
+      "expect": true
+     }
+    },
+    {
+     "id": "r5",
+     "q": "Find the optimal expression for this map (fewest, largest rectangles).",
+     "a": "**`wy′ + w′yz′`**",
+     "why": "Rows `wx`, `wx′` × columns `y′z′`, `y′z` → `wy′`. Rows `w′x′`, `w′x` in column `yz′` → `w′yz′`.",
+     "grid": {
+      "title": "K-map (+ = 1, blank = 0)",
+      "cols": [
+       "",
+       "yz",
+       "yz′",
+       "y′z′",
+       "y′z"
+      ],
+      "rows": [
+       [
+        "wx",
+        "",
+        "",
+        "+",
+        "+"
+       ],
+       [
+        "wx′",
+        "",
+        "",
+        "+",
+        "+"
+       ],
+       [
+        "w′x′",
+        "",
+        "+",
+        "",
+        ""
+       ],
+       [
+        "w′x",
+        "",
+        "+",
+        "",
+        ""
+       ]
+      ]
+     },
+     "check": {
+      "kind": "equiv",
+      "f": "BA:wy′ + w′yz′",
+      "g": "BA:wxy′z + wxy′z′ + wx′y′z + wx′y′z′ + w′xyz′ + w′x′yz′",
+      "expect": true
+     }
+    },
+    {
+     "id": "r6",
+     "q": "Find the optimal expression for this map (fewest, largest rectangles).",
+     "a": "**`xz + w′x′z′`**",
+     "why": "Rows `wx`, `w′x` (wrap top–bottom) × columns `yz`, `y′z` (wrap left–right) → the four corners → `xz`. Row `w′x′`, columns `yz′`, `y′z′` → `w′x′z′`.",
+     "grid": {
+      "title": "K-map (+ = 1, blank = 0)",
+      "cols": [
+       "",
+       "yz",
+       "yz′",
+       "y′z′",
+       "y′z"
+      ],
+      "rows": [
+       [
+        "wx",
+        "+",
+        "",
+        "",
+        "+"
+       ],
+       [
+        "wx′",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "w′x′",
+        "",
+        "+",
+        "+",
+        ""
+       ],
+       [
+        "w′x",
+        "+",
+        "",
+        "",
+        "+"
+       ]
+      ]
+     },
+     "check": {
+      "kind": "equiv",
+      "f": "BA:xz + w′x′z′",
+      "g": "BA:wxyz + wxy′z + w′xyz + w′xy′z + w′x′yz′ + w′x′y′z′",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-boss",
+   "level": "boss",
+   "items": [
+    {
+     "id": "b1",
+     "q": "Find an optimal expression for this map. Is the answer unique?",
+     "a": "**Two optimal answers:** `xy + xz′ + x′y′` and `xy + y′z′ + x′y′`. Both use 3 rectangles of 2.",
+     "why": "`xy` and `x′y′` are forced. The last `+` (`xy′z′`) can join `xyz′` (giving `xz′`) or `x′y′z′` (giving `y′z′`). Minimal forms need not be unique.",
+     "grid": {
+      "title": "K-map (+ = 1, blank = 0)",
+      "cols": [
+       "",
+       "yz",
+       "yz′",
+       "y′z′",
+       "y′z"
+      ],
+      "rows": [
+       [
+        "x",
+        "+",
+        "+",
+        "+",
+        ""
+       ],
+       [
+        "x′",
+        "",
+        "",
+        "+",
+        "+"
+       ]
+      ]
+     },
+     "check": [
+      {
+       "kind": "equiv",
+       "f": "BA:xy + xz′ + x′y′",
+       "g": "BA:xyz + xyz′ + xy′z′ + x′y′z + x′y′z′",
+       "expect": true
+      },
+      {
+       "kind": "equiv",
+       "f": "BA:xy + y′z′ + x′y′",
+       "g": "BA:xyz + xyz′ + xy′z′ + x′y′z + x′y′z′",
+       "expect": true
+      }
+     ]
+    },
+    {
+     "id": "b2",
+     "q": "Find an optimal expression for this 4-variable map.",
+     "a": "**`x′z′ + w′x′ + wxyz`**",
+     "why": "Row `w′x′` (all 4) → `w′x′`. Rows `wx′`, `w′x′` × columns `yz′`, `y′z′` → `x′z′`. The lone `+` at `wxyz` has no `+` neighbour, so it stays a full product.",
+     "grid": {
+      "title": "K-map (+ = 1, blank = 0)",
+      "cols": [
+       "",
+       "yz",
+       "yz′",
+       "y′z′",
+       "y′z"
+      ],
+      "rows": [
+       [
+        "wx",
+        "+",
+        "",
+        "",
+        ""
+       ],
+       [
+        "wx′",
+        "",
+        "+",
+        "+",
+        ""
+       ],
+       [
+        "w′x′",
+        "+",
+        "+",
+        "+",
+        "+"
+       ],
+       [
+        "w′x",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ]
+     },
+     "check": {
+      "kind": "equiv",
+      "f": "BA:x′z′ + w′x′ + wxyz",
+      "g": "BA:wxyz + wx′yz′ + wx′y′z′ + w′x′yz + w′x′yz′ + w′x′y′z + w′x′y′z′",
+      "expect": true
+     }
+    },
+    {
+     "id": "b3",
+     "q": "Find an optimal expression for this map. How much shorter than the canonical DNF is it?",
+     "a": "**`x′y′ + x′z′ + y′z′ + xyz`**: 4 terms instead of 5 (and 9 literals instead of 15).",
+     "why": "The three pairs overlap at `x′y′z′`. `xyz` has no `+` neighbour. The function is \"at most one of `x, y, z` is true, or all three are\".",
+     "grid": {
+      "title": "K-map (+ = 1, blank = 0)",
+      "cols": [
+       "",
+       "yz",
+       "yz′",
+       "y′z′",
+       "y′z"
+      ],
+      "rows": [
+       [
+        "x",
+        "+",
+        "",
+        "+",
+        ""
+       ],
+       [
+        "x′",
+        "",
+        "+",
+        "+",
+        "+"
+       ]
+      ]
+     },
+     "check": {
+      "kind": "equiv",
+      "f": "BA:x′y′ + x′z′ + y′z′ + xyz",
+      "g": "BA:xyz + xy′z′ + x′yz′ + x′y′z + x′y′z′",
+      "expect": true
+     }
+    },
+    {
+     "id": "b4",
+     "q": "Why is covering an empty (0) cell never allowed, even if it makes a bigger rectangle?",
+     "a": "Every cell a rectangle covers becomes a 1 of the resulting expression. Covering a 0 changes the function.",
+     "why": "Bigger is only better among rectangles that stay inside the `+` cells."
+    },
+    {
+     "id": "b5",
+     "q": "Convert `(p ⇔ q) ⇒ r` to CNF.",
+     "a": "**`(p + q + r)(p′ + q′ + r)`**",
+     "why": "`≡ ¬(p ⇔ q) ∨ r ≡ (pq′ + p′q) + r`. For CNF: `pq′ + p′q = (p + q)(p′ + q′)`, then distribute `+ r` into each clause.",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:(p + q + r)(p′ + q′ + r)",
+      "g": "(p ⇔ q) ⇒ r",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-retest",
+   "level": "retest",
+   "items": [
+    {
+     "id": "rt1",
+     "q": "CNF, DNF, both or neither: `a + b′c`?",
+     "a": "**DNF only.**"
+    },
+    {
+     "id": "rt2",
+     "q": "Canonical DNF of `x′` in `x, y`?",
+     "a": "**`x′y + x′y′`**",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:x′y + x′y′",
+      "g": "BA:x′",
+      "expect": true
+     }
+    },
+    {
+     "id": "rt3",
+     "q": "Allowed rectangle sides in a K-map?",
+     "a": "**1, 2 or 4** (never 3)."
+    },
+    {
+     "id": "rt4",
+     "q": "Optimal expression for `+` at `xyz′`, `x′yz′`, `xy′z′`, `x′y′z′` (the two middle columns)?",
+     "a": "**`z′`**",
+     "check": {
+      "kind": "equiv",
+      "f": "BA:z′",
+      "g": "BA:xyz′ + x′yz′ + xy′z′ + x′y′z′",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "recap",
+   "lines": [
+    "Literal = `p` or `p′`. CNF = `∏(sums of literals)`, DNF = `∑(products of literals)`; one-literal clauses allowed.",
+    "Every expression has a CNF and a DNF: eliminate `⇒`, push `′` in, distribute.",
+    "Canonical DNF: a full product for each 1-row; expand short terms with `(z + z′)`.",
+    "K-maps: Gray order, wrap-around torus, rectangles of 1/2/4 per side, maximal and few, no 0s.",
+    "Block of `2ᵐ` cells → a product with `m` fewer letters. Optimal forms are not always unique."
+   ]
+  },
+  {
+   "type": "links",
+   "id": "links",
+   "sub": "Free, from universities. Try them after the ladder above.",
+   "items": [
+    {
+     "title": "MIT 6.111 — Synthesis of combinational logic (tutorial problems with answers)",
+     "url": "https://courses.csail.mit.edu/6.111/f2004/tutprobs/synthesis_answers.html",
+     "source": "MIT",
+     "checked": "24 Sep 2026",
+     "note": "Karnaugh-map and sum-of-products minimisation exercises, each with a worked answer."
+    },
+    {
+     "title": "MIT 6.004 Computation Structures — Notes, Chapter 7: Combinational Logic",
+     "url": "https://computationstructures.org/notes/combinational_logic/notes.html",
+     "source": "MIT",
+     "checked": "24 Sep 2026",
+     "note": "Sum-of-products synthesis and Boolean simplification."
+    }
+   ]
+  }
+ ],
+ "sources": "Lecture slides: Week 2 slides 58–70 (literals, CNF/DNF, the normal-form theorem, canonical DNF, 10.2.3, Karnaugh maps, 10.4.2, 10.6.6(c)). All maps and expressions in the practice are original.",
+ "prev": {
+  "href": "../l6-boolean-algebra/",
+  "label": "L6 · Boolean Algebra"
+ },
+ "next": {
+  "href": "../",
+  "label": "COMP9020 home"
+ }
+}

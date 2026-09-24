@@ -1,0 +1,752 @@
+{
+ "id": "comp9020-n2",
+ "course": {
+  "code": "COMP9020",
+  "href": "../"
+ },
+ "code": "N2",
+ "emoji": "🔢",
+ "title": "Divisibility, mod, gcd & lcm",
+ "eyebrow": "COMP9020 · Week 1 · Numbers",
+ "minutes": 45,
+ "verified": true,
+ "goal": "Use `m | n`, `mod`, gcd and lcm correctly (including negatives and 0), trace both versions of Euclid's algorithm, and do Quiz-1-style one-line calculations.",
+ "magic": [
+  "`m | n` ⇔ `n = k·m`, `k ∈ ℤ`. Everything divides 0.",
+  "`n mod m` is always in `0 … m − 1` (so `−7 mod 3 = 2`).",
+  "gcd and lcm are always positive; `gcd · lcm = |m| · |n|`.",
+  "Slow Euclid: larger − smaller. Fast: `(m, n) → (n, m mod n)` until `(g, 0)`."
+ ],
+ "blocks": [
+  {
+   "type": "section",
+   "id": "learn",
+   "title": "💡 Learn it, one idea at a time"
+  },
+  {
+   "type": "idea",
+   "id": "d1",
+   "short": "m | n",
+   "title": "`m | n`: `n` is a whole-number multiple of `m`",
+   "summary": "`m | n` means `n = k·m` for some integer `k`. It works for negatives and 0: everything divides 0, and 0 divides only 0.",
+   "picture": "12 cookies shared among 3 friends: everyone gets exactly 4, nothing left over. So `3 | 12`. Among 5 friends, 2 are left over, so `5 ∤ 12`.",
+   "official": "For `m, n ∈ ℤ`, `m | n` (\"`m` divides `n`\", \"`n` is divisible by `m`\", \"`n` is a multiple of `m`\") is defined by `n = k · m` for some `k ∈ ℤ` (Week 1, slide 14). `m ∤ n` is its negation. For every `m`: `1 | m`, `−1 | m`, `m | m`, `m | −m`. `n | 0` for every `n`; `0 ∤ n` unless `n = 0`.",
+   "watch": {
+    "q": "Decide `4 | −20`, `−3 | 10`, `0 | 0`.",
+    "steps": [
+     "`−20 = (−5) · 4`, and `−5 ∈ ℤ`: **yes**.",
+     "`10 = k · (−3)` would need `k = −10/3`, not an integer: **no**.",
+     "`0 = k · 0` holds for any `k` (e.g. `k = 1`): **yes**."
+    ],
+    "answer": "**Yes, no, yes.**"
+   },
+   "tries": [
+    {
+     "id": "d1a",
+     "q": "`3 | −12`?",
+     "a": "**Yes.**",
+     "why": "`−12 = (−4) · 3`.",
+     "check": {
+      "kind": "calc",
+      "expr": "divides(3, -12)"
+     }
+    },
+    {
+     "id": "d1b",
+     "q": "`−4 | 10`?",
+     "a": "**No.**",
+     "why": "`10 / (−4) = −2.5` is not an integer.",
+     "check": {
+      "kind": "calc",
+      "expr": "not divides(-4, 10)"
+     }
+    },
+    {
+     "id": "d1c",
+     "q": "`7 | 0`?",
+     "a": "**Yes.**",
+     "why": "`0 = 0 · 7`. Every integer divides 0.",
+     "check": {
+      "kind": "calc",
+      "expr": "divides(7, 0)"
+     }
+    },
+    {
+     "id": "d1d",
+     "q": "`0 | 5`?",
+     "a": "**No.**",
+     "why": "`k · 0 = 0 ≠ 5` for every `k`.",
+     "check": {
+      "kind": "calc",
+      "expr": "not divides(0, 5)"
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "`m | n` means \"`m` divided by `n`\", a number.",
+    "correct": "`m | n` is a **statement** (true or false): \"`m` divides `n`\". The small number is on the **left**.",
+    "test": "Read it aloud as \"`m` divides `n`\". `3 | 12` is true; `12 | 3` is false."
+   },
+   "magic": "`m | n` ⇔ `n = k·m` for an integer `k`. `n | 0` always."
+  },
+  {
+   "type": "idea",
+   "id": "d2",
+   "short": "n mod m",
+   "title": "`n mod m`: the remainder, always between 0 and `m − 1`",
+   "summary": "`n = k·m + r` with `0 ≤ r < m`. For negative `n` the remainder is still ≥ 0.",
+   "picture": "A clock with 12 hours: 17 o'clock is 5 o'clock (17 mod 12 = 5). Going 7 hours **back** from midnight lands on 5 o'clock too: −7 mod 12 = 5.",
+   "official": "`r = n mod m` is the remainder when `n` is divided by `m`, defined by `n = k · m + r` with `0 ≤ r < m` (Week 1, slide 14). **`m | n` if and only if `n mod m = 0`.** Warning for coders: Java/C `%` gives `−7 % 3 = −1`; the course's `mod` (like Python's `%`) gives `2`.",
+   "watch": {
+    "q": "Find `−7 mod 3`.",
+    "steps": [
+     "We need `−7 = k · 3 + r` with `0 ≤ r < 3`.",
+     "`k = −2` gives `r = −7 + 6 = −1`: negative, not allowed.",
+     "`k = −3` gives `r = −7 + 9 = 2`: allowed ✅."
+    ],
+    "answer": "**`−7 mod 3 = 2`**."
+   },
+   "tries": [
+    {
+     "id": "d2a",
+     "q": "`17 mod 5`?",
+     "a": "**2**",
+     "why": "`17 = 3 · 5 + 2`.",
+     "check": {
+      "kind": "calc",
+      "expr": "mod(17, 5)",
+      "expect": 2
+     }
+    },
+    {
+     "id": "d2b",
+     "q": "`5 mod 8`?",
+     "a": "**5**",
+     "why": "`5 = 0 · 8 + 5`. If `n < m` (and `n ≥ 0`), the remainder is `n` itself.",
+     "check": {
+      "kind": "calc",
+      "expr": "mod(5, 8)",
+      "expect": 5
+     }
+    },
+    {
+     "id": "d2c",
+     "q": "`−12 mod 4`? What does that tell you?",
+     "a": "**0**, so `4 | −12`.",
+     "why": "`−12 = (−3) · 4 + 0`.",
+     "check": {
+      "kind": "calc",
+      "expr": "mod(-12, 4)",
+      "expect": 0
+     }
+    },
+    {
+     "id": "d2d",
+     "q": "`−1 mod 10`?",
+     "a": "**9**",
+     "why": "`−1 = (−1) · 10 + 9`.",
+     "check": {
+      "kind": "calc",
+      "expr": "mod(-1, 10)",
+      "expect": 9
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "`−7 mod 3 = −1` (what Java prints).",
+    "correct": "The course requires `0 ≤ r < m`, so `−7 mod 3 = 2`.",
+    "test": "Check your remainder is in `0 … m − 1`. If it's negative, add `m`."
+   },
+   "magic": "`n = k·m + r`, `0 ≤ r < m`. `m | n` ⇔ `n mod m = 0`."
+  },
+  {
+   "type": "idea",
+   "id": "d3",
+   "short": "Primes & coprime",
+   "title": "Primes, and numbers with nothing in common",
+   "summary": "A prime is > 1 with divisors 1 and itself only. `m` and `n` are relatively prime when `gcd(m, n) = 1`.",
+   "picture": "Primes are LEGO bricks that can't be split. Two numbers are coprime if they share no brick: 8 = 2·2·2 and 15 = 3·5 have nothing in common.",
+   "official": "Numbers `> 1` divisible only by 1 and themselves are **prime**. Numbers `m, n` with `gcd(m, n) = 1` are **relatively prime** (Week 1, slide 15). Lecture exercise 1.2.12: two even integers are never relatively prime (2 divides both).",
+   "watch": {
+    "q": "Is 1 prime? Are 9 and 28 relatively prime?",
+    "steps": [
+     "Primes must be `> 1`, so **1 is not prime**.",
+     "`9 = 3 · 3`, `28 = 2 · 2 · 7`: no common prime factor, so `gcd(9, 28) = 1`."
+    ],
+    "answer": "**1 is not prime. 9 and 28 are relatively prime** (neither of them is prime!)."
+   },
+   "tries": [
+    {
+     "id": "d3a",
+     "q": "Is 91 prime?",
+     "a": "**No:** `91 = 7 · 13`.",
+     "why": "Check primes up to `√91 ≈ 9.5`: 2, 3, 5, 7.",
+     "check": {
+      "kind": "calc",
+      "expr": "not is_prime(91)"
+     }
+    },
+    {
+     "id": "d3b",
+     "q": "Are 21 and 35 relatively prime?",
+     "a": "**No:** both are divisible by 7.",
+     "why": "`gcd(21, 35) = 7`.",
+     "check": {
+      "kind": "calc",
+      "expr": "gcd(21, 35)",
+      "expect": 7
+     }
+    },
+    {
+     "id": "d3c",
+     "q": "Are 15 and 16 relatively prime?",
+     "a": "**Yes.**",
+     "why": "Neighbouring integers never share a divisor bigger than 1.",
+     "check": {
+      "kind": "calc",
+      "expr": "gcd(15, 16)",
+      "expect": 1
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Relatively prime means both numbers are prime.",
+    "correct": "It only means they share no divisor except 1. `8` and `9` are relatively prime; neither is prime.",
+    "test": "Compute the gcd. Is it 1?"
+   },
+   "magic": "Prime: `> 1`, only 1 and itself. Relatively prime: `gcd = 1`."
+  },
+  {
+   "type": "idea",
+   "id": "d4",
+   "short": "gcd & lcm",
+   "title": "gcd and lcm: always positive, and `gcd · lcm = |m| · |n|`",
+   "summary": "gcd = biggest common divisor, lcm = smallest positive common multiple. Signs are ignored. `gcd(0, n) = |n|`; `gcd(0, 0)` is undefined.",
+   "picture": "Two buses: one every 6 minutes, one every 10. They leave together again after `lcm(6, 10) = 30` minutes. The largest tile size that fits both a 6 m and a 10 m wall exactly is `gcd(6, 10) = 2` m.",
+   "official": "`gcd(m, n)` and `lcm(m, n)` are **always taken as positive**, even if `m` or `n` is negative: `gcd(−4, 6) = gcd(4, −6) = gcd(−4, −6) = 2` (Week 1, slide 15). `gcd(0, 0)` is undefined; `gcd(0, n) = |n|` for `n ≠ 0` (slide 18). **Fact** (slide 16): `gcd(m, n) · lcm(m, n) = |m| · |n|`. Lecture exercise 1.2.9: for positive `m, n`, `lcm(m, n) = m·n` exactly when they're relatively prime, and `lcm(m, n) = n` exactly when `m | n`.",
+   "watch": {
+    "q": "Find `gcd(12, 18)` and use it to get `lcm(12, 18)`.",
+    "steps": [
+     "Divisors of 12: 1, 2, 3, 4, 6, 12. Of 18: 1, 2, 3, 6, 9, 18. Largest common: **6**.",
+     "`lcm = |12| · |18| / gcd = 216 / 6 = 36`."
+    ],
+    "answer": "**`gcd = 6`, `lcm = 36`.**"
+   },
+   "tries": [
+    {
+     "id": "d4a",
+     "q": "`gcd(18, −24)`?",
+     "a": "**6**",
+     "why": "Signs don't matter; `gcd(18, 24) = 6`.",
+     "check": {
+      "kind": "calc",
+      "expr": "gcd(18, -24)",
+      "expect": 6
+     }
+    },
+    {
+     "id": "d4b",
+     "q": "`lcm(−6, 10)`?",
+     "a": "**30**",
+     "why": "Always positive: `lcm(6, 10) = 30`.",
+     "check": {
+      "kind": "calc",
+      "expr": "lcm(-6, 10)",
+      "expect": 30
+     }
+    },
+    {
+     "id": "d4c",
+     "q": "`gcd(0, −9)`?",
+     "a": "**9**",
+     "why": "`gcd(0, n) = |n|`: every integer divides 0, so the answer is the largest divisor of −9.",
+     "check": {
+      "kind": "calc",
+      "expr": "gcd(0, -9)",
+      "expect": 9
+     }
+    },
+    {
+     "id": "d4d",
+     "q": "`gcd(a, b) = 4` and `a · b = 480` (both positive). `lcm(a, b)`?",
+     "a": "**120**",
+     "why": "`lcm = 480 / 4`.",
+     "check": {
+      "kind": "calc",
+      "expr": "480 // 4",
+      "expect": 120
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "`lcm(m, n) = m · n`.",
+    "correct": "Only when `m` and `n` are relatively prime. In general `lcm = |m·n| / gcd`: `lcm(6, 10) = 60 / 2 = 30`.",
+    "test": "Check the gcd first. If it isn't 1, the product is too big."
+   },
+   "magic": "Both positive. `gcd · lcm = |m| · |n|`. `gcd(0, n) = |n|`."
+  },
+  {
+   "type": "idea",
+   "id": "d5",
+   "short": "Euclid (slow)",
+   "title": "Euclid's algorithm: subtract the smaller from the larger",
+   "summary": "Replace the larger number by the difference until both are equal. That number is the gcd.",
+   "picture": "Two ribbons, 21 cm and 15 cm. Cut the short length off the long one, again and again. When both pieces are equal, that length measures both ribbons exactly: it's the gcd.",
+   "official": "Week 1, slide 19: `f(m, n) = m` if `m = n`; `f(m − n, n)` if `m > n`; `f(m, n − m)` if `m < n`. For `m, n > 0` it always terminates. It works because `gcd(m, n) = gcd(m − n, n)` for `m > n`: every common divisor of `m` and `n` divides `m − n`, and conversely. (The course's `euclid.python` program implements exactly this.)",
+   "watch": {
+    "q": "Trace `f(21, 15)`.",
+    "steps": [
+     "`21 > 15` → `f(6, 15)`.",
+     "`6 < 15` → `f(6, 9)`.",
+     "`6 < 9` → `f(6, 3)`.",
+     "`6 > 3` → `f(3, 3)`.",
+     "Equal → return **3**."
+    ],
+    "answer": "`gcd(21, 15) = 3`."
+   },
+   "tries": [
+    {
+     "id": "d5a",
+     "q": "Trace `f(24, 9)`.",
+     "a": "`(24, 9) → (15, 9) → (6, 9) → (6, 3) → (3, 3)` → **3**.",
+     "why": "Always subtract the smaller from the larger.",
+     "check": {
+      "kind": "calc",
+      "expr": "gcd(24, 9)",
+      "expect": 3
+     }
+    },
+    {
+     "id": "d5b",
+     "q": "Trace `f(35, 14)`.",
+     "a": "`(35, 14) → (21, 14) → (7, 14) → (7, 7)` → **7**.",
+     "why": "Stop as soon as the two are equal.",
+     "check": {
+      "kind": "calc",
+      "expr": "gcd(35, 14)",
+      "expect": 7
+     }
+    },
+    {
+     "id": "d5c",
+     "q": "Why does `f` always stop for positive inputs? (The lecture's \"Proof?\")",
+     "a": "Each step replaces the larger number by a smaller **positive** number, so `m + n` strictly decreases but stays positive. A positive integer can't decrease forever, so the recursion ends.",
+     "why": "Termination argument: find a quantity that shrinks every step and can't go below a floor."
+    },
+    {
+     "id": "d5d",
+     "q": "Why does `d | m − n` and `d | n` give `d | m`? (The lecture's \"why?\")",
+     "a": "`m − n = a·d` and `n = b·d`, so `m = (m − n) + n = (a + b)·d`.",
+     "why": "Common divisors survive adding as well as subtracting."
+    }
+   ],
+   "trap": {
+    "tempting": "Subtract in a fixed direction, e.g. always `m − n`.",
+    "correct": "Subtract the **smaller from the larger**; otherwise numbers go negative and the algorithm breaks.",
+    "test": "After each step, both numbers must still be positive."
+   },
+   "magic": "Larger − smaller until equal. That common value is the gcd."
+  },
+  {
+   "type": "idea",
+   "id": "d6",
+   "short": "Euclid (fast)",
+   "title": "The fast version: jump straight to the remainder",
+   "summary": "`gcd(m, n) = gcd(n, m mod n)`, stopping when the second number is 0.",
+   "picture": "Instead of cutting 15 cm off a 100 cm ribbon six times, just ask what's left after cutting as many as fit: `100 mod 15 = 10`.",
+   "official": "Problem set 1, Q7 introduces the faster version: `gcd(m, n)`: if `n = 0` return `m`, else return `gcd(n, m mod n)`. Taking `m mod n` does all the repeated subtractions of `n` in one step. (Q7 also asks you to adapt the correctness proof: try that yourself.)",
+   "watch": {
+    "q": "Trace the fast version on `(84, 36)`.",
+    "steps": [
+     "`84 mod 36 = 12` → `(36, 12)`.",
+     "`36 mod 12 = 0` → `(12, 0)`.",
+     "Second number is 0 → return **12**."
+    ],
+    "answer": "`gcd(84, 36) = 12` in 2 steps (the slow version needs 5)."
+   },
+   "tries": [
+    {
+     "id": "d6a",
+     "q": "Trace the fast version on `(100, 64)`.",
+     "a": "`(100, 64) → (64, 36) → (36, 28) → (28, 8) → (8, 4) → (4, 0)` → **4**.",
+     "why": "Each step: (second, first mod second).",
+     "check": {
+      "kind": "calc",
+      "expr": "gcd(100, 64)",
+      "expect": 4
+     }
+    },
+    {
+     "id": "d6b",
+     "q": "Trace the fast version on `(252, 105)`.",
+     "a": "`(252, 105) → (105, 42) → (42, 21) → (21, 0)` → **21**.",
+     "why": "`252 mod 105 = 42`, `105 mod 42 = 21`, `42 mod 21 = 0`.",
+     "check": {
+      "kind": "calc",
+      "expr": "gcd(252, 105)",
+      "expect": 21
+     }
+    },
+    {
+     "id": "d6c",
+     "q": "What happens if you start the fast version with the smaller number first, `(36, 84)`?",
+     "a": "One extra step: `36 mod 84 = 36`, so `(36, 84) → (84, 36)`, then as before → **12**.",
+     "why": "The first step just swaps them.",
+     "check": {
+      "kind": "calc",
+      "expr": "gcd(36, 84)",
+      "expect": 12
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Return `m mod n` as soon as it's small.",
+    "correct": "Keep going until the **second** number is 0; then return the first.",
+    "test": "Write every pair. The answer is the first number of the pair `(·, 0)`."
+   },
+   "magic": "`(m, n) → (n, m mod n)` until `(g, 0)`; answer `g`."
+  },
+  {
+   "type": "section",
+   "id": "practice",
+   "title": "🏋️ Practice ladder"
+  },
+  {
+   "type": "practice",
+   "id": "p-green",
+   "level": "green",
+   "items": [
+    {
+     "id": "g1",
+     "q": "`5 | 35`?",
+     "a": "**Yes.**",
+     "why": "`35 = 7 · 5`.",
+     "check": {
+      "kind": "calc",
+      "expr": "divides(5, 35)"
+     }
+    },
+    {
+     "id": "g2",
+     "q": "`23 mod 6`?",
+     "a": "**5**",
+     "why": "`23 = 3 · 6 + 5`.",
+     "check": {
+      "kind": "calc",
+      "expr": "mod(23, 6)",
+      "expect": 5
+     }
+    },
+    {
+     "id": "g3",
+     "q": "`gcd(14, 49)`?",
+     "a": "**7**",
+     "why": "`14 = 2 · 7`, `49 = 7 · 7`.",
+     "check": {
+      "kind": "calc",
+      "expr": "gcd(14, 49)",
+      "expect": 7
+     }
+    },
+    {
+     "id": "g4",
+     "q": "`lcm(4, 6)`?",
+     "a": "**12**",
+     "why": "`4 · 6 / gcd(4, 6) = 24 / 2`.",
+     "check": {
+      "kind": "calc",
+      "expr": "lcm(4, 6)",
+      "expect": 12
+     }
+    },
+    {
+     "id": "g5",
+     "q": "Is 2 prime?",
+     "a": "**Yes** (the only even prime).",
+     "why": "Its only divisors are 1 and 2.",
+     "check": {
+      "kind": "calc",
+      "expr": "is_prime(2)"
+     }
+    },
+    {
+     "id": "g6",
+     "q": "`−10 mod 4`?",
+     "a": "**2**",
+     "why": "`−10 = (−3) · 4 + 2`.",
+     "check": {
+      "kind": "calc",
+      "expr": "mod(-10, 4)",
+      "expect": 2
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-yellow",
+   "level": "yellow",
+   "items": [
+    {
+     "id": "y1",
+     "q": "`gcd(−20, 30)` and `lcm(−4, 6)`?",
+     "a": "**10** and **12**.",
+     "why": "Both always positive.",
+     "check": [
+      {
+       "kind": "calc",
+       "expr": "gcd(-20, 30)",
+       "expect": 10
+      },
+      {
+       "kind": "calc",
+       "expr": "lcm(-4, 6)",
+       "expect": 12
+      }
+     ]
+    },
+    {
+     "id": "y2",
+     "q": "`(−17) mod 5`?",
+     "a": "**3**",
+     "why": "`−17 = (−4) · 5 + 3`.",
+     "check": {
+      "kind": "calc",
+      "expr": "mod(-17, 5)",
+      "expect": 3
+     }
+    },
+    {
+     "id": "y3",
+     "q": "`gcd(m, n) = 1`, `m = 8`, `n` positive and `lcm(8, n) = 72`. Find `n`.",
+     "a": "**`n = 9`**",
+     "why": "Coprime → `lcm = 8n = 72`.",
+     "check": {
+      "kind": "calc",
+      "expr": "gcd(8, 9) == 1 and lcm(8, 9) == 72"
+     }
+    },
+    {
+     "id": "y4",
+     "q": "Trace the slow version on `(30, 12)`.",
+     "a": "`(30, 12) → (18, 12) → (6, 12) → (6, 6)` → **6**.",
+     "why": "Subtract the smaller from the larger.",
+     "check": {
+      "kind": "calc",
+      "expr": "gcd(30, 12)",
+      "expect": 6
+     }
+    },
+    {
+     "id": "y5",
+     "q": "Trace the fast version on `(13, 8)`. How many steps?",
+     "a": "`(13, 8) → (8, 5) → (5, 3) → (3, 2) → (2, 1) → (1, 0)`: **5 steps**, answer **1**.",
+     "why": "Neighbouring Fibonacci numbers are the slowest case for Euclid.",
+     "check": {
+      "kind": "calc",
+      "expr": "gcd(13, 8)",
+      "expect": 1
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-red",
+   "level": "red",
+   "sub": "Quiz 1 style (a variation of Problem set 1, Q2(a)): gcd, lcm, mod, floor and ceiling in one line. Original numbers.",
+   "items": [
+    {
+     "id": "r1",
+     "q": "Calculate `gcd(8, 28) − lcm(6, 9) + 23 mod 6 − ⌊4.7⌋ + ⌈−1.5⌉`.",
+     "a": "**−14**",
+     "why": "`4 − 18 + 5 − 4 + (−1)`.",
+     "check": {
+      "kind": "calc",
+      "expr": "gcd(8, 28) - lcm(6, 9) + mod(23, 6) - floor(4.7) + ceil(-1.5)",
+      "expect": -14
+     }
+    },
+    {
+     "id": "r2",
+     "q": "Calculate `gcd(15, 25) + lcm(4, 10) − 19 mod 4 + ⌊−2.2⌋ − ⌈2.2⌉`.",
+     "a": "**16**",
+     "why": "`5 + 20 − 3 + (−3) − 3`.",
+     "check": {
+      "kind": "calc",
+      "expr": "gcd(15, 25) + lcm(4, 10) - mod(19, 4) + floor(-2.2) - ceil(2.2)",
+      "expect": 16
+     }
+    },
+    {
+     "id": "r3",
+     "q": "Calculate `lcm(9, 12) − gcd(−14, 21) + (−9) mod 4 − ⌈0.5⌉ + ⌊−0.5⌋`.",
+     "a": "**30**",
+     "why": "`36 − 7 + 3 − 1 + (−1)`. Remember `(−9) mod 4 = 3`.",
+     "check": {
+      "kind": "calc",
+      "expr": "lcm(9, 12) - gcd(-14, 21) + mod(-9, 4) - ceil(0.5) + floor(-0.5)",
+      "expect": 30
+     }
+    },
+    {
+     "id": "r4",
+     "q": "Calculate `gcd(0, 18) − lcm(3, 5) + 40 mod 7 + ⌊−6.01⌋ − ⌈−6.01⌉`.",
+     "a": "**7**",
+     "why": "`18 − 15 + 5 + (−7) − (−6)`.",
+     "check": {
+      "kind": "calc",
+      "expr": "gcd(0, 18) - lcm(3, 5) + mod(40, 7) + floor(-6.01) - ceil(-6.01)",
+      "expect": 7
+     }
+    },
+    {
+     "id": "r5",
+     "q": "Calculate `gcd(−20, 30) + lcm(−4, 6) − (−17) mod 5 + ⌊9.99⌋ − ⌈9.01⌉`.",
+     "a": "**18**",
+     "why": "`10 + 12 − 3 + 9 − 10`.",
+     "check": {
+      "kind": "calc",
+      "expr": "gcd(-20, 30) + lcm(-4, 6) - mod(-17, 5) + floor(9.99) - ceil(9.01)",
+      "expect": 18
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-boss",
+   "level": "boss",
+   "items": [
+    {
+     "id": "b1",
+     "q": "Why can two even integers never be relatively prime? (Lecture 1.2.12.)",
+     "a": "**2 divides both, so their gcd is at least 2.**",
+     "why": "Relatively prime needs `gcd = 1`."
+    },
+    {
+     "id": "b2",
+     "q": "Positive `m, n` with `gcd(m, n) = m`. What can you say?",
+     "a": "**`m | n`.**",
+     "why": "`m` is a common divisor, so it divides `n`. (Conversely, if `m | n` then `gcd(m, n) = m`.)",
+     "check": {
+      "kind": "calc",
+      "expr": "all((gcd(m, n) == m) == (n % m == 0) for m in range(1, 30) for n in range(1, 30))"
+     }
+    },
+    {
+     "id": "b3",
+     "q": "Prove `gcd(2n + 1, n) = 1` for every positive integer `n`.",
+     "a": "Let `d` be a positive common divisor. Then `d | 2n + 1` and `d | 2n`, so `d | (2n + 1) − 2n = 1`. So `d = 1`.",
+     "why": "Common divisors divide differences (and multiples).",
+     "check": {
+      "kind": "calc",
+      "expr": "all(gcd(2*n + 1, n) == 1 for n in range(1, 200))"
+     }
+    },
+    {
+     "id": "b4",
+     "q": "Why is `gcd(0, 0)` undefined?",
+     "a": "**Every integer divides 0**, so the common divisors of 0 and 0 have no greatest element.",
+     "why": "For `gcd(0, n)` with `n ≠ 0`, the divisors of `n` are bounded by `|n|`, so a greatest one exists."
+    },
+    {
+     "id": "b5",
+     "q": "`gcd(m, n) = 6` and `lcm(m, n) = 60` for positive `m < n`. Find every possible pair.",
+     "a": "**`(6, 60)` and `(12, 30)`.**",
+     "why": "`m · n = 360`, both multiples of 6: `m = 6a, n = 6b` with `a · b = 10` and `gcd(a, b) = 1`: `(a, b) = (1, 10)` or `(2, 5)`.",
+     "check": {
+      "kind": "calc",
+      "expr": "sorted((m, n) for m in range(1, 61) for n in range(m + 1, 61) if gcd(m, n) == 6 and lcm(m, n) == 60)",
+      "is": "[(6, 60), (12, 30)]"
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-retest",
+   "level": "retest",
+   "items": [
+    {
+     "id": "rt1",
+     "q": "`−15 mod 4`?",
+     "a": "**1**",
+     "check": {
+      "kind": "calc",
+      "expr": "mod(-15, 4)",
+      "expect": 1
+     }
+    },
+    {
+     "id": "rt2",
+     "q": "`gcd(−9, 12) · lcm(−9, 12)`?",
+     "a": "**108**",
+     "check": {
+      "kind": "calc",
+      "expr": "gcd(-9, 12) * lcm(-9, 12)",
+      "expect": 108
+     }
+    },
+    {
+     "id": "rt3",
+     "q": "Fast Euclid on `(75, 45)`?",
+     "a": "`(75, 45) → (45, 30) → (30, 15) → (15, 0)` → **15**",
+     "check": {
+      "kind": "calc",
+      "expr": "gcd(75, 45)",
+      "expect": 15
+     }
+    },
+    {
+     "id": "rt4",
+     "q": "`0 | 0`? `0 | 3`?",
+     "a": "**Yes; no.**",
+     "check": [
+      {
+       "kind": "calc",
+       "expr": "divides(0, 0)"
+      },
+      {
+       "kind": "calc",
+       "expr": "not divides(0, 3)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "recap",
+   "lines": [
+    "`m | n`: `n = k·m`. `1 | m`, `m | m`, `n | 0`; `0 ∤ n` unless `n = 0`.",
+    "`n mod m`: `n = km + r`, `0 ≤ r < m`. `m | n` ⇔ `n mod m = 0`.",
+    "Prime: `> 1`, divisors 1 and itself. Relatively prime: `gcd = 1`.",
+    "gcd/lcm positive; `gcd(0, n) = |n|`, `gcd(0, 0)` undefined; `gcd · lcm = |m||n|`.",
+    "Euclid works because common divisors divide differences."
+   ]
+  },
+  {
+   "type": "links",
+   "id": "links",
+   "sub": "Free, from universities. Try them after the ladder above.",
+   "items": [
+    {
+     "title": "Mathematics for Computer Science — Sections 9.1–9.2 (Divisibility, GCD)",
+     "url": "https://courses.csail.mit.edu/6.042/spring18/mcs.pdf",
+     "source": "MIT",
+     "checked": "24 Sep 2026",
+     "note": "Divisibility, the gcd, and Euclid's algorithm with problems."
+    }
+   ]
+  }
+ ],
+ "sources": "Lecture slides: Week 1 slides 14–19 (divisibility, mod, gcd/lcm, primes, absolute value, 1.2.2, 1.2.7, 1.2.9, 1.2.12, Euclid's algorithm); the course program euclid.python; Problem set 1's statement of the fast gcd (Q7). All practice numbers are original.",
+ "prev": {
+  "href": "../n1-floor-ceiling-counting/",
+  "label": "N1 · Floor, Ceiling & Counting"
+ },
+ "next": {
+  "href": "../s1-sets-and-operations/",
+  "label": "S1 · Sets & Set Operations"
+ }
+}

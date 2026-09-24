@@ -20,7 +20,9 @@ time** (Start → one idea per step → one practice level per step → Finish),
 | `assets/gym.js`, `assets/gym.css` | The one engine and stylesheet for every page |
 | `tools/verify_answers.py` | Machine-checks every answer that has a `check` |
 | `tools/lint_lessons.py` | Checks structure, no repeated examples, catalog consistency |
-| `tools/logic.py` | Propositional-logic engine used by the checker |
+| `tools/logic.py` | Propositional-logic engine used by the checker (also reads `BA:` Boolean-algebra notation) |
+| `tools/build_coverage.py` | Regenerates `docs/COVERAGE_COMP9020.md` and fails if a mapped step no longer exists |
+| `docs/COVERAGE_COMP9020.md` | Every slide section / exercise / problem-set question → the step that trains it |
 | `docs/ROADMAP.md` | What's built and what's next — update it when a lesson ships |
 
 No build step, no framework, no dependencies. Plain HTML + CSS + vanilla JS + JSON.
@@ -40,7 +42,8 @@ No build step, no framework, no dependencies. Plain HTML + CSS + vanilla JS + JS
    python3 tools/lint_lessons.py       # must say 0 errors
    python3 -m http.server              # click through EVERY step at desktop and phone width (~390px)
    ```
-7. Update `catalog.json` (status `ready`, `path`), the neighbours' `prev`/`next`, and `docs/ROADMAP.md`.
+7. Update `catalog.json` (status `ready`, `path`, `group`), the neighbours' `prev`/`next`, `docs/ROADMAP.md`,
+   and the coverage map (`tools/build_coverage.py`).
 8. Commit with a clear message, then publish (below). Tell the learner the live URL of the new page.
 
 Never ship a lesson with unchecked answers when a check is possible. Never mark `"verified": true`
@@ -61,7 +64,8 @@ unless `verify_answers.py` passes for that file.
 ## Hard rules
 
 - The site is **public**. No problem-set text, no problem-set answers, no copied slides, no personal data,
-  no secrets. Quiz drills are original variations. (Details in the guide → Academic integrity.)
+  no secrets. Quiz drills are original variations, and a variation must not be the problem-set formula with its letters
+  renamed or negated. (Details in the guide → Academic integrity.)
 - Keep `CLAUDE.md` under 200 lines. Put teaching detail in `docs/TEACHING_GUIDE.md`,
   format detail in `docs/LESSON_FORMAT.md`.
 - Keep the engine small and dependency-free. New interaction types go into `assets/gym.js` as a new block

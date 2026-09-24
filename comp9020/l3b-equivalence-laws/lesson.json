@@ -1,0 +1,1000 @@
+{
+ "id": "comp9020-l3b",
+ "course": {
+  "code": "COMP9020",
+  "href": "../"
+ },
+ "code": "L3B",
+ "emoji": "🧮",
+ "title": "Equivalence & the Laws",
+ "eyebrow": "COMP9020 · Week 2 · Logical equivalence",
+ "minutes": 45,
+ "verified": true,
+ "goal": "Decide whether two formulas are equivalent: prove it with a chain of named laws, or disprove it with one row.",
+ "magic": [
+  "`≡` = identical truth-table columns. One differing row disproves it.",
+  "Implication: `p ⇒ q ≡ ¬p ∨ q`. De Morgan flips `∧ ↔ ∨` as `¬` goes in.",
+  "Chain proofs: remove arrows → push `¬` in → distribute/factor → tidy. One named law per line.",
+  "Substitute into a tautology everywhere → still a tautology. Swap in an equivalent piece → still equivalent.",
+  "`⊕` = the sides differ = `¬(A ⇔ B)`."
+ ],
+ "blocks": [
+  {
+   "type": "section",
+   "id": "learn",
+   "title": "💡 Learn it, one idea at a time"
+  },
+  {
+   "type": "idea",
+   "id": "q1",
+   "short": "What ≡ means",
+   "title": "`≡`: same truth value in every row",
+   "summary": "Two formulas are equivalent when their truth-table columns are identical. One differing row disproves it.",
+   "picture": "Two different recipes that always produce the same cake. You can swap one recipe for the other and nobody can tell. Equivalent formulas are like that, and that's how circuit designers swap a big circuit for a smaller one.",
+   "official": "`φ ≡ ψ` (**logically equivalent**) if they have the same truth value for **all** values of their basic propositions (Week 2, slide 10). Equivalent formulas give digital circuits that compute the same function, so equivalences are used to **optimise circuits**. To **disprove** an equivalence, **one** row where the two sides differ is enough (slide 13).",
+   "watch": {
+    "q": "Is `¬(p ∧ q) ≡ ¬p ∧ ¬q`?",
+    "steps": [
+     "Try to find a row where they differ.",
+     "Row `p = T, q = F`: `p ∧ q` = F, so `¬(p ∧ q)` = **T**.",
+     "Same row: `¬p ∧ ¬q` = F ∧ T = **F**.",
+     "They differ in this row."
+    ],
+    "answer": "**Not equivalent.** Counterexample row `p = T, q = F`. (The correct De Morgan is `¬(p ∧ q) ≡ ¬p ∨ ¬q`.)"
+   },
+   "tries": [
+    {
+     "id": "q1a",
+     "q": "Is `¬(p ∨ q) ≡ ¬p ∨ ¬q`? If not, give a row where they differ.",
+     "a": "**No.** Row `p = T, q = F`: left `¬(T)` = F, right `F ∨ T` = T.",
+     "why": "De Morgan flips `∨` to `∧`: `¬(p ∨ q) ≡ ¬p ∧ ¬q`.",
+     "check": [
+      {
+       "kind": "equiv",
+       "f": "¬(p ∨ q)",
+       "g": "¬p ∨ ¬q",
+       "expect": false
+      },
+      {
+       "kind": "equiv",
+       "f": "¬(p ∨ q)",
+       "g": "¬p ∧ ¬q",
+       "expect": true
+      }
+     ]
+    },
+    {
+     "id": "q1b",
+     "q": "Is `p ⇒ q ≡ ¬q ⇒ ¬p`?",
+     "a": "**Yes.**",
+     "why": "Both are false only in the row `p = T, q = F` (it's the contrapositive).",
+     "check": {
+      "kind": "equiv",
+      "f": "p ⇒ q",
+      "g": "¬q ⇒ ¬p",
+      "expect": true
+     }
+    },
+    {
+     "id": "q1c",
+     "q": "Is `p ∨ (q ∧ r) ≡ (p ∨ q) ∧ r`? If not, a row.",
+     "a": "**No.** Row `p = T, r = F` (any `q`): left T, right F.",
+     "why": "Moving brackets around a mix of `∨` and `∧` changes the meaning. The real law distributes `p ∨` into **both** parts.",
+     "check": [
+      {
+       "kind": "equiv",
+       "f": "p ∨ (q ∧ r)",
+       "g": "(p ∨ q) ∧ r",
+       "expect": false
+      },
+      {
+       "kind": "falsifying",
+       "f": "(p ∨ (q ∧ r)) ⇔ ((p ∨ q) ∧ r)",
+       "rows": [
+        {
+         "p": true,
+         "q": false,
+         "r": false
+        },
+        {
+         "p": true,
+         "q": true,
+         "r": false
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "q1d",
+     "q": "`φ ≡ ψ`. Which formula is then valid?",
+     "a": "**`φ ⇔ ψ`**",
+     "why": "`φ ≡ ψ` exactly when `⊨ φ ⇔ ψ` (Week 2, slide 27).",
+     "check": {
+      "kind": "valid",
+      "f": "(p ⇒ q) ⇔ (¬p ∨ q)",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "They agree in the rows I tried, so they're equivalent.",
+    "correct": "Equivalent needs **every** row. A few matching rows prove nothing; one differing row disproves it.",
+    "test": "To prove `≡`: a full table or a chain of laws. To disprove: one row."
+   },
+   "magic": "`≡` = identical columns. One different row = not equivalent."
+  },
+  {
+   "type": "idea",
+   "id": "q2",
+   "short": "The laws",
+   "title": "The law toolkit",
+   "summary": "Twelve named laws. Each one lets you swap one shape for another without changing the meaning.",
+   "picture": "Like algebra rules you already trust: `a + b = b + a`, `a(b + c) = ab + ac`. Logic has its own list, and every step of an equivalence proof must name one.",
+   "official": "The lecture's list (Week 2, slides 10–11) is in the table below. Two you'll use constantly: **Implication** `p ⇒ q ≡ ¬p ∨ q` (turns every arrow into `∨`), and **De Morgan** (pushes `¬` inside a bracket and flips `∧ ↔ ∨`).",
+   "grid": {
+    "title": "The law toolkit (Week 2, slides 10–11)",
+    "cols": [
+     "Law",
+     "For ∨",
+     "For ∧"
+    ],
+    "rows": [
+     [
+      "Excluded middle / Contradiction",
+      "`p ∨ ¬p ≡ ⊤`",
+      "`p ∧ ¬p ≡ ⊥`"
+     ],
+     [
+      "Identity",
+      "`p ∨ ⊥ ≡ p`",
+      "`p ∧ ⊤ ≡ p`"
+     ],
+     [
+      "Domination (slides list it under Identity)",
+      "`p ∨ ⊤ ≡ ⊤`",
+      "`p ∧ ⊥ ≡ ⊥`"
+     ],
+     [
+      "Idempotence",
+      "`p ∨ p ≡ p`",
+      "`p ∧ p ≡ p`"
+     ],
+     [
+      "Double negation",
+      "`¬¬p ≡ p`",
+      "—"
+     ],
+     [
+      "Commutativity",
+      "`p ∨ q ≡ q ∨ p`",
+      "`p ∧ q ≡ q ∧ p`"
+     ],
+     [
+      "Associativity",
+      "`(p ∨ q) ∨ r ≡ p ∨ (q ∨ r)`",
+      "`(p ∧ q) ∧ r ≡ p ∧ (q ∧ r)`"
+     ],
+     [
+      "Distribution",
+      "`p ∨ (q ∧ r) ≡ (p ∨ q) ∧ (p ∨ r)`",
+      "`p ∧ (q ∨ r) ≡ (p ∧ q) ∨ (p ∧ r)`"
+     ],
+     [
+      "De Morgan",
+      "`¬(p ∨ q) ≡ ¬p ∧ ¬q`",
+      "`¬(p ∧ q) ≡ ¬p ∨ ¬q`"
+     ],
+     [
+      "Implication",
+      "`p ⇒ q ≡ ¬p ∨ q`",
+      "`p ⇔ q ≡ (p ⇒ q) ∧ (q ⇒ p)`"
+     ]
+    ]
+   },
+   "watch": {
+    "q": "Name the law used in each step: `¬(¬p ∨ q)` → `¬¬p ∧ ¬q` → `p ∧ ¬q`.",
+    "steps": [
+     "Step 1 pushes `¬` into a bracket and turns `∨` into `∧`: **De Morgan**.",
+     "Step 2 removes `¬¬`: **Double negation**."
+    ],
+    "answer": "De Morgan, then Double negation. So `¬(¬p ∨ q) ≡ p ∧ ¬q`, which is also `¬(p ⇒ q)`."
+   },
+   "tries": [
+    {
+     "id": "q2a",
+     "q": "Which law turns `a ∨ ¬a` into `⊤`?",
+     "a": "**Excluded middle.**",
+     "why": "A statement or its opposite: one of them is always true.",
+     "check": {
+      "kind": "equiv",
+      "f": "a ∨ ¬a",
+      "g": "⊤",
+      "expect": true
+     }
+    },
+    {
+     "id": "q2b",
+     "q": "Which law turns `(x ∧ y) ∨ (x ∧ z)` into `x ∧ (y ∨ z)`?",
+     "a": "**Distribution** (used right-to-left, i.e. factoring out `x`).",
+     "why": "`p ∧ (q ∨ r) ≡ (p ∧ q) ∨ (p ∧ r)`, read backwards.",
+     "check": {
+      "kind": "equiv",
+      "f": "(x ∧ y) ∨ (x ∧ z)",
+      "g": "x ∧ (y ∨ z)",
+      "expect": true
+     }
+    },
+    {
+     "id": "q2c",
+     "q": "Which law turns `m ∧ ⊥` into `⊥`?",
+     "a": "**Domination** (the slides list `p ∧ ⊥ ≡ ⊥` in the Identity group).",
+     "why": "An `∧` with a guaranteed-false part is false.",
+     "check": {
+      "kind": "equiv",
+      "f": "m ∧ ⊥",
+      "g": "⊥",
+      "expect": true
+     }
+    },
+    {
+     "id": "q2d",
+     "q": "Rewrite `a ⇔ b` using only `⇒` and `∧`.",
+     "a": "**`(a ⇒ b) ∧ (b ⇒ a)`**",
+     "why": "The Implication law's second line.",
+     "check": {
+      "kind": "equiv",
+      "f": "a ⇔ b",
+      "g": "(a ⇒ b) ∧ (b ⇒ a)",
+      "expect": true
+     }
+    },
+    {
+     "id": "q2e",
+     "q": "Apply De Morgan to `¬(s ∧ ¬t)`.",
+     "a": "**`¬s ∨ t`**",
+     "why": "`¬(A ∧ B) ≡ ¬A ∨ ¬B` with `A = s`, `B = ¬t`, then double negation on `¬¬t`.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(s ∧ ¬t)",
+      "g": "¬s ∨ t",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "De Morgan just puts `¬` on each letter: `¬(p ∧ q) ≡ ¬p ∧ ¬q`.",
+    "correct": "De Morgan **also flips the joiner**: `¬(p ∧ q) ≡ ¬p ∨ ¬q`.",
+    "test": "Test with `p = T, q = F`: \"not both\" is true, \"neither\" is false."
+   },
+   "magic": "`⇒` becomes `¬A ∨ B`. `¬` goes inside by flipping `∧ ↔ ∨`."
+  },
+  {
+   "type": "idea",
+   "id": "q3",
+   "short": "Chain proofs",
+   "title": "Proving `≡` with a chain of laws",
+   "summary": "Start from one side, change one thing per line, and name the law each time until you reach the other side.",
+   "picture": "Like refactoring code: each commit makes one small safe change, and you note which rule made it safe. The last version behaves exactly like the first.",
+   "official": "Write `φ ≡ … ≡ ψ` with **one law per step**, named on the right (Week 2, slide 12 does this for a four-step chain ending in `¬p ∨ q`; slide 14 proves `(p ⇒ q) ⇒ (p ⇒ r) ≡ p ⇒ (q ⇒ r)` this way). The usual plan: (1) remove `⇒` and `⇔`, (2) push `¬` inward with De Morgan, (3) distribute or factor, (4) clean up with Excluded middle / Identity / Domination.",
+   "watch": {
+    "q": "Prove `(p ⇒ q) ∧ (p ⇒ r) ≡ p ⇒ (q ∧ r)`.",
+    "steps": [
+     "`(p ⇒ q) ∧ (p ⇒ r)`",
+     "`≡ (¬p ∨ q) ∧ (¬p ∨ r)` — Implication (twice)",
+     "`≡ ¬p ∨ (q ∧ r)` — Distribution (factor out `¬p ∨`)",
+     "`≡ p ⇒ (q ∧ r)` — Implication (read backwards)"
+    ],
+    "answer": "Done in three named steps. In words: \"if `p` then `q`, and if `p` then `r`\" = \"if `p` then both\"."
+   },
+   "tries": [
+    {
+     "id": "q3a",
+     "q": "Prove `p ∨ (¬p ∧ q) ≡ p ∨ q`. (This is the lecture's program-logic example, Week 1 slide 56.)",
+     "a": "`p ∨ (¬p ∧ q)` `≡ (p ∨ ¬p) ∧ (p ∨ q)` (Distribution) `≡ ⊤ ∧ (p ∨ q)` (Excluded middle) `≡ p ∨ q` (Identity).",
+     "why": "So `if x > 0 or (x <= 0 and y > 100)` can be simplified to `if x > 0 or y > 100`.",
+     "check": {
+      "kind": "equiv",
+      "f": "p ∨ (¬p ∧ q)",
+      "g": "p ∨ q",
+      "expect": true
+     }
+    },
+    {
+     "id": "q3b",
+     "q": "Prove `(a ∧ b) ∨ (a ∧ ¬b) ≡ a`.",
+     "a": "`≡ a ∧ (b ∨ ¬b)` (Distribution) `≡ a ∧ ⊤` (Excluded middle) `≡ a` (Identity).",
+     "why": "Factor out the common `a`, and the rest becomes `⊤`.",
+     "check": {
+      "kind": "equiv",
+      "f": "(a ∧ b) ∨ (a ∧ ¬b)",
+      "g": "a",
+      "expect": true
+     }
+    },
+    {
+     "id": "q3c",
+     "q": "Prove `(p ∨ q) ⇒ r ≡ (p ⇒ r) ∧ (q ⇒ r)`.",
+     "a": "`(p ∨ q) ⇒ r` `≡ ¬(p ∨ q) ∨ r` (Implication) `≡ (¬p ∧ ¬q) ∨ r` (De Morgan) `≡ (¬p ∨ r) ∧ (¬q ∨ r)` (Distribution) `≡ (p ⇒ r) ∧ (q ⇒ r)` (Implication).",
+     "why": "\"If either one, then `r`\" = \"each one alone leads to `r`\".",
+     "check": {
+      "kind": "equiv",
+      "f": "(p ∨ q) ⇒ r",
+      "g": "(p ⇒ r) ∧ (q ⇒ r)",
+      "expect": true
+     }
+    },
+    {
+     "id": "q3d",
+     "q": "Simplify `¬(p ⇒ ¬q)` as far as possible, naming each law.",
+     "a": "`≡ ¬(¬p ∨ ¬q)` (Implication) `≡ ¬¬p ∧ ¬¬q` (De Morgan) `≡ p ∧ q` (Double negation).",
+     "why": "\"It's not the case that `p` rules out `q`\" means both happen.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(p ⇒ ¬q)",
+      "g": "p ∧ q",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Do three changes in one line to save time.",
+    "correct": "One law per line, named. Markers give credit for each justified step, and big jumps hide mistakes.",
+    "test": "Read each line: can you name exactly one law that got you here?"
+   },
+   "magic": "Remove arrows → push `¬` in → distribute/factor → tidy up. Name every step."
+  },
+  {
+   "type": "idea",
+   "id": "q4",
+   "short": "Disprove fast",
+   "title": "Disproving: find the one row where they differ",
+   "summary": "Don't build two full tables: aim straight for a row that makes one side T and the other F.",
+   "picture": "A spot-the-difference puzzle: you don't need to list everything that matches. One difference is enough to say the pictures aren't the same.",
+   "official": "To show `φ ≢ ψ`, give **one** assignment where they differ (Week 2, slide 13: `(p ⇒ q) ⇒ r` vs `p ⇒ (q ⇒ r)` differ at `p = F, q = T, r = F`). **Trick:** make the side with an `⇒` false on purpose (left T, right F), then check the other side.",
+   "watch": {
+    "q": "Is `¬(p ⇔ q) ≡ ¬p ⇔ ¬q`?",
+    "steps": [
+     "Try the simplest row, `p = F, q = F`.",
+     "Left: `p ⇔ q` = T, so `¬(p ⇔ q)` = F.",
+     "Right: `¬p ⇔ ¬q` = T ⇔ T = T.",
+     "They differ."
+    ],
+    "answer": "**Not equivalent** (row `p = F, q = F`). In fact `¬p ⇔ ¬q ≡ p ⇔ q`: negating **both** sides of `⇔` changes nothing."
+   },
+   "tries": [
+    {
+     "id": "q4a",
+     "q": "Is `(p ⇒ q) ⇒ r ≡ (p ∧ q) ⇒ r`? If not, a row.",
+     "a": "**No.** Row `p = F, q = F, r = F`: left (T ⇒ F) = F, right (F ⇒ F) = T.",
+     "why": "Make the left false: its left side `p ⇒ q` must be T and `r` = F. `p = F` does that. Then the right side has a false condition, so it's T.",
+     "check": [
+      {
+       "kind": "equiv",
+       "f": "(p ⇒ q) ⇒ r",
+       "g": "(p ∧ q) ⇒ r",
+       "expect": false
+      },
+      {
+       "kind": "falsifying",
+       "f": "((p ⇒ q) ⇒ r) ⇔ ((p ∧ q) ⇒ r)",
+       "rows": [
+        {
+         "p": false,
+         "q": false,
+         "r": false
+        },
+        {
+         "p": false,
+         "q": true,
+         "r": false
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "q4b",
+     "q": "Is `p ⇒ (q ∨ r) ≡ (p ⇒ q) ∨ (p ⇒ r)`?",
+     "a": "**Yes, equivalent.**",
+     "why": "Both sides become `¬p ∨ q ∨ r` after the Implication law (and Idempotence for the duplicated `¬p`).",
+     "wrong": "If you went looking for a counterexample and found none: that's the sign it's true. Prove it with the chain instead.",
+     "check": {
+      "kind": "equiv",
+      "f": "p ⇒ (q ∨ r)",
+      "g": "(p ⇒ q) ∨ (p ⇒ r)",
+      "expect": true
+     }
+    },
+    {
+     "id": "q4c",
+     "q": "Is `(p ∧ q) ⇒ r ≡ (p ⇒ r) ∨ (q ⇒ r)`?",
+     "a": "**Yes, equivalent.**",
+     "why": "Left: `¬p ∨ ¬q ∨ r`. Right: `¬p ∨ r ∨ ¬q ∨ r`, which is the same after Idempotence.",
+     "check": {
+      "kind": "equiv",
+      "f": "(p ∧ q) ⇒ r",
+      "g": "(p ⇒ r) ∨ (q ⇒ r)",
+      "expect": true
+     }
+    },
+    {
+     "id": "q4d",
+     "q": "Is `p ⇒ (q ⇔ r) ≡ (p ⇒ q) ⇔ (p ⇒ r)`?",
+     "a": "**Yes, equivalent.**",
+     "why": "When `p` = F both sides are T. When `p` = T both sides reduce to `q ⇔ r`.",
+     "check": {
+      "kind": "equiv",
+      "f": "p ⇒ (q ⇔ r)",
+      "g": "(p ⇒ q) ⇔ (p ⇒ r)",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Two formulas that look different must be different.",
+    "correct": "Look-alikes can differ and different-looking ones can match. Only rows (or laws) decide.",
+    "test": "Before hunting for a counterexample, spend 20 seconds rewriting both sides with the Implication law."
+   },
+   "magic": "One differing row disproves `≡`. No row found? Prove it with laws."
+  },
+  {
+   "type": "idea",
+   "id": "q5",
+   "short": "Substitution",
+   "title": "Two substitution rules",
+   "summary": "Replace a letter everywhere in a tautology → still a tautology. Replace a piece by an equivalent piece → still equivalent.",
+   "picture": "A spell that works for *any* ingredient keeps working if you plug in a whole potion instead of one ingredient. And swapping an ingredient for an identical one never changes the result.",
+   "official": "**Rule 1** (Week 2, slide 40): if `⊨ φ(P)`, then `⊨ φ(α)`, where `α` replaces **every** occurrence of the letter `P`. Example: `⊨ P ⇒ (P ∨ Q)`, so `⊨ (A ∨ B) ⇒ (A ∨ B ∨ Q)`. **Rule 2** (slide 41): if `α ≡ β`, replacing an occurrence of `α` inside `φ` by `β` gives an equivalent formula. Example: `P ⇒ Q ≡ ¬P ∨ Q`, so `Q ⇒ (P ⇒ Q) ≡ Q ⇒ (¬P ∨ Q)`.",
+   "watch": {
+    "q": "`⊨ (P ∧ Q) ⇒ P`. Substitute `x ⇒ y` for `P`. What do you get, and is it valid?",
+    "steps": [
+     "Replace **every** `P` by `(x ⇒ y)`, with brackets.",
+     "Result: `((x ⇒ y) ∧ Q) ⇒ (x ⇒ y)`.",
+     "Rule 1 says a tautology stays a tautology."
+    ],
+    "answer": "**`((x ⇒ y) ∧ Q) ⇒ (x ⇒ y)`**, valid by substitution. No truth table needed."
+   },
+   "tries": [
+    {
+     "id": "q5a",
+     "q": "`⊨ ¬¬P ⇒ P`. Substitute `a ∨ b` for `P`.",
+     "a": "**`¬¬(a ∨ b) ⇒ (a ∨ b)`**, still valid.",
+     "why": "Every `P` gets `(a ∨ b)`, with brackets.",
+     "check": {
+      "kind": "valid",
+      "f": "¬¬(a ∨ b) ⇒ (a ∨ b)",
+      "expect": true
+     }
+    },
+    {
+     "id": "q5b",
+     "q": "You substitute `r` for **only one** of the two `P`s in `P ⇒ P`, getting `r ⇒ P`. Is the result guaranteed valid?",
+     "a": "**No.** `r ⇒ P` is false at `r = T, P = F`.",
+     "why": "Rule 1 needs **every** occurrence replaced.",
+     "check": {
+      "kind": "valid",
+      "f": "r ⇒ P",
+      "expect": false
+     }
+    },
+    {
+     "id": "q5c",
+     "q": "Use Rule 2 and `¬(a ∧ b) ≡ ¬a ∨ ¬b` to rewrite `c ∨ ¬(a ∧ b)`.",
+     "a": "**`c ∨ ¬a ∨ ¬b`**",
+     "why": "Swap the equivalent piece; the rest stays.",
+     "check": {
+      "kind": "equiv",
+      "f": "c ∨ ¬(a ∧ b)",
+      "g": "c ∨ ¬a ∨ ¬b",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "Substitute into any formula and keep its truth value.",
+    "correct": "Rule 1 is for **tautologies**, and every occurrence must be replaced. Rule 2 needs the swapped piece to be **equivalent**.",
+    "test": "Ask: is the formula I'm substituting into valid? Did I replace every copy?"
+   },
+   "magic": "Tautology + substitute everywhere = tautology. Swap in an equivalent piece = equivalent."
+  },
+  {
+   "type": "idea",
+   "id": "q6",
+   "short": "⊕ xor",
+   "title": "Exclusive or `⊕`: exactly one",
+   "summary": "`p ⊕ q` is T when exactly one of them is T. It's the opposite of `⇔`.",
+   "picture": "A hotel breakfast: \"eggs or pancakes\", meaning one or the other but not both. Or a two-way light switch: flip either switch and the light changes.",
+   "official": "`A ⊕ B` (**exclusive or**, xor) is T exactly when `A` and `B` have **different** values (the Problem set 2 hint gives its table; it's the logic behind the set operation `⊕` from Week 1, slide 27). Useful facts: `p ⊕ q ≡ (p ∧ ¬q) ∨ (¬p ∧ q) ≡ ¬(p ⇔ q) ≡ ¬p ⇔ q`, `p ⊕ ⊥ ≡ p`, `p ⊕ ⊤ ≡ ¬p`, `p ⊕ p ≡ ⊥`, `p ⊕ q ≡ q ⊕ p`.",
+   "watch": {
+    "q": "Show `p ⊕ ⊤ ≡ ¬p` with the table.",
+    "steps": [
+     "Row `p = F`: F ⊕ T = T (they differ), and `¬p` = T. ✅",
+     "Row `p = T`: T ⊕ T = F (they match), and `¬p` = F. ✅"
+    ],
+    "answer": "Same column, so `p ⊕ ⊤ ≡ ¬p`: xor with true **flips** the bit (like `x ^ 1` in code)."
+   },
+   "tries": [
+    {
+     "id": "q6a",
+     "q": "Value of `⊤ ⊕ ⊥`?",
+     "a": "**T**",
+     "why": "The sides differ.",
+     "check": {
+      "kind": "value",
+      "f": "⊤ ⊕ ⊥",
+      "expect": true
+     }
+    },
+    {
+     "id": "q6b",
+     "q": "Is `a ⊕ b ≡ (a ∨ b) ∧ ¬(a ∧ b)`?",
+     "a": "**Yes.**",
+     "why": "\"At least one, but not both\" = exactly one.",
+     "check": {
+      "kind": "equiv",
+      "f": "a ⊕ b",
+      "g": "(a ∨ b) ∧ ¬(a ∧ b)",
+      "expect": true
+     }
+    },
+    {
+     "id": "q6c",
+     "q": "Is `a ⊕ b ≡ a ∨ b`? If not, a row.",
+     "a": "**No.** Row `a = T, b = T`: `⊕` gives F, `∨` gives T.",
+     "why": "\"or\" in logic is inclusive. `⊕` excludes the both-true row.",
+     "check": {
+      "kind": "equiv",
+      "f": "a ⊕ b",
+      "g": "a ∨ b",
+      "expect": false
+     }
+    },
+    {
+     "id": "q6d",
+     "q": "Is `p ∧ (q ⊕ r) ≡ (p ∧ q) ⊕ (p ∧ r)`?",
+     "a": "**Yes.** `∧` distributes over `⊕`.",
+     "why": "If `p` = F both sides are F. If `p` = T both sides are `q ⊕ r`.",
+     "check": {
+      "kind": "equiv",
+      "f": "p ∧ (q ⊕ r)",
+      "g": "(p ∧ q) ⊕ (p ∧ r)",
+      "expect": true
+     }
+    }
+   ],
+   "trap": {
+    "tempting": "\"or\" in a logic formula means \"one or the other, not both\".",
+    "correct": "`∨` is **inclusive** (both is fine). Only `⊕` excludes both.",
+    "test": "Check the row where both are T: `∨` gives T, `⊕` gives F."
+   },
+   "magic": "`⊕` = the two sides differ = `¬(A ⇔ B)`."
+  },
+  {
+   "type": "section",
+   "id": "practice",
+   "title": "🏋️ Practice ladder"
+  },
+  {
+   "type": "practice",
+   "id": "p-green",
+   "level": "green",
+   "items": [
+    {
+     "id": "g1",
+     "q": "Name the law: `q ∧ q ≡ q`.",
+     "a": "**Idempotence.**",
+     "why": "Saying the same thing twice adds nothing.",
+     "check": {
+      "kind": "equiv",
+      "f": "q ∧ q",
+      "g": "q",
+      "expect": true
+     }
+    },
+    {
+     "id": "g2",
+     "q": "Name the law: `¬(a ∨ b) ≡ ¬a ∧ ¬b`.",
+     "a": "**De Morgan.**",
+     "why": "\"Not (a or b)\" = \"neither\".",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(a ∨ b)",
+      "g": "¬a ∧ ¬b",
+      "expect": true
+     }
+    },
+    {
+     "id": "g3",
+     "q": "Rewrite `u ⇒ v` without `⇒`.",
+     "a": "**`¬u ∨ v`**",
+     "why": "Implication law.",
+     "check": {
+      "kind": "equiv",
+      "f": "u ⇒ v",
+      "g": "¬u ∨ v",
+      "expect": true
+     }
+    },
+    {
+     "id": "g4",
+     "q": "Simplify `z ∨ ⊤`.",
+     "a": "**`⊤`**",
+     "why": "Domination: an `∨` with a true part is true.",
+     "check": {
+      "kind": "equiv",
+      "f": "z ∨ ⊤",
+      "g": "⊤",
+      "expect": true
+     }
+    },
+    {
+     "id": "g5",
+     "q": "Simplify `¬¬¬k`.",
+     "a": "**`¬k`**",
+     "why": "Double negation removes one pair of `¬`.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬¬¬k",
+      "g": "¬k",
+      "expect": true
+     }
+    },
+    {
+     "id": "g6",
+     "q": "Is `p ∨ q ≡ q ∨ p`?",
+     "a": "**Yes** (Commutativity).",
+     "why": "Order doesn't matter for `∨`.",
+     "check": {
+      "kind": "equiv",
+      "f": "p ∨ q",
+      "g": "q ∨ p",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-yellow",
+   "level": "yellow",
+   "items": [
+    {
+     "id": "y1",
+     "q": "Simplify `(p ∨ q) ∧ (p ∨ ¬q)`, naming the laws.",
+     "a": "**`p`**: `≡ p ∨ (q ∧ ¬q)` (Distribution) `≡ p ∨ ⊥` (Contradiction) `≡ p` (Identity).",
+     "why": "Factor out the common `p ∨`.",
+     "check": {
+      "kind": "equiv",
+      "f": "(p ∨ q) ∧ (p ∨ ¬q)",
+      "g": "p",
+      "expect": true
+     }
+    },
+    {
+     "id": "y2",
+     "q": "Simplify `¬(¬a ∧ b)`.",
+     "a": "**`a ∨ ¬b`**",
+     "why": "De Morgan, then double negation on `¬¬a`. Also `= b ⇒ a`.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(¬a ∧ b)",
+      "g": "a ∨ ¬b",
+      "expect": true
+     }
+    },
+    {
+     "id": "y3",
+     "q": "Is `(s ⇒ t) ∧ (s ⇒ ¬t) ≡ ¬s`?",
+     "a": "**Yes.**",
+     "why": "`≡ (¬s ∨ t) ∧ (¬s ∨ ¬t)` `≡ ¬s ∨ (t ∧ ¬t)` `≡ ¬s ∨ ⊥` `≡ ¬s`. If `s` led to both `t` and `¬t`, `s` must be false.",
+     "check": {
+      "kind": "equiv",
+      "f": "(s ⇒ t) ∧ (s ⇒ ¬t)",
+      "g": "¬s",
+      "expect": true
+     }
+    },
+    {
+     "id": "y4",
+     "q": "Is `m ⇒ ¬m ≡ ¬m`?",
+     "a": "**Yes.**",
+     "why": "`≡ ¬m ∨ ¬m` (Implication) `≡ ¬m` (Idempotence).",
+     "check": {
+      "kind": "equiv",
+      "f": "m ⇒ ¬m",
+      "g": "¬m",
+      "expect": true
+     }
+    },
+    {
+     "id": "y5",
+     "q": "Is `(a ⇔ b) ≡ (a ∧ b) ∨ (¬a ∧ ¬b)`?",
+     "a": "**Yes.**",
+     "why": "`⇔` is T exactly when both are T or both are F.",
+     "check": {
+      "kind": "equiv",
+      "f": "a ⇔ b",
+      "g": "(a ∧ b) ∨ (¬a ∧ ¬b)",
+      "expect": true
+     }
+    },
+    {
+     "id": "y6",
+     "q": "Rewrite `¬(x ⇔ y)` with `⊕`.",
+     "a": "**`x ⊕ y`**",
+     "why": "`⊕` is T exactly when `⇔` is F.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(x ⇔ y)",
+      "g": "x ⊕ y",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-red",
+   "level": "red",
+   "sub": "Problem set 2, Q4 style: *prove or disprove*. All pairs here are original.",
+   "items": [
+    {
+     "id": "r1",
+     "q": "Prove or disprove: `(p ∧ q) ∨ r ≡ p ∧ (q ∨ r)`.",
+     "a": "**Disprove.** Row `p = F, q = F, r = T`: left F ∨ T = T, right F ∧ … = F.",
+     "why": "The right side needs `p`; the left doesn't when `r` is true. Bracket position matters when `∧` and `∨` mix.",
+     "check": [
+      {
+       "kind": "equiv",
+       "f": "(p ∧ q) ∨ r",
+       "g": "p ∧ (q ∨ r)",
+       "expect": false
+      }
+     ]
+    },
+    {
+     "id": "r2",
+     "q": "Prove or disprove: `p ∨ (q ⇔ r) ≡ (p ∨ q) ⇔ (p ∨ r)`.",
+     "a": "**Prove.** Case `p` = T: both sides are T (left by `∨`; right is T ⇔ T). Case `p` = F: both sides are `q ⇔ r` (Identity: `F ∨ x ≡ x`).",
+     "why": "When a law list doesn't give a quick chain, a two-case argument on one letter is a valid proof.",
+     "check": {
+      "kind": "equiv",
+      "f": "p ∨ (q ⇔ r)",
+      "g": "(p ∨ q) ⇔ (p ∨ r)",
+      "expect": true
+     }
+    },
+    {
+     "id": "r3",
+     "q": "Prove or disprove: `¬(p ∧ q ∧ r) ≡ ¬p ∨ ¬q ∨ ¬r`.",
+     "a": "**Prove.** `¬((p ∧ q) ∧ r)` `≡ ¬(p ∧ q) ∨ ¬r` (De Morgan) `≡ (¬p ∨ ¬q) ∨ ¬r` (De Morgan) `≡ ¬p ∨ ¬q ∨ ¬r` (Associativity).",
+     "why": "De Morgan works for any number of parts: apply it twice.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(p ∧ q ∧ r)",
+      "g": "¬p ∨ ¬q ∨ ¬r",
+      "expect": true
+     }
+    },
+    {
+     "id": "r4",
+     "q": "Prove or disprove: `(p ⊕ q) ∧ r ≡ (p ∧ r) ⊕ q`.",
+     "a": "**Disprove.** Row `p = F, q = T, r = F`: left (T) ∧ F = F, right F ⊕ T = T.",
+     "why": "Set `r = F` to kill the left side, then make the right side T with `q = T`.",
+     "check": {
+      "kind": "equiv",
+      "f": "(p ⊕ q) ∧ r",
+      "g": "(p ∧ r) ⊕ q",
+      "expect": false
+     }
+    },
+    {
+     "id": "r5",
+     "q": "Prove or disprove: `(p ⇒ q) ⇒ p ≡ p`.",
+     "a": "**Prove.** `≡ ¬(¬p ∨ q) ∨ p` (Implication, twice) `≡ (p ∧ ¬q) ∨ p` (De Morgan, Double negation) `≡ (p ∧ ¬q) ∨ (p ∧ ⊤)` (Identity) `≡ p ∧ (¬q ∨ ⊤)` (Distribution) `≡ p ∧ ⊤` (Domination) `≡ p` (Identity).",
+     "why": "Surprising but true (it's called Peirce's law). The last four steps are the *absorption* shortcut `p ∨ (p ∧ x) ≡ p`.",
+     "check": {
+      "kind": "equiv",
+      "f": "(p ⇒ q) ⇒ p",
+      "g": "p",
+      "expect": true
+     }
+    },
+    {
+     "id": "r6",
+     "q": "Prove or disprove: `¬p ⇒ (q ∨ r) ≡ (¬q ∧ ¬r) ⇒ p`.",
+     "a": "**Prove.** Contrapositive: `¬p ⇒ (q ∨ r) ≡ ¬(q ∨ r) ⇒ ¬¬p` `≡ (¬q ∧ ¬r) ⇒ p` (De Morgan, Double negation).",
+     "why": "Swap-and-flip keeps the meaning; then tidy with De Morgan.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬p ⇒ (q ∨ r)",
+      "g": "(¬q ∧ ¬r) ⇒ p",
+      "expect": true
+     }
+    },
+    {
+     "id": "r7",
+     "q": "Prove or disprove: `(p ⇒ q) ∧ r ≡ p ⇒ (q ∧ r)`.",
+     "a": "**Disprove.** Row `p = F, q = F, r = F`: left T ∧ F = F, right F ⇒ … = T.",
+     "why": "The left side always needs `r`. The right only needs it when `p` holds.",
+     "check": {
+      "kind": "equiv",
+      "f": "(p ⇒ q) ∧ r",
+      "g": "p ⇒ (q ∧ r)",
+      "expect": false
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-boss",
+   "level": "boss",
+   "items": [
+    {
+     "id": "b1",
+     "q": "A circuit computes `(x ∧ y) ∨ (¬x ∧ y) ∨ (x ∧ ¬y)`. Find the shortest equivalent formula, naming each law.",
+     "a": "**`x ∨ y`.** `(x ∧ y) ∨ (¬x ∧ y) ≡ (x ∨ ¬x) ∧ y ≡ ⊤ ∧ y ≡ y` (Distribution, Excluded middle, Identity). Then `y ∨ (x ∧ ¬y) ≡ (y ∨ x) ∧ (y ∨ ¬y) ≡ (y ∨ x) ∧ ⊤ ≡ x ∨ y` (Distribution, Excluded middle, Identity, Commutativity).",
+     "why": "Three gates' worth of logic shrink to one OR gate.",
+     "check": {
+      "kind": "equiv",
+      "f": "(x ∧ y) ∨ (¬x ∧ y) ∨ (x ∧ ¬y)",
+      "g": "x ∨ y",
+      "expect": true
+     }
+    },
+    {
+     "id": "b2",
+     "q": "Simplify `¬(p ∨ ¬(q ⇒ p))`.",
+     "a": "**`¬p ∧ ¬q`.** `¬(q ⇒ p) ≡ q ∧ ¬p`. So inside: `p ∨ (q ∧ ¬p) ≡ (p ∨ q) ∧ (p ∨ ¬p) ≡ p ∨ q`. Then `¬(p ∨ q) ≡ ¬p ∧ ¬q` (De Morgan).",
+     "why": "Simplify the inside first; negate at the end.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(p ∨ ¬(q ⇒ p))",
+      "g": "¬p ∧ ¬q",
+      "expect": true
+     }
+    },
+    {
+     "id": "b3",
+     "q": "Prove or disprove: `(p ⇒ q) ∧ (q ⇒ r) ∧ (r ⇒ p) ≡ (p ⇔ q) ∧ (q ⇔ r)`.",
+     "a": "**Prove.** Both sides say that `p`, `q`, `r` all have the same value. Left: if any one is T, the cycle forces the next, so all are T; if any one is F, going backwards forces all F. Right: `p = q` and `q = r`.",
+     "why": "A cycle of implications is as strong as all the `⇔`s.",
+     "check": {
+      "kind": "equiv",
+      "f": "(p ⇒ q) ∧ (q ⇒ r) ∧ (r ⇒ p)",
+      "g": "(p ⇔ q) ∧ (q ⇔ r)",
+      "expect": true
+     }
+    },
+    {
+     "id": "b4",
+     "q": "Which options are equivalent to `¬(p ⇒ (q ∨ r))`?",
+     "a": "**(1), (3), (5)**",
+     "why": "`¬(p ⇒ X) ≡ p ∧ ¬X`, so the target is `p ∧ ¬(q ∨ r) ≡ p ∧ ¬q ∧ ¬r`. (5) is `(p ∧ ¬q) ∧ ¬r`. (2) is the un-negated formula. (4) allows `p = F`.",
+     "options": [
+      "`p ∧ ¬q ∧ ¬r`",
+      "`¬p ∨ q ∨ r`",
+      "`p ∧ ¬(q ∨ r)`",
+      "`(p ⇒ q) ∧ ¬r`",
+      "`¬(¬p ∨ q) ∧ ¬r`"
+     ],
+     "correct": [
+      0,
+      2,
+      4
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "¬(p ⇒ (q ∨ r))"
+     },
+     "multi": true
+    },
+    {
+     "id": "b5",
+     "q": "True or false: if `φ ≡ ψ`, then `¬φ ≡ ¬ψ`.",
+     "a": "**True.**",
+     "why": "Identical columns stay identical when both are flipped. (It's also Rule 2 with the context `¬(…)`.)"
+    },
+    {
+     "id": "b6",
+     "q": "Prove `¬(p ∧ q) ⇒ r ≡ (¬p ⇒ r) ∧ (¬q ⇒ r)`.",
+     "a": "`¬(p ∧ q) ⇒ r` `≡ (¬p ∨ ¬q) ⇒ r` (De Morgan, inside) `≡ ¬(¬p ∨ ¬q) ∨ r` (Implication) `≡ (p ∧ q) ∨ r` (De Morgan, Double negation) `≡ (p ∨ r) ∧ (q ∨ r)` (Distribution) `≡ (¬p ⇒ r) ∧ (¬q ⇒ r)` (Implication, Double negation).",
+     "why": "If not both, then `r`: missing `p` gives `r`, and missing `q` gives `r`.",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(p ∧ q) ⇒ r",
+      "g": "(¬p ⇒ r) ∧ (¬q ⇒ r)",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "p-retest",
+   "level": "retest",
+   "items": [
+    {
+     "id": "rt1",
+     "q": "De Morgan on `¬(a ∨ ¬b)`.",
+     "a": "**`¬a ∧ b`**",
+     "check": {
+      "kind": "equiv",
+      "f": "¬(a ∨ ¬b)",
+      "g": "¬a ∧ b",
+      "expect": true
+     }
+    },
+    {
+     "id": "rt2",
+     "q": "Is `p ⇒ q ≡ q ⇒ p`? If not, a row.",
+     "a": "**No.** Row `p = T, q = F` (or `p = F, q = T`).",
+     "check": {
+      "kind": "equiv",
+      "f": "p ⇒ q",
+      "g": "q ⇒ p",
+      "expect": false
+     }
+    },
+    {
+     "id": "rt3",
+     "q": "Simplify `(a ∧ ¬b) ∨ (a ∧ b)`.",
+     "a": "**`a`**",
+     "check": {
+      "kind": "equiv",
+      "f": "(a ∧ ¬b) ∨ (a ∧ b)",
+      "g": "a",
+      "expect": true
+     }
+    },
+    {
+     "id": "rt4",
+     "q": "Rewrite `x ⊕ y` using `⇔`.",
+     "a": "**`¬(x ⇔ y)`** (or `¬x ⇔ y`)",
+     "check": {
+      "kind": "equiv",
+      "f": "x ⊕ y",
+      "g": "¬(x ⇔ y)",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "recap",
+   "lines": [
+    "`φ ≡ ψ` ⇔ same value in every row ⇔ `⊨ φ ⇔ ψ`.",
+    "Disprove: one row. Prove: full table, a two-case split on one letter, or a chain of named laws.",
+    "Most-used laws: Implication, De Morgan, Double negation, Distribution, Excluded middle, Identity/Domination.",
+    "Substitution: every occurrence, into a tautology. Replacement: an equivalent piece.",
+    "`⊕`: exactly one is true. `p ⊕ ⊤ ≡ ¬p`, `p ⊕ ⊥ ≡ p`, `p ⊕ p ≡ ⊥`."
+   ]
+  },
+  {
+   "type": "links",
+   "id": "links",
+   "sub": "Free, from universities. Try them after the ladder above.",
+   "items": [
+    {
+     "title": "Mathematics for Computer Science — Section 3.4, The Algebra of Propositions",
+     "url": "https://courses.csail.mit.edu/6.042/spring18/mcs.pdf",
+     "source": "MIT — the book the COMP9020 slides borrow examples from",
+     "checked": "24 Sep 2026",
+     "note": "The equivalence laws and more chain-proof practice (Problems 3.x)."
+    }
+   ]
+  }
+ ],
+ "sources": "Lecture slides: Week 2 slides 10–14 (equivalence, the laws, 2.2.18) and 39–42 (substitution); Week 1 slides 27 and 56. Notation follows Prof. Thielscher's slides. All practice pairs are original.",
+ "prev": {
+  "href": "../l3-truth-tables/",
+  "label": "L3 · Truth-Table Detective"
+ },
+ "next": {
+  "href": "../l4-arguments-entailment/",
+  "label": "L4 · Arguments & Entailment"
+ }
+}

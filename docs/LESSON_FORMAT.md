@@ -71,6 +71,8 @@ Everything else is escaped, so raw HTML shows as text. Keep backticks and `**` b
 | `recap` | `title?`, `lines[]` | 🧠 60-second recap, shown on the Finish step. |
 | `links` | `id`, `sub?`, `items[{title, url, source, checked, note}]` | Shown on the Finish step. Tier-1 sources only (universities, official material). `checked` = date you opened the link. |
 
+A `steps` or `callout` block placed **before** any idea or practice becomes its own step (D2 uses this for its method card).
+
 ## Items (in `tries` and `practice.items`)
 
 ```json
@@ -88,6 +90,7 @@ Everything else is escaped, so raw HTML shows as text. Keep backticks and `**` b
   "steps": ["optional worked steps"],
   "why": "one line: why it's right",           // expected everywhere except retest
   "wrong": "If you said X: why that's wrong",  // optional, for likely mistakes
+  "grid": {"title": "…", "cols": [], "rows": [[]]},  // optional: a table shown under the question (K-maps, truth tables)
   "check": { … } or [ … ],                     // machine check(s), see below
   "nocheck": "reason"                          // only for option items that can't be machine-checked
 }
@@ -107,6 +110,21 @@ Formulas use the same symbols as the page: `¬ ∧ ∨ ⊕ ⇒ ⇔ ⊤ ⊥` and 
 | `options_equiv` | `target` | the options equivalent to `target` are exactly `correct` |
 | `options_entailed` | `premises[]` | the options entailed by the premises are exactly `correct` |
 | `options_falsify` | `f`, `rows[]` (one per option) | the options whose row makes `f` false are exactly `correct` |
+| `options_equiv_any` | `targets[]` | the options equivalent to **at least one** target are exactly `correct` (Quiz 2 Q3(b) shape) |
+| `options_valid` | — | the options that are tautologies are exactly `correct` |
+| `options_sat` | — | the options that are satisfiable are exactly `correct` |
+| `calc` | `expr`, `expect` or `is`, `let?` | a Python expression over numbers/sets/words equals `expect` (JSON value) or the value of the expression `is` |
+| `options_calc` | `exprs[]` (one per option), `let?` | the options whose expression is true are exactly `correct` |
+
+**Boolean-algebra notation.** Any formula string that starts with `BA:` is read in `+ · ′` notation: `+` or, `·`/juxtaposition and,
+`′` (or `'`) not, `0`/`1`; variables are single letters, so `BA:xy′ + z` means `(x ∧ ¬y) ∨ z`. Option lists in BA notation need `"ba": true`
+on their `options_*` check.
+
+**`calc` sandbox** (see `CALC_ENV` in `tools/verify_answers.py`): `floor ceil gcd lcm mod divides abs sqrt isqrt comb factorial pi e`,
+`count_mult(k, n, m)` (brute-force count of multiples), `is_prime`, sets via Python `{…}` and `frozenset`, `Pow(S)`, `cart(A, B, …)`,
+`words(alphabet, k)`, `upto(alphabet, n)` (`Σ≤ⁿ`), `match(regex, word)` (grammar membership), `product`, and `all any sum len sorted range …`.
+`let` defines names first, e.g. `{"U": "{1, 2, 3}"}`, so \"true for all sets\" claims can be brute-forced with `all(… for A in Pow(U) for B in Pow(U))`.
+Prefer a brute-force check (e.g. `count_mult`, or looping over all subsets) over re-typing the formula you used in the answer.
 
 ## Adding a lesson — checklist
 

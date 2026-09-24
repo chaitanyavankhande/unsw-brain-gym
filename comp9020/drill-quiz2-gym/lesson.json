@@ -1,0 +1,585 @@
+{
+ "id": "comp9020-d2",
+ "course": {
+  "code": "COMP9020",
+  "href": "../"
+ },
+ "code": "D2",
+ "emoji": "🎯",
+ "title": "Quiz 2 Gym",
+ "eyebrow": "COMP9020 · Drill · Quiz 2 on Thu 1 Oct 2026",
+ "minutes": 30,
+ "verified": true,
+ "goal": "Do the two Quiz 2 question types fast and without traps: match English statements to equivalent formulas, and pick every formula a premise entails.",
+ "magic": [
+  "Translate first, then rewrite: `A ⇒ B = ¬A ∨ B`, `A ⇒ (B ⇒ C) = (A ∧ B) ⇒ C`.",
+  "`¬A ⇔ B` is `A ⊕ B`, NOT `A ⇔ B`.",
+  "Entailed = T in every premise-row. One F kills it."
+ ],
+ "blocks": [
+  {
+   "type": "steps",
+   "id": "method",
+   "title": "Before you start: how the two Quiz 2 questions work",
+   "steps": [
+    "**The quiz** (Week 2 slide 2, Problem set 2 footer): at the start of your tutorial, closed book, no devices. You get your own variation of **Q3(b)** and **Q5(b)**. 1 mark each, partial marks possible.",
+    "**Q3(b)-type:** two English statements, a list of formulas. Translate each statement FIRST (letters on paper), then rewrite with `A ⇒ B = ¬A ∨ B`, `A ⇒ (B ⇒ C) = (A ∧ B) ⇒ C`, De Morgan, and `¬A ⇔ B = A ⊕ B`. Match each option to one statement.",
+    "**Traps to check on every option:** \"only if\" never flips · \"unless\" = if not · \"neither … nor\" = `¬a ∧ ¬b` · a `¬` on one side of `⇔` turns it into `⊕` · one direction of `⇔` is not enough.",
+    "**Q5(b)-type:** one premise, several candidate formulas. Write the premise's true rows in a mini-table ONCE. A candidate is entailed exactly when it is T in **every** one of those rows.",
+    "**Speed tip:** a candidate that is the premise rewritten (contrapositive, `¬A ∨ B` form) is always entailed. A candidate that is F in one premise-row is out. Stop checking it at the first F."
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "round1",
+   "level": "red",
+   "title": "Round 1 · English → pick the equivalent formulas",
+   "sub": "Seven original scenarios in the exact shape of the quiz's Q3(b): two statements, five formulas.",
+   "toc": "Q3(b) style",
+   "items": [
+    {
+     "id": "a1",
+     "q": "**S1:** \"Provided the room is cold, the heater is on unless a window is open.\"\n**S2:** \"The heater is on only if no window is open.\"\nSelect the formulas that are logically equivalent to S1 or to S2.",
+     "a": "**(2) and (4).** (4) = S1, (2) = S2.",
+     "why": "S1 = `c ⇒ (¬w ⇒ h)` (\"provided\" marks the outer condition; \"unless\" = if not). Rewrite each `⇒` as `¬A ∨ B`: `¬c ∨ w ∨ h`, which is (4). S2 = `h ⇒ ¬w` = `¬h ∨ ¬w` = `¬(h ∧ w)`, which is (2). (1) wrongly forces `¬w` whenever it's cold. (3) says `h ⇔ w`. (5) is true whenever the heater is on, even with no cold room.",
+     "letters": "`h` = the heater is on · `w` = a window is open · `c` = the room is cold",
+     "options": [
+      "`c ⇒ (h ∧ ¬w)`",
+      "`¬(h ∧ w)`",
+      "`(¬h ∨ w) ∧ (h ∨ ¬w)`",
+      "`h ∨ w ∨ ¬c`",
+      "`(c ∧ ¬w) ∨ h`"
+     ],
+     "correct": [
+      1,
+      3
+     ],
+     "mono": true,
+     "wrong": "If you picked (1): \"unless a window is open\" doesn't promise the window is shut. It only says what happens when it's shut.",
+     "check": {
+      "kind": "options_equiv_any",
+      "targets": [
+       "c ⇒ (¬w ⇒ h)",
+       "h ⇒ ¬w"
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "a2",
+     "q": "**S1:** \"We deploy only if the tests pass and the code is reviewed.\"\n**S2:** \"Whenever the tests fail, we don't deploy unless the code is reviewed.\"\nSelect the formulas that are logically equivalent to S1 or to S2.",
+     "a": "**(3) and (5).** (3) = S1, (5) = S2.",
+     "why": "S1 = `d ⇒ (t ∧ r)` = `¬d ∨ (t ∧ r)`, and distributing gives (3). S2 = `¬t ⇒ (¬r ⇒ ¬d)` = `t ∨ r ∨ ¬d`, which is (5). (1) is the converse of S1. (2) is `¬d ∨ t ∨ ¬r`, which has the wrong sign on `r`. (4) is exactly the situation that **breaks** S2.",
+     "letters": "`t` = the tests pass · `r` = the code is reviewed · `d` = we deploy",
+     "options": [
+      "`(t ∧ r) ⇒ d`",
+      "`(d ∧ ¬t) ⇒ ¬r`",
+      "`(¬d ∨ t) ∧ (¬d ∨ r)`",
+      "`¬t ∧ ¬r ∧ d`",
+      "`¬d ∨ t ∨ r`"
+     ],
+     "correct": [
+      2,
+      4
+     ],
+     "mono": true,
+     "wrong": "If you picked (1): \"only if\" never flips. The deploy is on the left.",
+     "check": {
+      "kind": "options_equiv_any",
+      "targets": [
+       "d ⇒ (t ∧ r)",
+       "¬t ⇒ (¬r ⇒ ¬d)"
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "a3",
+     "q": "**S1:** \"The coffee machine brews exactly when it is switched on and has water.\"\n**S2:** \"It isn't switched on unless it has water.\"\nSelect the formulas that are logically equivalent to S1 or to S2.",
+     "a": "**(2) and (4).** (2) = S1, (4) = S2.",
+     "why": "S1 = `b ⇔ (o ∧ m)`: both directions. (2) spells out both: `b ⇒ o` and `b ⇒ m` together are `b ⇒ (o ∧ m)`, plus the way back. S2 = `¬m ⇒ ¬o` = `o ⇒ m` = `¬o ∨ m`, which is (4). (1) is the converse of S2. (3) is only one direction of S1. (5) doesn't match either.",
+     "letters": "`b` = the machine brews · `o` = it is switched on · `m` = it has water",
+     "options": [
+      "`m ⇒ o`",
+      "`(b ⇒ o) ∧ (b ⇒ m) ∧ ((o ∧ m) ⇒ b)`",
+      "`b ⇒ (o ∧ m)`",
+      "`¬o ∨ m`",
+      "`(o ∧ ¬m) ∨ b`"
+     ],
+     "correct": [
+      1,
+      3
+     ],
+     "mono": true,
+     "wrong": "If you picked (3): \"exactly when\" is `⇔`. One direction isn't enough.",
+     "check": {
+      "kind": "options_equiv_any",
+      "targets": [
+       "b ⇔ (o ∧ m)",
+       "¬m ⇒ ¬o"
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "a4",
+     "q": "**S1:** \"You don't pay a late fee just in case the book is returned on time or the loan is extended.\"\n**S2:** \"The loan is extended only if the book isn't returned on time.\"\nSelect the formulas that are logically equivalent to S1 or to S2.",
+     "a": "**(4) and (5).** (4) = S1, (5) = S2.",
+     "why": "S1 = `¬l ⇔ (r ∨ x)`. \"Not A just in case B\" means A and B are **opposite**, and that is `⊕`: `l ⊕ (r ∨ x)`, which is (4). S2 = `x ⇒ ¬r` = `¬x ∨ ¬r` = `¬(x ∧ r)`, which is (5). (1) drops the \"don't\": it says the fee matches. (2) is the converse-style mix-up of S2. (3) allows `l` with `x` true.",
+     "letters": "`l` = you pay a late fee · `r` = the book is returned on time · `x` = the loan is extended",
+     "options": [
+      "`l ⇔ (r ∨ x)`",
+      "`¬r ⇒ x`",
+      "`(¬l ∧ (r ∨ x)) ∨ (l ∧ ¬r)`",
+      "`l ⊕ (r ∨ x)`",
+      "`¬(x ∧ r)`"
+     ],
+     "correct": [
+      3,
+      4
+     ],
+     "mono": true,
+     "wrong": "If you picked (1): the `¬` on `l` matters. `¬l ⇔ Y` is the opposite of `l ⇔ Y`.",
+     "check": {
+      "kind": "options_equiv_any",
+      "targets": [
+       "¬l ⇔ (r ∨ x)",
+       "x ⇒ ¬r"
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "a5",
+     "q": "**S1:** \"Whenever the key is in the ignition, the alarm beeps unless the seatbelt is fastened.\"\n**S2:** \"The alarm beeps only if the key is in the ignition and the seatbelt isn't fastened.\"\nSelect the formulas that are logically equivalent to S1 or to S2.",
+     "a": "**(2) and (4).** (2) = S1, (4) = S2.",
+     "why": "S1 = `k ⇒ (¬s ⇒ a)`, and `A ⇒ (B ⇒ C)` = `(A ∧ B) ⇒ C`, which is (2). S2 = `a ⇒ (k ∧ ¬s)` = `¬a ∨ (k ∧ ¬s)`; distributing gives (4). (1) has `¬s` where S1 has `s` (`¬k ∨ s ∨ a`). (3) forgets the seatbelt. (5) is S1 and S2 together, stronger than either.",
+     "letters": "`k` = the key is in the ignition · `s` = the seatbelt is fastened · `a` = the alarm beeps",
+     "options": [
+      "`¬k ∨ ¬s ∨ a`",
+      "`(k ∧ ¬s) ⇒ a`",
+      "`a ∨ ¬k`",
+      "`(¬a ∨ k) ∧ (¬a ∨ ¬s)`",
+      "`(k ∧ ¬s) ⇔ a`"
+     ],
+     "correct": [
+      1,
+      3
+     ],
+     "mono": true,
+     "wrong": "If you picked (5): it is true exactly when S1 **and** S2 both hold. Each option should match ONE statement.",
+     "check": {
+      "kind": "options_equiv_any",
+      "targets": [
+       "k ⇒ (¬s ⇒ a)",
+       "a ⇒ (k ∧ ¬s)"
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "a6",
+     "q": "**S1:** \"Provided I don't take the car, I take an umbrella if it rains.\"\n**S2:** \"When it doesn't rain, I take neither the car nor an umbrella.\"\nSelect the formulas that are logically equivalent to S1 or to S2.",
+     "a": "**(1) and (4).** (4) = S1, (1) = S2.",
+     "why": "S1 = `¬c ⇒ (r ⇒ u)` = `(¬c ∧ r) ⇒ u`, which is (4). S2 = `¬r ⇒ (¬c ∧ ¬u)` = `r ∨ (¬c ∧ ¬u)`, which is (1). (3) says \"not both\", weaker than \"neither\". (5) flips the contrapositive the wrong way: S2's contrapositive is `(c ∨ u) ⇒ r`. (2) matches neither.",
+     "letters": "`r` = it rains · `u` = I take an umbrella · `c` = I take the car",
+     "options": [
+      "`r ∨ (¬c ∧ ¬u)`",
+      "`(r ⇒ u) ⇒ ¬c`",
+      "`¬r ⇒ ¬(c ∧ u)`",
+      "`(r ∧ ¬c) ⇒ u`",
+      "`(c ∨ u) ⇒ ¬r`"
+     ],
+     "correct": [
+      0,
+      3
+     ],
+     "mono": true,
+     "wrong": "If you picked (3): \"neither … nor\" is `¬c ∧ ¬u`. \"Not both\" `¬(c ∧ u)` allows taking one of them.",
+     "check": {
+      "kind": "options_equiv_any",
+      "targets": [
+       "¬c ⇒ (r ⇒ u)",
+       "¬r ⇒ (¬c ∧ ¬u)"
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "a7",
+     "q": "**S1:** \"Requests error if and only if the server is down or the queue is full.\"\n**S2:** \"The queue is full only if the server is up.\"\nSelect the formulas that are logically equivalent to S1 or to S2.",
+     "a": "**(2) and (5).** (5) = S1, (2) = S2.",
+     "why": "S1 = `e ⇔ (¬u ∨ q)`. Negate both sides of a `⇔` and it stays true: `¬e ⇔ ¬(¬u ∨ q)` = `¬e ⇔ (u ∧ ¬q)`, which is (5). S2 = `q ⇒ u` = `¬q ∨ u`, which is (2). (1) and (4) are each only one direction of S1. (3) is the converse of S2.",
+     "letters": "`e` = requests error · `u` = the server is up · `q` = the queue is full",
+     "options": [
+      "`e ⇒ (¬u ∨ q)`",
+      "`u ∨ ¬q`",
+      "`u ⇒ q`",
+      "`(u ∧ ¬q) ⇒ ¬e`",
+      "`¬e ⇔ (u ∧ ¬q)`"
+     ],
+     "correct": [
+      1,
+      4
+     ],
+     "mono": true,
+     "wrong": "If you picked (1): \"if and only if\" needs both directions. (1) alone allows errors to be missing when the server is down.",
+     "check": {
+      "kind": "options_equiv_any",
+      "targets": [
+       "e ⇔ (¬u ∨ q)",
+       "q ⇒ u"
+      ]
+     },
+     "multi": true
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "round2",
+   "level": "red",
+   "title": "Round 2 · Which formulas are entailed?",
+   "sub": "Eight original premises in the shape of the quiz's Q5(b).",
+   "toc": "Q5(b) style",
+   "items": [
+    {
+     "id": "b1",
+     "q": "Which are logically entailed by `(p ∨ q) ⇒ ¬r`?",
+     "a": "**(1), (2), (4)**",
+     "why": "Premise-rows (`p q r`): FFF, FFT, FTF, TFF, TTF. (1) `p ⇒ ¬r` ✅. (2) `r ⇒ ¬q` ✅ (the only `r = T` row is FFT). (3) `¬r` ❌ at FFT. (4) `¬p ∨ ¬q ∨ ¬r` ✅ (never all three T). (5) `(p ∧ q) ⇒ r` ❌ at TTF.",
+     "options": [
+      "`p ⇒ ¬r`",
+      "`r ⇒ ¬q`",
+      "`¬r`",
+      "`¬p ∨ ¬q ∨ ¬r`",
+      "`(p ∧ q) ⇒ r`"
+     ],
+     "correct": [
+      0,
+      1,
+      3
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_entailed",
+      "premises": [
+       "(p ∨ q) ⇒ ¬r"
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "b2",
+     "q": "Which are logically entailed by `¬(p ⇔ q) ∧ (q ∨ r)`?",
+     "a": "**(1), (3), (4), (5)**",
+     "why": "Premise-rows: FTF, FTT, TFT. (1) `p ∨ q` ✅. (2) `r` ❌ at FTF. (3) `p ⇒ r` ✅ (the only `p = T` row has `r = T`). (4) `q ⇒ ¬p` ✅. (5) `¬q ⇒ (p ∧ r)` ✅ (the only `q = F` row is TFT).",
+     "options": [
+      "`p ∨ q`",
+      "`r`",
+      "`p ⇒ r`",
+      "`q ⇒ ¬p`",
+      "`¬q ⇒ (p ∧ r)`"
+     ],
+     "correct": [
+      0,
+      2,
+      3,
+      4
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_entailed",
+      "premises": [
+       "¬(p ⇔ q) ∧ (q ∨ r)"
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "b3",
+     "q": "Which are logically entailed by `¬(x ⇒ y) ∨ z`?",
+     "a": "**(2), (3), (4), (5)**",
+     "why": "Premise-rows (`x y z`): FFT, FTT, TFF, TFT, TTT. (1) `z` ❌ at TFF. (2) `x ∨ z` ✅. (3) `y ⇒ z` ✅ (every `y = T` row has `z = T`). (4) `¬y ∨ z` is (3) again ✅. (5) `(x ∧ ¬z) ⇒ ¬y` ✅ (the only `x = T, z = F` row has `y = F`).",
+     "options": [
+      "`z`",
+      "`x ∨ z`",
+      "`y ⇒ z`",
+      "`¬y ∨ z`",
+      "`(x ∧ ¬z) ⇒ ¬y`"
+     ],
+     "correct": [
+      1,
+      2,
+      3,
+      4
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_entailed",
+      "premises": [
+       "¬(x ⇒ y) ∨ z"
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "b4",
+     "q": "Which are logically entailed by `p ∨ (q ∧ ¬r)`?",
+     "a": "**(1), (3), (5)**",
+     "why": "Premise-rows: the four `p = T` rows plus FTF. (1) `p ∨ q` ✅. (2) `¬r ⇒ p` ❌ at FTF. (3) `r ⇒ p` ✅ (FTF has `r = F`). (4) `q ∨ ¬r` ❌ at TFT. (5) `¬p ⇒ ¬r` ✅ (same as (3)).",
+     "options": [
+      "`p ∨ q`",
+      "`¬r ⇒ p`",
+      "`r ⇒ p`",
+      "`q ∨ ¬r`",
+      "`¬p ⇒ ¬r`"
+     ],
+     "correct": [
+      0,
+      2,
+      4
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_entailed",
+      "premises": [
+       "p ∨ (q ∧ ¬r)"
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "b5",
+     "q": "Which are logically entailed by `¬(a ∨ (b ∧ c))`?",
+     "a": "**(1), (3), (4), (5)**",
+     "why": "Premise-rows (`a b c`): FFF, FFT, FTF. (1) `¬a` ✅. (2) `¬b` ❌ at FTF. (3) `¬b ∨ ¬c` ✅. (4) `b ⇒ ¬c` is (3) again ✅. (5) `a ⇒ b` ✅ (`a` is always F).",
+     "options": [
+      "`¬a`",
+      "`¬b`",
+      "`¬b ∨ ¬c`",
+      "`b ⇒ ¬c`",
+      "`a ⇒ b`"
+     ],
+     "correct": [
+      0,
+      2,
+      3,
+      4
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_entailed",
+      "premises": [
+       "¬(a ∨ (b ∧ c))"
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "b6",
+     "q": "Which are logically entailed by `(p ⊕ q) ⇒ r`?",
+     "a": "**(2), (4)**",
+     "why": "Premise-rows: every row except TFF and FTF. (1) `r` ❌ at FFF. (2) `¬r ⇒ (p ⇔ q)` ✅ (it's the contrapositive). (3) `p ∨ q ∨ r` ❌ at FFF. (4) `(p ∧ ¬q) ⇒ r` ✅. (5) `q ⇒ r` ❌ at TTF.",
+     "options": [
+      "`r`",
+      "`¬r ⇒ (p ⇔ q)`",
+      "`p ∨ q ∨ r`",
+      "`(p ∧ ¬q) ⇒ r`",
+      "`q ⇒ r`"
+     ],
+     "correct": [
+      1,
+      3
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_entailed",
+      "premises": [
+       "(p ⊕ q) ⇒ r"
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "b7",
+     "q": "Which are logically entailed by `¬p ∧ (q ⇔ ¬r)`?",
+     "a": "**(1), (3), (5)**",
+     "why": "Premise-rows: FFT and FTF. (1) `q ∨ r` ✅. (2) `q` ❌ at FFT. (3) `¬p ∧ ¬(q ∧ r)` ✅. (4) `¬q ⇒ ¬r` ❌ at FFT. (5) `p ∨ ¬q ∨ ¬r` ✅ (`q`, `r` are never both T).",
+     "options": [
+      "`q ∨ r`",
+      "`q`",
+      "`¬p ∧ ¬(q ∧ r)`",
+      "`¬q ⇒ ¬r`",
+      "`p ∨ ¬q ∨ ¬r`"
+     ],
+     "correct": [
+      0,
+      2,
+      4
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_entailed",
+      "premises": [
+       "¬p ∧ (q ⇔ ¬r)"
+      ]
+     },
+     "multi": true
+    },
+    {
+     "id": "b8",
+     "q": "Which are logically entailed by `(a ⇒ b) ∧ (b ⇒ c) ∧ a`?",
+     "a": "**(1), (2), (3)**",
+     "why": "Only one premise-row: `a = T` forces `b = T`, which forces `c = T`. (4) `b ⊕ c` = T ⊕ T = F ❌.",
+     "options": [
+      "`c`",
+      "`a ∧ b ∧ c`",
+      "`¬c ⇒ ¬a`",
+      "`b ⊕ c`"
+     ],
+     "correct": [
+      0,
+      1,
+      2
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_entailed",
+      "premises": [
+       "(a ⇒ b) ∧ (b ⇒ c) ∧ a"
+      ]
+     },
+     "multi": true
+    }
+   ]
+  },
+  {
+   "type": "practice",
+   "id": "round3",
+   "level": "retest",
+   "title": "Round 3 · Speed mix (redo in 2 days)",
+   "toc": "Speed mix",
+   "items": [
+    {
+     "id": "c1",
+     "q": "\"The alarm goes off only if the door opens.\" (`g` = goes off, `d` = door opens) Which **one** option matches?",
+     "a": "**(2)**",
+     "why": "\"Only if\" → `g ⇒ d`, and (2) is its contrapositive.",
+     "options": [
+      "`d ⇒ g`",
+      "`¬d ⇒ ¬g`",
+      "`g ⇔ d`"
+     ],
+     "correct": [
+      1
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "g ⇒ d"
+     }
+    },
+    {
+     "id": "c2",
+     "q": "Is `q` entailed by `(p ⇒ q) ∧ (¬p ⇒ q)`?",
+     "a": "**Yes.**",
+     "why": "Either `p` or `¬p` holds, and both lead to `q`.",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "(p ⇒ q) ∧ (¬p ⇒ q)"
+      ],
+      "f": "q",
+      "expect": true
+     }
+    },
+    {
+     "id": "c3",
+     "q": "\"I cycle unless it snows.\" (`c`, `s`) Which **one** option matches?",
+     "a": "**(3)**",
+     "why": "Unless = if not: `¬s ⇒ c` = `s ∨ c`.",
+     "options": [
+      "`s ⇒ ¬c`",
+      "`c ⇒ ¬s`",
+      "`s ∨ c`"
+     ],
+     "correct": [
+      2
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "¬s ⇒ c"
+     }
+    },
+    {
+     "id": "c4",
+     "q": "Is `q` entailed by `(p ∧ q) ∨ (q ∧ r)`?",
+     "a": "**Yes.**",
+     "why": "Both halves contain `q`, so every premise-row has `q = T`. (Factor it out: `q ∧ (p ∨ r)`.)",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "(p ∧ q) ∨ (q ∧ r)"
+      ],
+      "f": "q",
+      "expect": true
+     }
+    },
+    {
+     "id": "c5",
+     "q": "\"The build is green just in case no test fails.\" (`g` = green, `f` = a test fails) Which **one** option matches?",
+     "a": "**(1)**",
+     "why": "`g ⇔ ¬f` is the same as `g ⊕ f`: exactly one of them is true.",
+     "options": [
+      "`g ⊕ f`",
+      "`g ⇔ f`",
+      "`¬f ⇒ g`"
+     ],
+     "correct": [
+      0
+     ],
+     "mono": true,
+     "check": {
+      "kind": "options_equiv",
+      "target": "g ⇔ ¬f"
+     }
+    },
+    {
+     "id": "c6",
+     "q": "Is `¬q` entailed by `p ⊕ q` and `p`?",
+     "a": "**Yes.**",
+     "why": "`p` = T, and `⊕` needs the sides to differ, so `q` = F.",
+     "check": {
+      "kind": "entails",
+      "premises": [
+       "p ⊕ q",
+       "p"
+      ],
+      "f": "¬q",
+      "expect": true
+     }
+    }
+   ]
+  },
+  {
+   "type": "recap",
+   "lines": [
+    "Q3(b): translate each statement → rewrite → match. Watch only-if, unless, neither–nor, `¬` inside `⇔`.",
+    "Q5(b): premise-rows once, then test each option on every row.",
+    "Learn it first in L2B (translation), L3 (truth tables) and L4 (entailment)."
+   ],
+   "title": "🧠 What this drill trains"
+  }
+ ],
+ "sources": "Quiz format from Week 2 slide 2 and the Problem set 2 assessment footer. All statements, premises and options are original variations; no problem-set text or answers.",
+ "prev": {
+  "href": "../l4-arguments-entailment/",
+  "label": "L4 · Arguments & Entailment"
+ },
+ "next": {
+  "href": "../l5-proofs/",
+  "label": "L5 · Proofs"
+ }
+}
